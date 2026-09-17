@@ -1,833 +1,230 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universe Pro - Advanced Social Media</title>
+    <title>Universe Pro - Updated UI</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #161e2e;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --border-color: #334155;
-            --nav-bg: #111827;
+        /* --- ग्लोबल स्टाइल्स --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #000; color: #fff; overflow-x: hidden; }
+        
+        #app-container {
+            width: 100%; max-width: 450px; margin: 0 auto; height: 100vh;
+            background-color: #121212; position: relative; border-left: 1px solid #333; border-right: 1px solid #333;
+            display: flex; flex-direction: column;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        /* --- टॉप हेडर --- */
+        .top-header {
+            padding: 15px; border-bottom: 1px solid #262626; display: flex; justify-content: space-between; align-items: center;
+        }
+        .top-header h2 { font-size: 20px; font-weight: 600; }
+
+        /* --- मेन कंटेंट एरिया --- */
+        .main-content { flex: 1; overflow-y: auto; padding-bottom: 60px; }
+        .tab-section { display: none; height: 100%; }
+        .tab-section.active { display: block; }
+
+        /* --- 1. होम फीड --- */
+        .post { padding: 15px; border-bottom: 1px solid #262626; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #444; cursor: pointer; object-fit: cover; }
+        .post-content { height: 250px; background-color: #262626; border-radius: 8px; margin-bottom: 10px; }
+
+        /* --- 2. सर्च बार और ग्लोबल चैट (अपडेटेड) --- */
+        .search-container { padding: 15px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #262626; }
+        .search-box {
+            flex: 1; background: #262626; border-radius: 20px; padding: 10px 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .search-box input {
+            background: transparent; border: none; color: white; outline: none; width: 100%;
+        }
+        .global-chat-btn {
+            background: #0078ff; color: white; border: none; padding: 10px 15px;
+            border-radius: 20px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* --- 3. रील्स सेक्शन (बिना सर्च के) --- */
+        .reel-container { height: 100%; display: flex; justify-content: center; align-items: center; background: #1a1a1a; position: relative;}
+        .reel-actions { position: absolute; right: 15px; bottom: 80px; display: flex; flex-direction: column; gap: 20px; font-size: 24px; }
+
+        /* --- 4. खुद की प्रोफाइल (बिना टॉप चैट/सर्च के) --- */
+        .profile-header-info { text-align: center; padding: 30px 15px; border-bottom: 1px solid #262626; }
+        .profile-header-info .avatar { width: 80px; height: 80px; margin: 0 auto 10px auto; cursor: default; }
+
+        /* --- 5. दूसरे यूजर की प्रोफाइल (चैट और + बटन के साथ) --- */
+        #other-user-profile {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212; z-index: 100; transform: translateX(100%); transition: transform 0.3s ease;
+        }
+        #other-user-profile.open { transform: translateX(0); }
+        .back-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+        
+        .action-buttons { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+        .btn-add {
+            background: #262626; color: white; border: none; width: 40px; height: 40px;
+            border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center;
+        }
+        .btn-private-chat {
+            background: #0078ff; color: white; border: none; padding: 0 30px;
+            border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;
         }
 
-        /* Auth Screen */
-        #auth-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 1000;
-            text-align: center;
+        /* --- बॉटम नेविगेशन --- */
+        .bottom-nav {
+            position: absolute; bottom: 0; width: 100%; height: 60px; background: #000;
+            border-top: 1px solid #262626; display: flex; justify-content: space-around; align-items: center; z-index: 50;
         }
+        .nav-item { color: #888; font-size: 24px; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: #fff; }
 
-        .auth-card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            width: 100%;
-            max-width: 380px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-
-        .auth-card h1 {
-            color: var(--accent-color);
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-        }
-
-        .auth-card p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-color);
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: var(--accent-color);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            background: var(--accent-color);
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--accent-hover);
-        }
-
-        /* Main App Wrapper */
-        #main-app {
-            width: 100%;
-            max-width: 480px;
-            display: none;
-            flex-direction: column;
-            min-height: 100vh;
-            position: relative;
-            padding-bottom: 70px;
-        }
-
-        /* Header with Global Search & Results Dropdown */
-        header {
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--nav-bg);
-            padding: 10px 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border-bottom: 1px solid var(--border-color);
-            position: fixed;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .logo-img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent-color);
-        }
-
-        .logo-area h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        /* Global Search Container */
-        .global-search-container {
-            width: 100%;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent-color);
-        }
-
-        /* Search Results Dropdown List */
-        .search-results-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-top: 5px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            z-index: 200;
-        }
-
-        .search-result-item {
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            transition: background 0.2s;
-        }
-
-        .search-result-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .search-result-item img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .search-result-info .s-name {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .search-result-info .s-sub {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        /* Container & Screens */
-        .main-container {
-            width: 100%;
-            margin-top: 110px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .screen {
-            display: none;
-            padding: 15px;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        /* Post Cards */
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 14px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: var(--border-color);
-        }
-
-        .user-info .username {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-primary);
-        }
-
-        .user-info .time {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .card-media-wrapper {
-            width: 100%;
-            background: #000;
-            max-height: 450px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .card-media {
-            width: 100%;
-            max-height: 450px;
-            object-fit: cover;
-        }
-
-        .card-body {
-            padding: 12px 15px;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 8px;
-        }
-
-        .card-actions svg {
-            width: 22px;
-            height: 22px;
-            fill: none;
-            stroke: var(--text-primary);
-            stroke-width: 2;
-            cursor: pointer;
-            transition: stroke 0.2s;
-        }
-
-        .card-actions svg:hover {
-            stroke: var(--accent-color);
-        }
-
-        .likes-count {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .caption-text {
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            line-height: 1.4;
-        }
-
-        .caption-text span {
-            font-weight: 600;
-            margin-right: 6px;
-            cursor: pointer;
-        }
-
-        .caption-text span:hover {
-            color: var(--accent-color);
-        }
-
-        /* Profile Screen Design */
-        .profile-header-card {
-            background-color: var(--card-bg);
-            border-radius: 14px;
-            padding: 25px 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .profile-avatar-large {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--accent-color);
-            margin-bottom: 12px;
-        }
-
-        .profile-username {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .profile-bio {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            max-width: 300px;
-        }
-
-        .profile-stats {
-            display: flex;
-            gap: 30px;
-            width: 100%;
-            justify-content: center;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px 0;
-            margin-bottom: 15px;
-        }
-
-        .stat-box span {
-            display: block;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .stat-box label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-
-        .profile-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-        }
-
-        .profile-grid-item {
-            width: 100%;
-            aspect-ratio: 1;
-            background: var(--card-bg);
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        /* Upload Screen */
-        .upload-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
-        }
-
-        .upload-card h3 {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        /* Bottom Navigation */
-        nav {
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--nav-bg);
-            position: fixed;
-            bottom: 0;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid var(--border-color);
-            z-index: 100;
-        }
-
-        nav button {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            transition: color 0.2s;
-        }
-
-        nav button.active {
-            color: var(--accent-color);
-        }
-
-        nav button svg {
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Authentication Screen -->
-    <div id="auth-screen">
-        <div class="auth-card">
-            <h1>Universe Pro</h1>
-            <p>Apna naam darj karke app mein pravesh karein</p>
-            <input type="text" id="username-input" class="form-control" placeholder="Apna naam likhein (Jaise: Adit bhai)">
-            <button class="btn" onclick="handleLogin()">Shuru Karein 🚀</button>
+<div id="app-container">
+
+    <!-- मेन कंटेंट एरिया -->
+    <div class="main-content">
+        
+        <!-- 1. होम सेक्शन -->
+        <div id="home" class="tab-section active">
+            <div class="top-header">
+                <h2>Universe Pro</h2>
+            </div>
+            <!-- डमी पोस्ट -->
+            <div class="post">
+                <div class="post-header">
+                    <!-- इस अवतार पर क्लिक करने से दूसरे व्यक्ति की प्रोफाइल खुलेगी -->
+                    <img src="https://i.pravatar.cc/150?img=11" alt="User" class="avatar" onclick="openUserProfile('Rahul Sharma', 'https://i.pravatar.cc/150?img=11')">
+                    <div>
+                        <strong>Rahul Sharma</strong>
+                        <div style="font-size: 12px; color: #888;">2 hours ago</div>
+                    </div>
+                </div>
+                <div class="post-content"></div>
+                <div style="margin-top: 10px;"><i class="far fa-heart"></i> <i class="far fa-comment"></i></div>
+            </div>
+        </div>
+
+        <!-- 2. सर्च और ग्लोबल चैट सेक्शन (अपडेटेड) -->
+        <div id="search" class="tab-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search" style="color: #888;"></i>
+                    <input type="text" placeholder="Search anyone...">
+                </div>
+                <!-- अनजाने लोगों से या पब्लिक चैट करने के लिए ग्लोबल बटन -->
+                <button class="global-chat-btn" onclick="alert('Global Chat Room Opened!')">
+                    <i class="fas fa-globe"></i> Chat
+                </button>
+            </div>
+            <div style="padding: 15px; color: #888; text-align: center; margin-top: 50px;">
+                <i class="fas fa-users" style="font-size: 40px; margin-bottom: 10px; color: #444;"></i>
+                <p>Search for people or join the global conversation.</p>
+            </div>
+        </div>
+
+        <!-- 3. रील्स सेक्शन (यहां कोई सर्च बार नहीं है) -->
+        <div id="reels" class="tab-section">
+            <div class="reel-container">
+                <div style="color: #fff; font-size: 20px;">Reel Playing...</div>
+                <div class="reel-actions">
+                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-comment"></i>
+                    <i class="fas fa-share"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. खुद की प्रोफाइल (ऊपर से सर्च और चैट हटाया गया) -->
+        <div id="profile" class="tab-section">
+            <div class="top-header">
+                <h2>My Profile</h2>
+                <!-- यहां से चैट और सर्च आइकन हटा दिए गए हैं -->
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="profile-header-info">
+                <img src="https://i.pravatar.cc/150?img=50" alt="My Profile" class="avatar">
+                <h3>Adit Bhai</h3>
+                <p style="color: #888; font-size: 14px; margin-top: 5px;">Web Developer | Gamer</p>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px;">
+                <div style="width: 33%; height: 120px; background: #262626;"></div>
+                <div style="width: 33%; height: 120px; background: #333;"></div>
+                <div style="width: 33%; height: 120px; background: #262626;"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Main Application Wrapper -->
-    <div id="main-app">
-        <!-- Header with Unified Search & Dropdown Results -->
-        <header>
-            <div class="header-top">
-                <div class="logo-area" onclick="openMyProfile()">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="logo-img" id="header-avatar" alt="Logo">
-                    <h1 id="header-app-name">Universe Pro</h1>
-                </div>
-            </div>
-            <!-- Global Search Bar with Profile Results Dropdown -->
-            <div class="global-search-container">
-                <input type="text" id="global-search" class="search-input" placeholder="🔍 User ka naam dhoondhein (Jaise: Vansh Singh)..." oninput="handleGlobalSearch(this.value)">
-                <div id="search-dropdown" class="search-results-dropdown">
-                    <!-- Dynamic Search Results -->
-                </div>
-            </div>
-        </header>
-
-        <!-- Container Screens -->
-        <div class="main-container">
-            
-            <!-- Home Feed Screen -->
-            <div id="screen-home" class="screen active">
-                <div id="feed-container">
-                    <!-- Dynamic Posts Rendered Here -->
-                </div>
-            </div>
-
-            <!-- Reels Screen -->
-            <div id="screen-reels" class="screen">
-                <div id="reels-container">
-                    <!-- Dynamic Reels Rendered Here -->
-                </div>
-            </div>
-
-            <!-- Upload Screen -->
-            <div id="screen-upload" class="screen">
-                <div class="upload-card">
-                    <h3>Nayi Post ya Media Dalein</h3>
-                    <input type="text" id="post-caption" class="form-control" placeholder="Apna caption likhein...">
-                    <input type="text" id="post-media-url" class="form-control" placeholder="Image / Video ka Direct URL dalein">
-                    <button class="btn" onclick="createNewPost()">Post Publish Karein</button>
-                </div>
-            </div>
-
-            <!-- Profile Screen -->
-            <div id="screen-profile" class="screen">
-                <div class="profile-header-card">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" class="profile-avatar-large" id="profile-avatar" alt="Profile">
-                    <div class="profile-username" id="profile-name">Adit bhai</div>
-                    <div class="profile-bio" id="profile-bio">Welcome to my official Universe Pro space! Exploring tech, code, and creations. 💻✨</div>
-                    <div class="profile-stats">
-                        <div class="stat-box">
-                            <span id="stat-posts-count">0</span>
-                            <label>Posts</label>
-                        </div>
-                        <div class="stat-box">
-                            <span id="stat-followers-count">1.4K</span>
-                            <label>Followers</label>
-                        </div>
-                        <div class="stat-box">
-                            <span id="stat-following-count">210</span>
-                            <label>Following</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-grid" id="profile-posts-grid">
-                    <!-- User grid posts -->
-                </div>
-            </div>
-
+    <!-- 5. दूसरे व्यक्ति की प्रोफाइल स्क्रीन (क्लिक करने पर खुलेगी) -->
+    <div id="other-user-profile">
+        <div class="top-header">
+            <button class="back-btn" onclick="closeUserProfile()"><i class="fas fa-arrow-left"></i></button>
+            <h2 id="other-user-name">User Name</h2>
+            <i class="fas fa-ellipsis-v"></i>
         </div>
-
-        <!-- Bottom Navigation Bar -->
-        <nav>
-            <button onclick="switchTab('home')" class="active" id="nav-home">
-                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-                Home
-            </button>
-            <button onclick="switchTab('reels')" id="nav-reels">
-                <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                Reels
-            </button>
-            <button onclick="switchTab('upload')" id="nav-upload">
-                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Upload
-            </button>
-            <button onclick="switchTab('profile')" id="nav-profile">
-                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                Profile
-            </button>
-        </nav>
+        <div class="profile-header-info">
+            <img id="other-user-img" src="" alt="User" class="avatar" style="cursor: default;">
+            <h3 id="other-user-title">User Name</h3>
+            
+            <!-- एक्शन बटन्स (+ और प्राइवेट चैट) -->
+            <div class="action-buttons">
+                <button class="btn-add" onclick="alert('Follow request sent!')">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="btn-private-chat" onclick="alert('Private chat opened with this user!')">
+                    <i class="fas fa-comment-alt"></i> Chat
+                </button>
+            </div>
+        </div>
     </div>
 
-    <script>
-        let currentUser = "Adit bhai";
-        let userAvatarDefault = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100";
+    <!-- बॉटम नेविगेशन बार -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)"><i class="fas fa-home"></i></div>
+        <div class="nav-item" onclick="switchTab('search', this)"><i class="fas fa-search"></i></div>
+        <div class="nav-item" onclick="switchTab('reels', this)"><i class="fas fa-video"></i></div>
+        <div class="nav-item" onclick="switchTab('profile', this)"><i class="fas fa-user"></i></div>
+    </div>
 
-        let defaultPosts = [
-            {
-                id: 1,
-                username: "Vansh Singh",
-                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
-                media: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500",
-                caption: "Naya 3D Web Environment test kar rahe hain Universe Pro ke liye! 🚀",
-                time: "2 hours ago",
-                likes: 42,
-                followers: "850",
-                following: "120"
-            },
-            {
-                id: 2,
-                username: "Dinesh Kumar Singh",
-                avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100",
-                media: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500",
-                caption: "Technology aur systems management ka anubhav bada hi shandar hai.",
-                time: "5 hours ago",
-                likes: 89,
-                followers: "3.2K",
-                following: "45"
-            }
-        ];
+</div>
 
-        let allPosts = JSON.parse(localStorage.getItem('universe_posts')) || defaultPosts;
+<script>
+    // टैब्स बदलने का लॉजिक
+    function switchTab(tabId, element) {
+        // सारे सेक्शन छुपाओ
+        document.querySelectorAll('.tab-section').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        // नेविगेशन आइकॉन से एक्टिव क्लास हटाओ
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.classList.remove('active');
+        });
 
-        function savePosts() {
-            localStorage.setItem('universe_posts', JSON.stringify(allPosts));
-        }
+        // जो क्लिक हुआ है उसे दिखाओ
+        document.getElementById(tabId).classList.add('active');
+        element.classList.add('active');
+    }
 
-        function handleLogin() {
-            const inputVal = document.getElementById('username-input').value.trim();
-            if(inputVal !== "") {
-                currentUser = inputVal;
-            }
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
-            
-            document.getElementById('profile-name').innerText = currentUser;
-            renderFeed(allPosts);
-            renderReels(allPosts);
-        }
+    // किसी दूसरे की प्रोफाइल खोलने का लॉजिक (अकेले आदमी से बात करने के लिए)
+    function openUserProfile(name, imageSrc) {
+        document.getElementById('other-user-name').innerText = name;
+        document.getElementById('other-user-title').innerText = name;
+        document.getElementById('other-user-img').src = imageSrc;
+        
+        document.getElementById('other-user-profile').classList.add('open');
+    }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    // दूसरे की प्रोफाइल बंद करने का लॉजिक
+    function closeUserProfile() {
+        document.getElementById('other-user-profile').classList.remove('open');
+    }
+</script>
 
-            document.getElementById('screen-' + tabName).classList.add('active');
-            document.getElementById('nav-' + tabName).classList.add('active');
-
-            if(tabName === 'profile') {
-                loadProfileData(currentUser, userAvatarDefault, "1.4K", "210");
-            }
-        }
-
-        // Global Search Functionality (Search karne par users ki dropdown list dikhayega)
-        function handleGlobalSearch(query) {
-            const dropdown = document.getElementById('search-dropdown');
-            const q = query.toLowerCase().trim();
-
-            if(q === "") {
-                dropdown.style.display = 'none';
-                return;
-            }
-
-            // Unique users nikalna posts mein se
-            const uniqueUsersMap = new Map();
-            allPosts.forEach(p => {
-                if(!uniqueUsersMap.has(p.username)) {
-                    uniqueUsersMap.set(p.username, {
-                        username: p.username,
-                        avatar: p.avatar,
-                        followers: p.followers || "500",
-                        following: p.following || "100"
-                    });
-                }
-            });
-
-            // Apne khud ko bhi search list mein add kar sakte hain
-            if(currentUser.toLowerCase().includes(q)) {
-                uniqueUsersMap.set(currentUser, {
-                    username: currentUser,
-                    avatar: userAvatarDefault,
-                    followers: "1.4K",
-                    following: "210"
-                });
-            }
-
-            const matchedUsers = Array.from(uniqueUsersMap.values()).filter(u => u.username.toLowerCase().includes(q));
-
-            dropdown.innerHTML = '';
-            if(matchedUsers.length === 0) {
-                dropdown.innerHTML = `<div style="padding: 10px 15px; font-size: 0.85rem; color: var(--text-secondary);">Koi user nahi mila</div>`;
-            } else {
-                matchedUsers.forEach(user => {
-                    const item = document.createElement('div');
-                    item.className = 'search-result-item';
-                    item.innerHTML = `
-                        <img src="${user.avatar}" alt="Avatar">
-                        <div class="search-result-info">
-                            <div class="s-name">${user.username}</div>
-                            <div class="s-sub">${user.followers} Followers</div>
-                        </div>
-                    `;
-                    // Click karte hi seedha us user ki profile khulegi, chat nahi!
-                    item.onclick = () => {
-                        dropdown.style.display = 'none';
-                        document.getElementById('global-search').value = '';
-                        viewUserProfile(user.username, user.avatar, user.followers, user.following);
-                    };
-                    dropdown.appendChild(item);
-                });
-            }
-            dropdown.style.display = 'block';
-        }
-
-        function renderFeed(postsToRender) {
-            const feedContainer = document.getElementById('feed-container');
-            feedContainer.innerHTML = '';
-
-            if(postsToRender.length === 0) {
-                feedContainer.innerHTML = `<p style="text-align:center; color: var(--text-secondary); padding: 20px;">Koi post nahi mili.</p>`;
-                return;
-            }
-
-            postsToRender.forEach(post => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-header" onclick="viewUserProfile('${post.username}', '${post.avatar}', '${post.followers || "500"}', '${post.following || "100"}')">
-                        <img src="${post.avatar}" class="avatar" alt="Avatar">
-                        <div class="user-info">
-                            <div class="username">${post.username}</div>
-                            <div class="time">${post.time}</div>
-                        </div>
-                    </div>
-                    <div class="card-media-wrapper">
-                        <img src="${post.media}" class="card-media" alt="Post Media" onerror="this.src='https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=500'">
-                    </div>
-                    <div class="card-body">
-                        <div class="card-actions">
-                            <svg viewBox="0 0 24 24" onclick="likePost(${post.id})"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                        </div>
-                        <div class="likes-count">${post.likes} likes</div>
-                        <div class="caption-text"><span onclick="viewUserProfile('${post.username}', '${post.avatar}', '${post.followers || "500"}', '${post.following || "100"}')">${post.username}</span>${post.caption}</div>
-                    </div>
-                `;
-                feedContainer.appendChild(card);
-            });
-        }
-
-        function renderReels(postsToRender) {
-            const reelsContainer = document.getElementById('reels-container');
-            reelsContainer.innerHTML = '';
-
-            postsToRender.forEach(post => {
-                const reelCard = document.createElement('div');
-                reelCard.className = 'card';
-                reelCard.innerHTML = `
-                    <div class="card-header" onclick="viewUserProfile('${post.username}', '${post.avatar}', '${post.followers || "500"}', '${post.following || "100"}')">
-                        <img src="${post.avatar}" class="avatar" alt="Avatar">
-                        <div class="user-info">
-                            <div class="username">${post.username} (Reel)</div>
-                            <div class="time">${post.time}</div>
-                        </div>
-                    </div>
-                    <div class="card-media-wrapper" style="height: 380px;">
-                        <img src="${post.media}" class="card-media" style="height: 380px;" alt="Reel Media" onerror="this.src='https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=500'">
-                    </div>
-                    <div class="card-body">
-                        <div class="caption-text"><span onclick="viewUserProfile('${post.username}', '${post.avatar}', '${post.followers || "500"}', '${post.following || "100"}')">${post.username}</span>${post.caption}</div>
-                    </div>
-                `;
-                reelsContainer.appendChild(reelCard);
-            });
-        }
-
-        function likePost(id) {
-            const post = allPosts.find(p => p.id === id);
-            if(post) {
-                post.likes += 1;
-                savePosts();
-                renderFeed(allPosts);
-            }
-        }
-
-        // Yeh function ab seedha user ki profile kholta hai jahan followers aur photos/videos grid dikhte hain
-        function viewUserProfile(username, avatar, followers, following) {
-            switchTab('profile');
-            loadProfileData(username, avatar, followers, following);
-        }
-
-        function loadProfileData(username, avatar, followers, following) {
-            document.getElementById('profile-name').innerText = username;
-            document.getElementById('profile-avatar').src = avatar;
-            document.getElementById('stat-followers-count').innerText = followers;
-            document.getElementById('stat-following-count').innerText = following;
-            
-            const userPosts = allPosts.filter(p => p.username === username);
-            document.getElementById('stat-posts-count').innerText = userPosts.length;
-
-            const grid = document.getElementById('profile-posts-grid');
-            grid.innerHTML = '';
-
-            if(userPosts.length === 0) {
-                grid.innerHTML = `<p style="grid-column: span 3; text-align:center; color: var(--text-secondary); padding: 20px;">Is user ki koi post uplabdh nahi hai.</p>`;
-            } else {
-                userPosts.forEach(p => {
-                    const img = document.createElement('img');
-                    img.src = p.media;
-                    img.className = 'profile-grid-item';
-                    grid.appendChild(img);
-                });
-            }
-        }
-
-        function openMyProfile() {
-            switchTab('profile');
-            loadProfileData(currentUser, userAvatarDefault, "1.4K", "210");
-        }
-
-        function createNewPost() {
-            const caption = document.getElementById('post-caption').value.trim();
-            const mediaUrl = document.getElementById('post-media-url').value.trim();
-
-            if(!caption && !mediaUrl) {
-                alert("Kripya caption ya media URL dalein!");
-                return;
-            }
-
-            const newEntry = {
-                id: Date.now(),
-                username: currentUser,
-                avatar: userAvatarDefault,
-                media: mediaUrl || "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=500",
-                caption: caption || "Universe Pro naya update!",
-                time: "Just now",
-                likes: 1,
-                followers: "1.4K",
-                following: "210"
-            };
-
-            allPosts.unshift(newEntry);
-            savePosts();
-
-            document.getElementById('post-caption').value = '';
-            document.getElementById('post-media-url').value = '';
-            
-            switchTab('home');
-            renderFeed(allPosts);
-            renderReels(allPosts);
-            alert("Aapki post safalpurvak publish ho gayi hai, Adit bhai!");
-        }
-    </script>
 </body>
 </html>
