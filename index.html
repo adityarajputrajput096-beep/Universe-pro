@@ -4,6 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Universe Pro</title>
+
+<!-- Firebase SDK Integration -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
+    authDomain: "universe-pro-f36a8.firebaseapp.com",
+    databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
+    projectId: "universe-pro-f36a8",
+    storageBucket: "universe-pro-f36a8.firebasestorage.app",
+    messagingSenderId: "1051673611050",
+    appId: "1:1051673611050:web:24d6db4c72628131d42c53",
+    measurementId: "G-0LNVPWTMCF"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  window.firebaseApp = app;
+</script>
+
 <style>
 :root{
   --bg:#000000;
@@ -409,6 +431,19 @@ function renderStories(){
   s.innerHTML = addStoryBtn + userStories;
 }
 
+function openUserStory(id){
+  let st = db.stories.find(s=>s.userId===id);
+  if(!st) return toast('No story available');
+  let u = userById(id);
+  document.getElementById('storyUser').textContent = u ? u.username : 'User';
+  document.getElementById('storyBody').innerHTML = `<img src="${st.data}" style="width:100%;max-height:70vh;object-fit:contain">`;
+  document.getElementById('storyModal').classList.remove('hidden');
+}
+
+function closeStory(){
+  document.getElementById('storyModal').classList.add('hidden');
+}
+
 function handleStoryUpload(e){
   let f=e.target.files[0];
   if(!f)return;
@@ -467,11 +502,9 @@ function renderFeed(){
 function handleMediaClick(event, postId){
   let now = Date.now();
   if (now - lastClickTime < 300) {
-    // Double click -> Like Post with Heart Animation
     triggerHeartPop(postId);
     likePost(postId, true);
   } else {
-    // Single click -> Open Full Photo Modal View
     setTimeout(()=>{
       if (Date.now() - lastClickTime >= 300) {
         openPostModal(postId);
@@ -708,112 +741,126 @@ function toggleFollowPerson(){
     toast('Unfollowed');
   }else{
     myObj.following.push(profileUser);
-    toast('Following');
+    toast('Followed');
   }
   save();
   openUser(profileUser);
-  renderProfile();
 }
 
-function startProfileChat(){if(!profileUser)return;openChat(profileUser)}
-
-function switchProfileTab(t){
-  profileTab=t;
-  document.getElementById('btnMyPosts').classList.toggle('active', t==='posts');
-  document.getElementById('btnSavedPosts').classList.toggle('active', t==='saved');
-  renderProfile();
+function startProfileChat(){
+  if(!profileUser)return;
+  openChatWith(profileUser);
 }
 
-function renderProfile(){
-  let u=me();
-  if(!u)return;
-  u.following = u.following || [];
-  document.getElementById('myAvatar').setAttribute('style',u.pic?`background-image:url('${u.pic}')`:'');
-  document.getElementById('myName').textContent=u.name+' (@'+u.username+')';
-  document.getElementById('postCount').textContent=db.posts.filter(p=>p.userId===current).length;
-  
-  let followersCount = db.users.filter(usr=>(usr.following||[]).includes(current)).length;
-  document.getElementById('followerCount').textContent=followersCount;
-  document.getElementById('followingCount').textContent=u.following.length;
-
-  let ps = [];
-  if(profileTab==='posts'){
-    ps = db.posts.filter(p=>p.userId===current);
-  }else{
-    ps = db.posts.filter(p=>(p.saved||[]).includes(current));
-  }
-
-  document.getElementById('myGrid').innerHTML=ps.map(p=>`<div class="grid-item" onclick="openPostModal('${p.id}')">${p.type==='video'?`<video src="${p.data}" muted></video>`:`<img src="${p.data}">`}</div>`).join('')||`<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">${profileTab==='posts'?'No posts uploaded yet':'No saved posts'}</div>`;
+function changeProfilePic(){
+  document.getElementById('profileInput').click();
 }
 
-function changeProfilePic(){document.getElementById('profileInput').click()}
 function saveProfilePic(e){
   let f=e.target.files[0];
   if(!f)return;
   let r=new FileReader();
   r.onload=()=>{
-    me().pic=r.result;
-    save();
-    renderAll();
-    toast('Profile photo updated');
+    let myObj=me();
+    if(myObj){
+      myObj.pic=r.result;
+      save();
+      renderProfile();
+      toast('Profile picture updated!');
+    }
   };
   r.readAsDataURL(f);
 }
 
-function openChatList(){showTab('chat');backChats()}
-function renderChats(){
-  let box=document.getElementById('chatList');
-  let ids=[...new Set(Object.keys(db.chats).flatMap(k=>k.split('|')).filter(x=>x&&x!==current))];
-  box.innerHTML=ids.map(id=>{
-    let u=userById(id);
-    return u?`<div class="chat-row" onclick="openChat('${id}')"><div class="small-avatar" ${avatarStyle(u.pic)}></div><b>${esc(u.username)}</b></div>`:''
-  }).join('')||'<div style="padding:35px;text-align:center;color:#777">Open a user profile from Search and tap Chat.</div>';
+function switchProfileTab(tab){
+  profileTab=tab;
+  document.getElementById('btnMyPosts').classList.toggle('active', tab==='posts');
+  document.getElementById('btnSavedPosts').classList.toggle('active', tab==='saved');
+  renderProfileGrid();
 }
 
-function chatKey(a,b){return[a,b].sort().join('|')}
-function openChat(id){
-  activeChat=id;
-  let u=userById(id);
+function renderProfile(){
+  let myObj=me();
+  if(!myObj) return;
+  document.getElementById('myAvatar').style.backgroundImage = myObj.pic ? `url('${myObj.pic}')` : '';
+  document.getElementById('myName').textContent = myObj.name;
+  let myPosts = db.posts.filter(p=>p.userId===current);
+  document.getElementById('postCount').textContent = myPosts.length;
+  document.getElementById('followerCount').textContent = db.users.filter(u=>(u.following||[]).includes(current)).length;
+  document.getElementById('followingCount').textContent = (myObj.following||[]).length;
+  renderProfileGrid();
+}
+
+function renderProfileGrid(){
+  let posts = [];
+  if(profileTab==='posts'){
+    posts = db.posts.filter(p=>p.userId===current);
+  }else{
+    posts = db.posts.filter(p=>(p.saved||[]).includes(current));
+  }
+  document.getElementById('myGrid').innerHTML = posts.map(p=>`<div class="grid-item" onclick="openPostModal('${p.id}')">${p.type==='video'?`<video src="${p.data}" muted></video>`:`<img src="${p.data}">`}</div>`).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
+}
+
+function openChatList(){
   showTab('chat');
+  backChats();
+}
+
+function backChats(){
+  document.getElementById('chatListView').classList.remove('hidden');
+  document.getElementById('chatRoom').classList.add('hidden');
+  activeChat=null;
+}
+
+function openChatWith(userId){
+  showTab('chat');
+  activeChat=userId;
+  let u=userById(userId);
+  document.getElementById('chatTitle').textContent = u ? u.username : 'Chat';
   document.getElementById('chatListView').classList.add('hidden');
   document.getElementById('chatRoom').classList.remove('hidden');
-  document.getElementById('chatTitle').textContent='@'+u.username;
   renderMessages();
 }
 
-function backChats(){document.getElementById('chatListView').classList.remove('hidden');document.getElementById('chatRoom').classList.add('hidden');renderChats()}
+function renderChats(){
+  let box=document.getElementById('chatList');
+  let users=db.users.filter(u=>u.id!==current);
+  box.innerHTML=users.map(u=>`<div class="chat-row" onclick="openChatWith('${u.id}')">
+    <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+    <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
+  </div>`).join('')||'<div style="padding:20px;text-align:center;color:#777">No other users found</div>';
+}
+
 function renderMessages(){
-  let box=document.getElementById('messages'),arr=db.chats[chatKey(current,activeChat)]||[];
-  box.innerHTML=arr.map(m=>`<div class="bubble ${m.from===current?'sent':'received'}">${esc(m.text)}</div>`).join('');
+  if(!activeChat)return;
+  let chatKey=[current,activeChat].sort().join('_');
+  let msgs=db.chats[chatKey]||[];
+  let box=document.getElementById('messages');
+  box.innerHTML=msgs.map(m=>`<div class="bubble ${m.from===current?'sent':'received'}">${esc(m.text)}</div>`).join('');
   box.scrollTop=box.scrollHeight;
 }
 
 function sendMessage(){
-  let input=document.getElementById('messageInput'),t=input.value.trim();
-  if(!t||!activeChat)return;
-  let k=chatKey(current,activeChat);
-  db.chats[k]=db.chats[k]||[];
-  db.chats[k].push({from:current,text:t,time:Date.now()});
-  input.value='';
+  let inp=document.getElementById('messageInput');
+  let txt=inp.value.trim();
+  if(!txt||!activeChat)return;
+  let chatKey=[current,activeChat].sort().join('_');
+  db.chats[chatKey]=db.chats[chatKey]||[];
+  db.chats[chatKey].push({from:current,text:txt,time:Date.now()});
+  inp.value='';
   save();
   renderMessages();
-  renderChats();
 }
 
-function openUserStory(id){
-  let u=userById(id),story=db.stories.find(s=>s.userId===id);
-  document.getElementById('storyUser').textContent='@'+u.username;
-  document.getElementById('storyBody').innerHTML=story?`<img src="${story.data}" style="max-width:100%;border-radius:8px">`:'<p style="color:#aaa;text-align:center">No active story</p>';
-  document.getElementById('storyModal').classList.remove('hidden');
-}
-
-function closeStory(){document.getElementById('storyModal').classList.add('hidden')}
-
-window.addEventListener('DOMContentLoaded',()=>{
-  current=localStorage.getItem('universe_session');
-  if(current&&userById(current))appScreen();
-  else loginScreen();
-});
+window.onload=()=>{
+  let s=localStorage.getItem('universe_session');
+  if(s && userById(s)){
+    current=s;
+    appScreen();
+  }else{
+    loginScreen();
+  }
+};
 </script>
 </body>
 </html>
