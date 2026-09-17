@@ -3,28 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Universe Pro</title>
-
-<!-- Firebase SDK Integration -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
-    authDomain: "universe-pro-f36a8.firebaseapp.com",
-    databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
-    projectId: "universe-pro-f36a8",
-    storageBucket: "universe-pro-f36a8.firebasestorage.app",
-    messagingSenderId: "1051673611050",
-    appId: "1:1051673611050:web:24d6db4c72628131d42c53",
-    measurementId: "G-0LNVPWTMCF"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  window.firebaseApp = app;
-</script>
+<title>Universe Pro - Live Firebase</title>
 
 <style>
 :root{
@@ -50,7 +29,6 @@ button:active{transform:scale(0.96)}
 .input:focus{border-color:var(--accent)}
 .primary{width:100%;border:0;background:var(--accent);color:white;padding:11px;border-radius:8px;font-weight:700;margin-top:8px}
 .switch{text-align:center;color:var(--muted);margin-top:18px;font-size:14px}.switch span{color:var(--accent);font-weight:700;cursor:pointer}
-.note{font-size:11px;color:#666;text-align:center;margin-top:16px;line-height:1.4}
 
 #app{display:none;min-height:100vh;padding-top:56px;padding-bottom:65px}
 .header{height:56px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
@@ -77,7 +55,6 @@ main{width:min(650px,100%);margin:auto}
 .post-media{width:100%;max-height:650px;background:#050505;display:flex;justify-content:center;align-items:center;cursor:pointer;position:relative;overflow:hidden;border-radius:4px}
 .post-media img,.post-media video{width:100%;max-height:650px;object-fit:contain}
 
-/* Heart Pop Animation */
 .heart-pop{position:absolute;font-size:80px;color:var(--like);pointer-events:none;animation:pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;opacity:0}
 @keyframes pop{0%{transform:scale(0);opacity:0}50%{transform:scale(1.2);opacity:1}100%{transform:scale(1);opacity:0}}
 
@@ -97,7 +74,6 @@ main{width:min(650px,100%);margin:auto}
 .search-result:hover{background:#121212}
 
 /* Profile Tab */
-.profile{padding-bottom:20px}
 .profile-top{display:flex;gap:24px;align-items:center;padding:25px 18px;border-bottom:1px solid var(--card-border)}
 .profile-avatar{width:88px;height:88px;border-radius:50%;background:#222;background-size:cover;background-position:center;border:2px solid #444}
 .stats{display:flex;gap:22px;text-align:center}
@@ -144,8 +120,6 @@ main{width:min(650px,100%);margin:auto}
 .upload{padding:16px}
 .preview{height:380px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .preview img,.preview video{max-width:100%;max-height:100%}
-.toolbar{display:flex;gap:8px;overflow-x:auto;padding:12px 0}
-.chip{white-space:nowrap;background:#262626;border:1px solid #444;color:#fff;padding:8px 14px;border-radius:20px;font-size:13px}
 
 /* Bottom Nav */
 .bottom{position:fixed;bottom:0;left:0;right:0;height:56px;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);border-top:1px solid var(--card-border);display:flex;justify-content:space-around;align-items:center;z-index:100}
@@ -154,16 +128,11 @@ main{width:min(650px,100%);margin:auto}
 
 /* Modals */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:15px}
-.modal-card{background:#181818;border:1px solid #333;border-radius:14px;width:min(440px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.9)}
+.modal-card{background:#181818;border:1px solid #333;border-radius:14px;width:min(440px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
 .modal-head{padding:15px;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between;align-items:center;font-weight:700}
 .modal-body{padding:15px;overflow-y:auto;flex:1}
-
 .comment-item{display:flex;gap:10px;margin-bottom:12px;font-size:13px}
-.comment-item b{color:#fff;margin-right:5px}
-
-.toast{position:fixed;left:50%;bottom:75px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:600;box-shadow:0 5px 20px rgba(0,0,0,0.5)}
-
-@media(max-width:500px){main{width:100%}.profile-top{gap:15px}.stats{gap:12px}.preview{height:310px}}
+.toast{position:fixed;left:50%;bottom:75px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:600}
 </style>
 </head>
 <body>
@@ -173,12 +142,12 @@ main{width:min(650px,100%);margin:auto}
     <div class="logo">Universe Pro</div>
     <form id="authForm">
       <input id="fullName" class="input hidden" placeholder="Full name">
-      <input id="username" class="input" placeholder="Username" autocomplete="username" required>
-      <input id="password" class="input" type="password" placeholder="Password" autocomplete="current-password" required>
+      <input id="email" class="input" type="email" placeholder="Email address" required>
+      <input id="username" class="input" placeholder="Username" required>
+      <input id="password" class="input" type="password" placeholder="Password" required>
       <button class="primary" id="authBtn">Log In</button>
     </form>
     <div class="switch"><span id="switchText">Don't have an account?</span> <span id="switchBtn">Sign up</span></div>
-    <div class="note">Demo app: accounts are stored only in this browser.</div>
   </div>
 </section>
 
@@ -211,14 +180,7 @@ main{width:min(650px,100%);margin:auto}
     <h3 id="uploadTitle">Create Post</h3>
     <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0">
     <div class="preview" id="preview">Select a photo or video</div>
-    <div class="toolbar">
-      <button class="chip" onclick="filterPreview('brightness')">💡 Brightness</button>
-      <button class="chip" onclick="filterPreview('contrast')">🌓 Contrast</button>
-      <button class="chip" onclick="filterPreview('grayscale')">🎞️ B&W</button>
-      <button class="chip" onclick="filterPreview('sepia')">📜 Vintage</button>
-      <button class="chip" onclick="resetPreview()">🔄 Reset</button>
-    </div>
-    <input id="caption" class="input" placeholder="Write a caption...">
+    <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:10px;">
     <button class="primary" onclick="publish()">Publish Post</button>
   </div>
 </section>
@@ -242,7 +204,7 @@ main{width:min(650px,100%);margin:auto}
         <div class="stat"><strong id="followingCount">0</strong>following</div>
       </div>
     </div>
-    <div class="bio"><b id="myName"></b><p style="color:#aaa;margin-top:5px">Welcome to my Universe Pro 🚀</p></div>
+    <div class="bio"><b id="myName"></b><p style="color:#aaa;margin-top:5px">Welcome to Universe Pro 🚀</p></div>
     <div class="profile-actions">
       <button class="secondary" onclick="changeProfilePic()">Change photo</button>
       <button class="secondary" onclick="logout()">Log out</button>
@@ -293,23 +255,16 @@ main{width:min(650px,100%);margin:auto}
 <!-- Story Modal -->
 <div id="storyModal" class="modal hidden" onclick="closeStory()">
   <div class="modal-card" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <span id="storyUser"></span>
-      <button class="action" onclick="closeStory()">✕</button>
-    </div>
+    <div class="modal-head"><span id="storyUser"></span><button class="action" onclick="closeStory()">✕</button></div>
     <div class="modal-body" id="storyBody"></div>
   </div>
 </div>
-
 <input id="storyFileInput" type="file" accept="image/*" class="hidden" onchange="handleStoryUpload(event)">
 
 <!-- Comments Modal -->
 <div id="commentModal" class="modal hidden" onclick="closeComments()">
   <div class="modal-card" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <span>Comments</span>
-      <button class="action" onclick="closeComments()">✕</button>
-    </div>
+    <div class="modal-head"><span>Comments</span><button class="action" onclick="closeComments()">✕</button></div>
     <div class="modal-body" id="commentsList"></div>
     <div class="chat-input" style="border-top:1px solid #333;">
       <input id="commentInput" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()">
@@ -318,549 +273,429 @@ main{width:min(650px,100%);margin:auto}
   </div>
 </div>
 
-<!-- 1-Click Photo Viewer Modal (Lightbox) -->
-<div id="postModal" class="modal hidden" onclick="closePostModal()">
-  <div class="modal-card" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <div id="postModalUser" class="person" onclick="openUserFromModal()"></div>
-      <button class="action" onclick="closePostModal()">✕</button>
-    </div>
-    <div class="modal-body" style="padding:0">
-      <div id="postModalMedia" class="post-media" style="max-height:70vh;"></div>
-      <div class="details" style="padding:15px">
-        <div id="postModalLikes" class="likes"></div>
-        <div id="postModalCaption" class="caption"></div>
-        <div style="margin-top:12px;border-top:1px solid #282828;padding-top:10px;">
-          <b>Comments:</b>
-          <div id="postModalComments" style="margin-top:8px;max-height:120px;overflow-y:auto"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Firebase Modular Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getDatabase, ref, set, get, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-<script>
-const KEY='universe_pro_v2';
-let db=JSON.parse(localStorage.getItem(KEY)||'null')||{users:[],posts:[],stories:[],chats:{}};
-let current=null, signup=false, selected=null, previewUrl='', previewType='', previewFilter='', activeChat=null, profileUser=null;
-let activeCommentPostId=null;
-let profileTab='posts';
-let activeModalPostId=null;
-let lastClickTime=0;
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
+    authDomain: "universe-pro-f36a8.firebaseapp.com",
+    databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
+    projectId: "universe-pro-f36a8",
+    storageBucket: "universe-pro-f36a8.firebasestorage.app",
+    messagingSenderId: "1051673611050",
+    appId: "1:1051673611050:web:24d6db4c72628131d42c53"
+  };
 
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
-function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display='none',1800)}
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function userById(id){return db.users.find(u=>u.id===id)}
-function me(){return userById(current)}
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
 
-function showTab(id){
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  
-  document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active-nav'));
-  let navBtn = document.getElementById('nav-'+id);
-  if(navBtn) navBtn.classList.add('active-nav');
+  let currentUid = null;
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {};
+  let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
+  let activeCommentPostId = null, profileTab = 'posts';
 
-  if(id==='home')renderFeed();
-  if(id==='reels')renderReels();
-  if(id==='profile')renderProfile();
-  if(id==='chat')renderChats();
-}
-
-function loginScreen(){document.getElementById('auth').style.display='flex';document.getElementById('app').style.display='none'}
-function appScreen(){document.getElementById('auth').style.display='none';document.getElementById('app').style.display='block';renderAll()}
-
-document.getElementById('switchBtn').onclick=()=>{
-  signup=!signup;
-  document.getElementById('fullName').classList.toggle('hidden',!signup);
-  document.getElementById('fullName').required=signup;
-  document.getElementById('authBtn').textContent=signup?'Sign Up':'Log In';
-  document.getElementById('switchText').textContent=signup?'Already have an account?':"Don't have an account?";
-  document.getElementById('switchBtn').textContent=signup?'Log in':'Sign up';
-}
-
-document.getElementById('authForm').onsubmit=e=>{
-  e.preventDefault();
-  let u=document.getElementById('username').value.trim().toLowerCase(),
-      p=document.getElementById('password').value,
-      n=document.getElementById('fullName').value.trim();
-  
-  if(signup){
-    if(!n)return toast('Enter your name');
-    if(db.users.some(x=>x.username===u))return toast('Username already exists');
-    let obj={id:crypto.randomUUID(),name:n,username:u,password:p,pic:'',following:[],created:Date.now()};
-    db.users.push(obj);
-    save();
-    current=obj.id;
-    localStorage.setItem('universe_session',current);
-    appScreen();
-    toast('Account created');
-  }else{
-    let obj=db.users.find(x=>x.username===u&&x.password===p);
-    if(!obj)return toast('Wrong username or password');
-    current=obj.id;
-    localStorage.setItem('universe_session',current);
-    appScreen();
-    toast('Logged in');
+  function toast(msg){
+    let x = document.getElementById('toast');
+    x.textContent = msg;
+    x.style.display = 'block';
+    clearTimeout(window.tt);
+    window.tt = setTimeout(()=>x.style.display='none', 1800);
   }
-}
 
-function logout(){localStorage.removeItem('universe_session');current=null;loginScreen()}
-function renderAll(){renderStories();renderFeed();renderReels();renderProfile();renderChats()}
-function avatarStyle(pic){return pic?`style="background-image:url('${pic}')"`:''}
+  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
+  function avatarStyle(pic){ return pic ? `style="background-image:url('${pic}')"` : '' }
 
-function renderStories(){
-  let s=document.getElementById('stories');
-  let myObj=me();
-  let addStoryBtn = `<div class="story" onclick="document.getElementById('storyFileInput').click()">
-    <div class="ring add-story-ring"><div class="avatar" ${avatarStyle(myObj?.pic)}>+</div></div>
-    <div>Your Story</div>
-  </div>`;
+  // Realtime Listeners
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      currentUid = user.uid;
+      document.getElementById('auth').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      listenToDatabase();
+    } else {
+      currentUid = null;
+      document.getElementById('auth').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }
+  });
 
-  let userStories = db.users.map(u=>{
-    let hasStory = db.stories.some(st=>st.userId===u.id);
-    return `<div class="story" onclick="openUserStory('${u.id}')">
-      <div class="ring" style="${hasStory?'':'background:#333'}">
-        <div class="avatar" ${avatarStyle(u.pic)}></div>
-      </div>
-      <div>${esc(u.username)}</div>
-    </div>`;
-  }).join('');
+  function listenToDatabase() {
+    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); });
+    onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
+    onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
+    onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; if(activeChat) renderMessages(); });
+  }
 
-  s.innerHTML = addStoryBtn + userStories;
-}
-
-function openUserStory(id){
-  let st = db.stories.find(s=>s.userId===id);
-  if(!st) return toast('No story available');
-  let u = userById(id);
-  document.getElementById('storyUser').textContent = u ? u.username : 'User';
-  document.getElementById('storyBody').innerHTML = `<img src="${st.data}" style="width:100%;max-height:70vh;object-fit:contain">`;
-  document.getElementById('storyModal').classList.remove('hidden');
-}
-
-function closeStory(){
-  document.getElementById('storyModal').classList.add('hidden');
-}
-
-function handleStoryUpload(e){
-  let f=e.target.files[0];
-  if(!f)return;
-  let r=new FileReader();
-  r.onload=()=>{
-    db.stories=db.stories.filter(s=>s.userId!==current);
-    db.stories.push({id:crypto.randomUUID(),userId:current,data:r.result,time:Date.now()});
-    save();
+  function renderAll() {
     renderStories();
-    toast('Story updated!');
+    renderFeed();
+    renderReels();
+    renderProfile();
+    renderChats();
+  }
+
+  // Auth Handling
+  document.getElementById('switchBtn').onclick = () => {
+    signup = !signup;
+    document.getElementById('fullName').classList.toggle('hidden', !signup);
+    document.getElementById('authBtn').textContent = signup ? 'Sign Up' : 'Log In';
+    document.getElementById('switchText').textContent = signup ? 'Already have an account?' : "Don't have an account?";
+    document.getElementById('switchBtn').textContent = signup ? 'Log in' : 'Sign up';
   };
-  r.readAsDataURL(f);
-}
 
-function renderFeed(){
-  let f=document.getElementById('feed');
-  let posts=[...db.posts].sort((a,b)=>b.time-a.time);
-  f.innerHTML=posts.map(post=>{
-    let u=userById(post.userId);
-    if(!u)return '';
-    let liked=(post.likes||[]).includes(current);
-    let isSaved=(post.saved||[]).includes(current);
-    let commentsCount = (post.comments||[]).length;
+  document.getElementById('authForm').onsubmit = async (e) => {
+    e.preventDefault();
+    let email = document.getElementById('email').value.trim();
+    let pass = document.getElementById('password').value;
+    let username = document.getElementById('username').value.trim().toLowerCase();
+    let name = document.getElementById('fullName').value.trim();
 
-    return `<article class="post">
-      <div class="post-head">
-        <div class="person" onclick="openUser('${u.id}')">
-          <div class="small-avatar" ${avatarStyle(u.pic)}></div>
-          <b>${esc(u.username)}</b>
-        </div>
-        ${post.userId===current ? `<button class="action" onclick="deletePost('${post.id}')">⋯</button>` : ''}
-      </div>
-      <div class="post-media" id="media-${post.id}" onclick="handleMediaClick(event, '${post.id}')">
-        ${post.type==='video'?`<video src="${post.data}" controls></video>`:`<img src="${post.data}" alt="post">`}
-      </div>
-      <div class="actions">
-        <div class="actions-left">
-          <button class="action ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
-          <button class="action" onclick="openComments('${post.id}')">💬</button>
-          <button class="action" onclick="sharePost('${post.id}')">➤</button>
-        </div>
-        <button class="action" onclick="savePost('${post.id}')">${isSaved?'🔖':'📑'}</button>
-      </div>
-      <div class="details">
-        <div class="likes">${post.likes?.length||0} likes</div>
-        <div class="caption"><b>${esc(u.username)}</b>${esc(post.caption||'')}</div>
-        <div class="comment-link" onclick="openComments('${post.id}')">
-          ${commentsCount>0?`View all ${commentsCount} comments`:'Add a comment...'}
-        </div>
-      </div>
-    </article>`;
-  }).join('')||'<div style="padding:40px;text-align:center;color:#777">No posts yet. Create the first one!</div>';
-}
-
-/* 1-Click & Double Tap Handler */
-function handleMediaClick(event, postId){
-  let now = Date.now();
-  if (now - lastClickTime < 300) {
-    triggerHeartPop(postId);
-    likePost(postId, true);
-  } else {
-    setTimeout(()=>{
-      if (Date.now() - lastClickTime >= 300) {
-        openPostModal(postId);
+    try {
+      if (signup) {
+        let res = await createUserWithEmailAndPassword(auth, email, pass);
+        await set(ref(db, 'users/' + res.user.uid), {
+          id: res.user.uid,
+          name: name,
+          username: username,
+          email: email,
+          pic: '',
+          following: []
+        });
+        toast('Account Created!');
+      } else {
+        await signInWithEmailAndPassword(auth, email, pass);
+        toast('Logged In!');
       }
-    }, 300);
-  }
-  lastClickTime = now;
-}
-
-function triggerHeartPop(postId){
-  let el = document.getElementById('media-' + postId);
-  if(!el) return;
-  let heart = document.createElement('div');
-  heart.className = 'heart-pop';
-  heart.innerHTML = '♥';
-  el.appendChild(heart);
-  setTimeout(()=> heart.remove(), 600);
-}
-
-/* Open Full Photo Modal */
-function openPostModal(postId){
-  activeModalPostId = postId;
-  let p = db.posts.find(x => x.id === postId);
-  if(!p) return;
-  let u = userById(p.userId);
-
-  document.getElementById('postModalUser').innerHTML = `
-    <div class="small-avatar" ${avatarStyle(u?.pic)}></div>
-    <b>${esc(u?.username || 'user')}</b>
-  `;
-  document.getElementById('postModalMedia').innerHTML = p.type === 'video' ? `<video src="${p.data}" controls></video>` : `<img src="${p.data}">`;
-  document.getElementById('postModalLikes').textContent = (p.likes?.length || 0) + ' likes';
-  document.getElementById('postModalCaption').innerHTML = `<b>${esc(u?.username)}</b> ${esc(p.caption || '')}`;
-
-  let commentsHtml = (p.comments || []).map(c => {
-    let cu = userById(c.userId);
-    return `<div class="comment-item"><b>${esc(cu?.username || 'user')}:</b> ${esc(c.text)}</div>`;
-  }).join('') || '<div style="color:#777">No comments yet.</div>';
-
-  document.getElementById('postModalComments').innerHTML = commentsHtml;
-  document.getElementById('postModal').classList.remove('hidden');
-}
-
-function closePostModal(){
-  document.getElementById('postModal').classList.add('hidden');
-  activeModalPostId = null;
-}
-
-function openUserFromModal(){
-  if(!activeModalPostId) return;
-  let p = db.posts.find(x => x.id === activeModalPostId);
-  closePostModal();
-  if(p) openUser(p.userId);
-}
-
-function openComments(postId){
-  activeCommentPostId=postId;
-  renderCommentsList();
-  document.getElementById('commentModal').classList.remove('hidden');
-}
-
-function closeComments(){
-  document.getElementById('commentModal').classList.add('hidden');
-  activeCommentPostId=null;
-}
-
-function renderCommentsList(){
-  let p=db.posts.find(x=>x.id===activeCommentPostId);
-  if(!p)return;
-  p.comments = p.comments || [];
-  let box=document.getElementById('commentsList');
-  box.innerHTML = p.comments.map(c=>{
-    let u=userById(c.userId);
-    return `<div class="comment-item">
-      <div class="small-avatar" style="width:26px;height:26px;${u?.pic?`background-image:url('${u.pic}')`:''}"></div>
-      <div><b>${esc(u?.username||'user')}:</b> ${esc(c.text)}</div>
-    </div>`;
-  }).join('')||'<p style="color:#777;text-align:center">No comments yet.</p>';
-}
-
-function submitComment(){
-  let input=document.getElementById('commentInput');
-  let txt=input.value.trim();
-  if(!txt || !activeCommentPostId)return;
-  let p=db.posts.find(x=>x.id===activeCommentPostId);
-  p.comments = p.comments || [];
-  p.comments.push({id:crypto.randomUUID(),userId:current,text:txt,time:Date.now()});
-  input.value='';
-  save();
-  renderCommentsList();
-  renderFeed();
-}
-
-function likePost(id, forceLike = false){
-  let p=db.posts.find(x=>x.id===id);
-  p.likes=p.likes||[];
-  let i=p.likes.indexOf(current);
-  if (forceLike) {
-    if (i < 0) p.likes.push(current);
-  } else {
-    i>=0?p.likes.splice(i,1):p.likes.push(current);
-  }
-  save();
-  renderFeed();
-  renderProfile();
-  if(activeModalPostId === id) openPostModal(id);
-}
-
-function savePost(id){
-  let p=db.posts.find(x=>x.id===id);
-  p.saved=p.saved||[];
-  let i=p.saved.indexOf(current);
-  i>=0?p.saved.splice(i,1):p.saved.push(current);
-  save();
-  renderFeed();
-  renderProfile();
-  toast(i>=0?'Removed from saved':'Saved');
-}
-
-function sharePost(id){
-  navigator.clipboard?.writeText(location.href).then(()=>toast('Link copied')).catch(()=>toast('Share link ready'));
-}
-
-function deletePost(id){
-  let p=db.posts.find(x=>x.id===id);
-  if(p?.userId!==current)return toast('You can delete only your posts');
-  db.posts=db.posts.filter(x=>x.id!==id);
-  save();
-  renderAll();
-  toast('Post deleted');
-}
-
-function openUpload(){showTab('upload');document.getElementById('uploadTitle').textContent='Create Post';selected=null}
-
-document.getElementById('fileInput').onchange=e=>{
-  let f=e.target.files[0];
-  if(!f)return;
-  selected=f;
-  previewUrl=URL.createObjectURL(f);
-  previewType=f.type.startsWith('video')?'video':'image';
-  document.getElementById('preview').innerHTML=previewType==='video'?`<video src="${previewUrl}" controls></video>`:`<img src="${previewUrl}">`;
-}
-
-function filterPreview(f){
-  previewFilter=f;
-  let x=document.querySelector('#preview img,#preview video');
-  if(!x)return; 
-  x.style.filter=f==='brightness'?'brightness(1.25)':f==='contrast'?'contrast(1.35)':f==='grayscale'?'grayscale(1)':f==='sepia'?'sepia(1)':'';
-}
-
-function resetPreview(){
-  previewFilter='';
-  let x=document.querySelector('#preview img,#preview video');
-  if(x)x.style.filter='';
-}
-
-function publish(){
-  if(!selected)return toast('Select a photo or video first');
-  let r=new FileReader();
-  r.onload=()=>{
-    db.posts.push({id:crypto.randomUUID(),userId:current,data:r.result,type:previewType,caption:document.getElementById('caption').value,time:Date.now(),likes:[],saved:[],comments:[]});
-    save();
-    document.getElementById('caption').value='';
-    document.getElementById('fileInput').value='';
-    document.getElementById('preview').textContent='Select a photo or video';
-    selected=null;
-    showTab('home');
-    toast('Published!');
-  };
-  r.readAsDataURL(selected);
-}
-
-function renderReels(){
-  let list=document.getElementById('reelsList');
-  let reels=db.posts.filter(p=>p.type==='video').sort((a,b)=>b.time-a.time);
-  list.innerHTML=reels.map(p=>{
-    let u=userById(p.userId);
-    return `<div class="reel">
-      <video src="${p.data}" controls loop playsinline></video>
-      <div class="reel-info"><b>@${esc(u?.username||'user')}</b><div>${esc(p.caption||'')}</div></div>
-      <div class="reel-actions">
-        <button class="action" onclick="likePost('${p.id}')">♥</button>
-        <button class="action" onclick="openComments('${p.id}')">💬</button>
-        <button class="action" onclick="sharePost('${p.id}')">➤</button>
-      </div>
-    </div>`;
-  }).join('')||'<div style="padding:40px;text-align:center;color:#777">Upload a video to see it here.</div>';
-}
-
-function searchUsers(q){
-  q=q.trim().toLowerCase();
-  let box=document.getElementById('searchResults');
-  if(!q){box.innerHTML='<div style="padding:30px;text-align:center;color:#777">Search for a username</div>';return}
-  let users=db.users.filter(u=>u.username.includes(q)||u.name.toLowerCase().includes(q));
-  box.innerHTML=users.map(u=>`<div class="search-result" onclick="openUser('${u.id}')">
-    <div class="small-avatar" ${avatarStyle(u.pic)}></div>
-    <div><b>${esc(u.username)}</b><div style="color:#888">${esc(u.name)}</div></div>
-  </div>`).join('')||'<div style="padding:30px;text-align:center;color:#777">No user found</div>';
-}
-
-function openUser(id){
-  profileUser=id;
-  let u=userById(id);
-  if(!u)return;
-  document.getElementById('personAvatar').setAttribute('style',u.pic?`background-image:url('${u.pic}')`: '');
-  document.getElementById('personName').textContent=u.name;
-  document.getElementById('personUsername').textContent='@'+u.username;
-  
-  let myObj=me();
-  myObj.following = myObj.following || [];
-  let isFollowing = myObj.following.includes(id);
-  let followBtn = document.getElementById('personFollowBtn');
-  followBtn.textContent = isFollowing ? 'Following' : 'Follow';
-  followBtn.className = isFollowing ? 'secondary following-btn' : 'primary';
-
-  let followersCount = db.users.filter(usr=>(usr.following||[]).includes(id)).length;
-  let followingCount = (u.following||[]).length;
-  document.getElementById('personFollowerCount').textContent = followersCount;
-  document.getElementById('personFollowingCount').textContent = followingCount;
-
-  let ps=db.posts.filter(p=>p.userId===id);
-  document.getElementById('personPhotoTitle').textContent=`Photos (${ps.length})`;
-  document.getElementById('personGrid').innerHTML=ps.map(p=>`<div class="grid-item" onclick="openPostModal('${p.id}')">${p.type==='video'?`<video src="${p.data}" muted></video>`:`<img src="${p.data}">`}</div>`).join('')||'<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
-  showTab('personProfile');
-}
-
-function toggleFollowPerson(){
-  if(!profileUser)return;
-  let myObj=me();
-  myObj.following = myObj.following || [];
-  let index = myObj.following.indexOf(profileUser);
-  if(index>=0){
-    myObj.following.splice(index, 1);
-    toast('Unfollowed');
-  }else{
-    myObj.following.push(profileUser);
-    toast('Followed');
-  }
-  save();
-  openUser(profileUser);
-}
-
-function startProfileChat(){
-  if(!profileUser)return;
-  openChatWith(profileUser);
-}
-
-function changeProfilePic(){
-  document.getElementById('profileInput').click();
-}
-
-function saveProfilePic(e){
-  let f=e.target.files[0];
-  if(!f)return;
-  let r=new FileReader();
-  r.onload=()=>{
-    let myObj=me();
-    if(myObj){
-      myObj.pic=r.result;
-      save();
-      renderProfile();
-      toast('Profile picture updated!');
+    } catch (err) {
+      toast(err.message.replace('Firebase: ', ''));
     }
   };
-  r.readAsDataURL(f);
-}
 
-function switchProfileTab(tab){
-  profileTab=tab;
-  document.getElementById('btnMyPosts').classList.toggle('active', tab==='posts');
-  document.getElementById('btnSavedPosts').classList.toggle('active', tab==='saved');
-  renderProfileGrid();
-}
+  window.logout = () => signOut(auth);
 
-function renderProfile(){
-  let myObj=me();
-  if(!myObj) return;
-  document.getElementById('myAvatar').style.backgroundImage = myObj.pic ? `url('${myObj.pic}')` : '';
-  document.getElementById('myName').textContent = myObj.name;
-  let myPosts = db.posts.filter(p=>p.userId===current);
-  document.getElementById('postCount').textContent = myPosts.length;
-  document.getElementById('followerCount').textContent = db.users.filter(u=>(u.following||[]).includes(current)).length;
-  document.getElementById('followingCount').textContent = (myObj.following||[]).length;
-  renderProfileGrid();
-}
+  // Feed & Posts
+  function renderFeed() {
+    let f = document.getElementById('feed');
+    let posts = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).sort((a,b) => b.time - a.time);
+    f.innerHTML = posts.map(post => {
+      let u = dbUsers[post.userId] || {};
+      let liked = (post.likes || []).includes(currentUid);
+      let isSaved = (post.saved || []).includes(currentUid);
+      let commentsCount = Object.keys(post.comments || {}).length;
 
-function renderProfileGrid(){
-  let posts = [];
-  if(profileTab==='posts'){
-    posts = db.posts.filter(p=>p.userId===current);
-  }else{
-    posts = db.posts.filter(p=>(p.saved||[]).includes(current));
+      return `<article class="post">
+        <div class="post-head">
+          <div class="person" onclick="openUser('${post.userId}')">
+            <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+            <b>${esc(u.username || 'user')}</b>
+          </div>
+        </div>
+        <div class="post-media">
+          ${post.type === 'video' ? `<video src="${post.data}" controls></video>` : `<img src="${post.data}">`}
+        </div>
+        <div class="actions">
+          <div class="actions-left">
+            <button class="action ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
+            <button class="action" onclick="openComments('${post.id}')">💬</button>
+          </div>
+          <button class="action" onclick="savePost('${post.id}')">${isSaved?'🔖':'📑'}</button>
+        </div>
+        <div class="details">
+          <div class="likes">${(post.likes||[]).length} likes</div>
+          <div class="caption"><b>${esc(u.username||'user')}</b> ${esc(post.caption||'')}</div>
+          <div class="comment-link" onclick="openComments('${post.id}')">
+            ${commentsCount > 0 ? `View all ${commentsCount} comments` : 'Add a comment...'}
+          </div>
+        </div>
+      </article>`;
+    }).join('') || '<div style="padding:40px;text-align:center;color:#777">No posts available</div>';
   }
-  document.getElementById('myGrid').innerHTML = posts.map(p=>`<div class="grid-item" onclick="openPostModal('${p.id}')">${p.type==='video'?`<video src="${p.data}" muted></video>`:`<img src="${p.data}">`}</div>`).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
-}
 
-function openChatList(){
-  showTab('chat');
-  backChats();
-}
+  window.likePost = (postId) => {
+    let p = dbPosts[postId];
+    if(!p) return;
+    let likes = p.likes || [];
+    let idx = likes.indexOf(currentUid);
+    if(idx >= 0) likes.splice(idx, 1);
+    else likes.push(currentUid);
+    set(ref(db, `posts/${postId}/likes`), likes);
+  };
 
-function backChats(){
-  document.getElementById('chatListView').classList.remove('hidden');
-  document.getElementById('chatRoom').classList.add('hidden');
-  activeChat=null;
-}
+  window.savePost = (postId) => {
+    let p = dbPosts[postId];
+    if(!p) return;
+    let saved = p.saved || [];
+    let idx = saved.indexOf(currentUid);
+    if(idx >= 0) saved.splice(idx, 1);
+    else saved.push(currentUid);
+    set(ref(db, `posts/${postId}/saved`), saved);
+  };
 
-function openChatWith(userId){
-  showTab('chat');
-  activeChat=userId;
-  let u=userById(userId);
-  document.getElementById('chatTitle').textContent = u ? u.username : 'Chat';
-  document.getElementById('chatListView').classList.add('hidden');
-  document.getElementById('chatRoom').classList.remove('hidden');
-  renderMessages();
-}
+  // Uploading
+  window.openUpload = () => { window.showTab('upload'); selectedFile = null; };
 
-function renderChats(){
-  let box=document.getElementById('chatList');
-  let users=db.users.filter(u=>u.id!==current);
-  box.innerHTML=users.map(u=>`<div class="chat-row" onclick="openChatWith('${u.id}')">
-    <div class="small-avatar" ${avatarStyle(u.pic)}></div>
-    <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
-  </div>`).join('')||'<div style="padding:20px;text-align:center;color:#777">No other users found</div>';
-}
+  document.getElementById('fileInput').onchange = e => {
+    let f = e.target.files[0];
+    if(!f) return;
+    selectedFile = f;
+    let r = new FileReader();
+    r.onload = () => {
+      previewUrl = r.result;
+      previewType = f.type.startsWith('video') ? 'video' : 'image';
+      document.getElementById('preview').innerHTML = previewType === 'video' ? `<video src="${previewUrl}" controls></video>` : `<img src="${previewUrl}">`;
+    };
+    r.readAsDataURL(f);
+  };
 
-function renderMessages(){
-  if(!activeChat)return;
-  let chatKey=[current,activeChat].sort().join('_');
-  let msgs=db.chats[chatKey]||[];
-  let box=document.getElementById('messages');
-  box.innerHTML=msgs.map(m=>`<div class="bubble ${m.from===current?'sent':'received'}">${esc(m.text)}</div>`).join('');
-  box.scrollTop=box.scrollHeight;
-}
+  window.publish = () => {
+    if(!previewUrl) return toast('Select a file first');
+    let newPostRef = push(ref(db, 'posts'));
+    set(newPostRef, {
+      userId: currentUid,
+      data: previewUrl,
+      type: previewType,
+      caption: document.getElementById('caption').value,
+      time: Date.now(),
+      likes: [],
+      saved: []
+    });
+    document.getElementById('caption').value = '';
+    document.getElementById('preview').textContent = 'Select a photo or video';
+    previewUrl = '';
+    window.showTab('home');
+    toast('Post published live!');
+  };
 
-function sendMessage(){
-  let inp=document.getElementById('messageInput');
-  let txt=inp.value.trim();
-  if(!txt||!activeChat)return;
-  let chatKey=[current,activeChat].sort().join('_');
-  db.chats[chatKey]=db.chats[chatKey]||[];
-  db.chats[chatKey].push({from:current,text:txt,time:Date.now()});
-  inp.value='';
-  save();
-  renderMessages();
-}
+  // Comments
+  window.openComments = (postId) => {
+    activeCommentPostId = postId;
+    renderCommentsList();
+    document.getElementById('commentModal').classList.remove('hidden');
+  };
 
-window.onload=()=>{
-  let s=localStorage.getItem('universe_session');
-  if(s && userById(s)){
-    current=s;
-    appScreen();
-  }else{
-    loginScreen();
+  window.closeComments = () => {
+    document.getElementById('commentModal').classList.add('hidden');
+    activeCommentPostId = null;
+  };
+
+  function renderCommentsList() {
+    let p = dbPosts[activeCommentPostId];
+    if(!p) return;
+    let comments = p.comments || {};
+    let box = document.getElementById('commentsList');
+    box.innerHTML = Object.keys(comments).map(k => {
+      let c = comments[k];
+      let u = dbUsers[c.userId] || {};
+      return `<div class="comment-item">
+        <div class="small-avatar" style="width:24px;height:24px;${u.pic?`background-image:url('${u.pic}')`:''}"></div>
+        <div><b>${esc(u.username||'user')}:</b> ${esc(c.text)}</div>
+      </div>`;
+    }).join('') || '<p style="color:#777;text-align:center">No comments yet.</p>';
   }
-};
+
+  window.submitComment = () => {
+    let inp = document.getElementById('commentInput');
+    let txt = inp.value.trim();
+    if(!txt || !activeCommentPostId) return;
+    push(ref(db, `posts/${activeCommentPostId}/comments`), {
+      userId: currentUid,
+      text: txt,
+      time: Date.now()
+    });
+    inp.value = '';
+    renderCommentsList();
+  };
+
+  // Profile & Nav Functions
+  window.showTab = (id) => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.bottom button').forEach(b => b.classList.remove('active-nav'));
+    let navBtn = document.getElementById('nav-' + id);
+    if(navBtn) navBtn.classList.add('active-nav');
+  };
+
+  function renderProfile() {
+    let myObj = dbUsers[currentUid] || {};
+    document.getElementById('myAvatar').style.backgroundImage = myObj.pic ? `url('${myObj.pic}')` : '';
+    document.getElementById('myName').textContent = myObj.name || '';
+    let myPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
+    document.getElementById('postCount').textContent = myPosts.length;
+    document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(currentUid)).length;
+    document.getElementById('followingCount').textContent = (myObj.following || []).length;
+    
+    let gridPosts = profileTab === 'posts' ? myPosts : Object.keys(dbPosts).filter(k => (dbPosts[k].saved||[]).includes(currentUid));
+    document.getElementById('myGrid').innerHTML = gridPosts.map(k => {
+      let p = dbPosts[k];
+      return `<div class="grid-item">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`;
+    }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
+  }
+
+  window.changeProfilePic = () => document.getElementById('profileInput').click();
+  window.saveProfilePic = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      update(ref(db, `users/${currentUid}`), { pic: r.result });
+      toast('Profile photo updated!');
+    };
+    r.readAsDataURL(f);
+  };
+
+  // Realtime Chat
+  window.openChatList = () => { window.showTab('chat'); window.backChats(); };
+  window.backChats = () => {
+    document.getElementById('chatListView').classList.remove('hidden');
+    document.getElementById('chatRoom').classList.add('hidden');
+    activeChat = null;
+  };
+
+  function renderChats() {
+    let box = document.getElementById('chatList');
+    let users = Object.keys(dbUsers).filter(k => k !== currentUid).map(k => dbUsers[k]);
+    box.innerHTML = users.map(u => `<div class="chat-row" onclick="openChatWith('${u.id}')">
+      <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+      <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
+    </div>`).join('') || '<div style="padding:20px;text-align:center;color:#777">No users found</div>';
+  }
+
+  window.openChatWith = (userId) => {
+    window.showTab('chat');
+    activeChat = userId;
+    let u = dbUsers[userId] || {};
+    document.getElementById('chatTitle').textContent = u.username || 'Chat';
+    document.getElementById('chatListView').classList.add('hidden');
+    document.getElementById('chatRoom').classList.remove('hidden');
+    renderMessages();
+  };
+
+  function renderMessages() {
+    if(!activeChat) return;
+    let chatKey = [currentUid, activeChat].sort().join('_');
+    let msgs = dbChats[chatKey] || {};
+    let box = document.getElementById('messages');
+    box.innerHTML = Object.keys(msgs).map(k => {
+      let m = msgs[k];
+      return `<div class="bubble ${m.from === currentUid ? 'sent' : 'received'}">${esc(m.text)}</div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  }
+
+  window.sendMessage = () => {
+    let inp = document.getElementById('messageInput');
+    let txt = inp.value.trim();
+    if(!txt || !activeChat) return;
+    let chatKey = [currentUid, activeChat].sort().join('_');
+    push(ref(db, `chats/${chatKey}`), {
+      from: currentUid,
+      text: txt,
+      time: Date.now()
+    });
+    inp.value = '';
+  };
+
+  // Stories & Reels
+  function renderStories() {
+    let s = document.getElementById('stories');
+    let myObj = dbUsers[currentUid] || {};
+    let addBtn = `<div class="story" onclick="document.getElementById('storyFileInput').click()">
+      <div class="ring add-story-ring"><div class="avatar" ${avatarStyle(myObj.pic)}>+</div></div>
+      <div>Your Story</div>
+    </div>`;
+
+    let storiesHtml = Object.keys(dbStories).map(uId => {
+      let u = dbUsers[uId] || {};
+      return `<div class="story" onclick="openUserStory('${uId}')">
+        <div class="ring"><div class="avatar" ${avatarStyle(u.pic)}></div></div>
+        <div>${esc(u.username || 'User')}</div>
+      </div>`;
+    }).join('');
+
+    s.innerHTML = addBtn + storiesHtml;
+  }
+
+  window.handleStoryUpload = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      set(ref(db, `stories/${currentUid}`), { data: r.result, time: Date.now() });
+      toast('Story added live!');
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.openUserStory = (uId) => {
+    let st = dbStories[uId];
+    if(!st) return;
+    let u = dbUsers[uId] || {};
+    document.getElementById('storyUser').textContent = u.username || 'Story';
+    document.getElementById('storyBody').innerHTML = `<img src="${st.data}" style="width:100%;max-height:70vh;object-fit:contain">`;
+    document.getElementById('storyModal').classList.remove('hidden');
+  };
+
+  window.closeStory = () => document.getElementById('storyModal').classList.add('hidden');
+
+  function renderReels() {
+    let list = document.getElementById('reelsList');
+    let reels = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).filter(p => p.type === 'video');
+    list.innerHTML = reels.map(p => {
+      let u = dbUsers[p.userId] || {};
+      return `<div class="reel">
+        <video src="${p.data}" controls loop></video>
+        <div class="reel-info"><b>@${esc(u.username||'user')}</b><div>${esc(p.caption||'')}</div></div>
+      </div>`;
+    }).join('') || '<div style="padding:40px;text-align:center;color:#777">No reels uploaded yet</div>';
+  }
+
+  window.searchUsers = (q) => {
+    q = q.trim().toLowerCase();
+    let box = document.getElementById('searchResults');
+    if(!q) return box.innerHTML = '<div style="padding:30px;text-align:center;color:#777">Search username</div>';
+    let matched = Object.keys(dbUsers).map(k => dbUsers[k]).filter(u => u.username?.includes(q) || u.name?.toLowerCase().includes(q));
+    box.innerHTML = matched.map(u => `<div class="search-result" onclick="openUser('${u.id}')">
+      <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+      <div><b>${esc(u.username)}</b><div style="color:#888">${esc(u.name)}</div></div>
+    </div>`).join('') || '<div style="padding:30px;text-align:center;color:#777">No users found</div>';
+  };
+
+  window.openUser = (uId) => {
+    profileUser = uId;
+    let u = dbUsers[uId] || {};
+    document.getElementById('personAvatar').style.backgroundImage = u.pic ? `url('${u.pic}')` : '';
+    document.getElementById('personName').textContent = u.name || '';
+    document.getElementById('personUsername').textContent = '@' + (u.username || '');
+    
+    let myObj = dbUsers[currentUid] || {};
+    let isFollowing = (myObj.following || []).includes(uId);
+    let btn = document.getElementById('personFollowBtn');
+    btn.textContent = isFollowing ? 'Following' : 'Follow';
+    btn.className = isFollowing ? 'secondary following-btn' : 'primary';
+
+    let userPosts = Object.keys(dbPosts).map(k => dbPosts[k]).filter(p => p.userId === uId);
+    document.getElementById('personGrid').innerHTML = userPosts.map(p => `<div class="grid-item">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
+    window.showTab('personProfile');
+  };
+
+  window.toggleFollowPerson = () => {
+    if(!profileUser) return;
+    let myObj = dbUsers[currentUid] || {};
+    let following = myObj.following || [];
+    let idx = following.indexOf(profileUser);
+    if(idx >= 0) following.splice(idx, 1);
+    else following.push(profileUser);
+    set(ref(db, `users/${currentUid}/following`), following);
+    window.openUser(profileUser);
+  };
+
+  window.startProfileChat = () => {
+    if(profileUser) window.openChatWith(profileUser);
+  };
 </script>
 </body>
 </html>
