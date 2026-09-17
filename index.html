@@ -1,230 +1,440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universe Pro - Updated UI</title>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* --- ग्लोबल स्टाइल्स --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #000; color: #fff; overflow-x: hidden; }
-        
-        #app-container {
-            width: 100%; max-width: 450px; margin: 0 auto; height: 100vh;
-            background-color: #121212; position: relative; border-left: 1px solid #333; border-right: 1px solid #333;
-            display: flex; flex-direction: column;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universe Pro - Ultimate Edition</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #000; color: #fff; user-select: none; }
 
-        /* --- टॉप हेडर --- */
-        .top-header {
-            padding: 15px; border-bottom: 1px solid #262626; display: flex; justify-content: space-between; align-items: center;
-        }
-        .top-header h2 { font-size: 20px; font-weight: 600; }
+        /* AUTH SCREEN */
+        #auth-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #000; padding: 20px; }
+        .auth-card { background: #121212; border: 1px solid #333; width: 100%; max-width: 350px; padding: 40px 30px; text-align: center; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .auth-logo { font-size: 42px; font-weight: bold; font-family: cursive, sans-serif; margin-bottom: 30px; letter-spacing: -1px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-input { width: 100%; padding: 11px 14px; background: #262626; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 13px; margin-bottom: 10px; outline: none; }
+        .auth-btn { width: 100%; padding: 10px; background: #0095f6; color: #fff; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; margin-top: 10px; cursor: pointer; transition: background 0.2s; }
+        .auth-btn:hover { background: #1877f2; }
+        .switch-auth { margin-top: 15px; font-size: 14px; color: #aaa; background: #121212; border: 1px solid #333; padding: 15px; width: 100%; max-width: 350px; border-radius: 8px; text-align: center; }
+        .switch-auth a { color: #0095f6; font-weight: 600; text-decoration: none; cursor: pointer; }
 
-        /* --- मेन कंटेंट एरिया --- */
-        .main-content { flex: 1; overflow-y: auto; padding-bottom: 60px; }
-        .tab-section { display: none; height: 100%; }
-        .tab-section.active { display: block; }
+        /* MAIN APP WRAPPER */
+        #main-app-wrapper { display: none; padding-top: 50px; padding-bottom: 60px; background-color: #000; min-height: 100vh; }
+        
+        /* HEADER */
+        .insta-header { position: fixed; top: 0; left: 0; width: 100%; height: 50px; background: #000; border-bottom: 1px solid #262626; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 1000; }
+        .insta-header h2 { font-size: 24px; font-weight: bold; font-family: cursive, sans-serif; letter-spacing: -0.5px; }
+        .header-icons { display: flex; gap: 20px; font-size: 22px; cursor: pointer; align-items: center; position: relative; }
+        
+        /* PLUS DROPDOWN MENU */
+        #plus-dropdown-menu { display: none; position: absolute; right: 40px; top: 40px; background: #262626; border: 1px solid #444; border-radius: 8px; width: 160px; box-shadow: 0 4px 15px rgba(0,0,0,0.7); z-index: 2000; overflow: hidden; }
+        .dropdown-item { padding: 12px 15px; font-size: 13.5px; color: #fff; border-bottom: 1px solid #333; cursor: pointer; text-align: left; transition: background 0.2s; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background: #363636; }
 
-        /* --- 1. होम फीड --- */
-        .post { padding: 15px; border-bottom: 1px solid #262626; }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #444; cursor: pointer; object-fit: cover; }
-        .post-content { height: 250px; background-color: #262626; border-radius: 8px; margin-bottom: 10px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        /* --- 2. सर्च बार और ग्लोबल चैट (अपडेटेड) --- */
-        .search-container { padding: 15px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #262626; }
-        .search-box {
-            flex: 1; background: #262626; border-radius: 20px; padding: 10px 15px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .search-box input {
-            background: transparent; border: none; color: white; outline: none; width: 100%;
-        }
-        .global-chat-btn {
-            background: #0078ff; color: white; border: none; padding: 10px 15px;
-            border-radius: 20px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;
-        }
+        /* STORIES TRAY */
+        .stories-container { display: flex; gap: 12px; padding: 12px 15px; background: #000; border-bottom: 1px solid #262626; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .stories-container::-webkit-scrollbar { display: none; }
+        .story-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex-shrink: 0; }
+        .story-ring { width: 66px; height: 66px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); display: flex; align-items: center; justify-content: center; position: relative; }
+        .story-ring.seen { background: #555; }
+        .story-avatar { width: 60px; height: 60px; border-radius: 50%; background: #222; background-size: cover; background-position: center; border: 2px solid #000; }
+        .story-username { font-size: 11px; color: #f5f5f5; margin-top: 5px; max-width: 68px; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+        .my-story-add-badge { position: absolute; bottom: 2px; right: 2px; background: #0095f6; color: #fff; width: 20px; height: 20px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #000; font-weight: bold; }
 
-        /* --- 3. रील्स सेक्शन (बिना सर्च के) --- */
-        .reel-container { height: 100%; display: flex; justify-content: center; align-items: center; background: #1a1a1a; position: relative;}
-        .reel-actions { position: absolute; right: 15px; bottom: 80px; display: flex; flex-direction: column; gap: 20px; font-size: 24px; }
+        /* POST CARD */
+        .post-card { background: #000; border-bottom: 1px solid #262626; margin-bottom: 15px; position: relative; }
+        .post-header { display: flex; align-items: center; padding: 10px 15px; justify-content: space-between; }
+        .user-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .post-profile-pic { width: 32px; height: 32px; border-radius: 50%; background: #333; background-size: cover; background-position: center; }
+        .username { font-weight: 600; font-size: 13.5px; color: #fff; }
+        
+        .post-options-container { position: relative; }
+        .three-dots-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; padding: 5px; }
+        .post-dropdown-menu { display: none; position: absolute; right: 0; top: 30px; background: #262626; border: 1px solid #444; border-radius: 6px; width: 150px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.6); }
+        .post-dropdown-item { padding: 10px 12px; font-size: 13px; color: #fff; cursor: pointer; border-bottom: 1px solid #333; }
+        .post-dropdown-item:last-child { border-bottom: none; color: #ed4956; }
+        .post-dropdown-item:hover { background: #363636; }
 
-        /* --- 4. खुद की प्रोफाइल (बिना टॉप चैट/सर्च के) --- */
-        .profile-header-info { text-align: center; padding: 30px 15px; border-bottom: 1px solid #262626; }
-        .profile-header-info .avatar { width: 80px; height: 80px; margin: 0 auto 10px auto; cursor: default; }
+        .post-media { width: 100%; max-height: 480px; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
+        .post-media img, .post-media video { width: 100%; height: auto; max-height: 480px; object-fit: contain; }
+        
+        .post-actions { display: flex; justify-content: space-between; padding: 10px 15px; font-size: 22px; align-items: center; }
+        .action-left { display: flex; gap: 15px; cursor: pointer; }
+        .action-right { display: flex; gap: 15px; cursor: pointer; font-size: 20px; }
 
-        /* --- 5. दूसरे यूजर की प्रोफाइल (चैट और + बटन के साथ) --- */
-        #other-user-profile {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #121212; z-index: 100; transform: translateX(100%); transition: transform 0.3s ease;
-        }
-        #other-user-profile.open { transform: translateX(0); }
-        .back-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
-        
-        .action-buttons { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
-        .btn-add {
-            background: #262626; color: white; border: none; width: 40px; height: 40px;
-            border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center;
-        }
-        .btn-private-chat {
-            background: #0078ff; color: white; border: none; padding: 0 30px;
-            border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;
-        }
+        .post-details { padding: 0 15px 12px 15px; font-size: 14px; color: #fff; }
+        .likes-count { font-weight: 600; margin-bottom: 5px; cursor: pointer; font-size: 13px; }
+        .caption { font-size: 13.5px; line-height: 1.4; }
+        
+        .comments-list { margin-top: 5px; max-height: 130px; overflow-y: auto; display: none; background: #121212; padding: 8px; border-radius: 6px; }
+        .comments-list.open { display: block; }
+        .comment-item { margin-top: 4px; font-size: 13px; border-bottom: 1px solid #222; padding-bottom: 4px; color: #ddd; }
+        .comment-input-box { display: flex; border-top: 1px solid #262626; padding: 8px 15px; align-items: center; background: #000; }
+        .comment-input-box input { flex: 1; border: none; outline: none; font-size: 13px; background: transparent; color: #fff; }
+        .comment-input-box button { background: none; border: none; color: #0095f6; font-weight: 600; cursor: pointer; font-size: 13px; }
+        .toggle-comment-btn { font-size: 12px; color: #8e8e8e; cursor: pointer; margin-top: 5px; display: inline-block; }
 
-        /* --- बॉटम नेविगेशन --- */
-        .bottom-nav {
-            position: absolute; bottom: 0; width: 100%; height: 60px; background: #000;
-            border-top: 1px solid #262626; display: flex; justify-content: space-around; align-items: center; z-index: 50;
-        }
-        .nav-item { color: #888; font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: #fff; }
+        /* FULLSCREEN MEDIA MODAL */
+        #fullscreen-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; }
+        .fullscreen-body { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; position: relative; }
+        #fullscreen-modal img, #fullscreen-modal video { max-width: 100%; max-height: 80vh; object-fit: contain; }
+        .fullscreen-toolbar { display: flex; gap: 20px; padding: 15px; background: rgba(20,20,20,0.9); border-radius: 30px; margin-bottom: 20px; align-items: center; }
+        .tool-btn { background: #262626; color: #fff; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+        .tool-btn:hover { background: #363636; }
+        .close-modal-btn { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 26px; cursor: pointer; background: rgba(255,255,255,0.2); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2001; }
 
-    </style>
+        /* REELS TAB */
+        #reels-tab { background: #000; height: calc(100vh - 100px); overflow-y: scroll; scroll-snap-type: y mandatory; }
+        .reel-item { width: 100%; height: calc(100vh - 100px); scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
+        .reel-item video { width: 100%; height: 100%; object-fit: contain; background: #000; cursor: pointer; }
+        .reel-overlay-info { position: absolute; bottom: 25px; left: 15px; right: 75px; color: #fff; z-index: 10; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; }
+        .reel-user { font-weight: bold; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .reel-caption { font-size: 13.5px; opacity: 0.9; }
+        .reel-side-actions { position: absolute; right: 15px; bottom: 35px; display: flex; flex-direction: column; gap: 20px; align-items: center; color: #fff; z-index: 10; font-size: 26px; }
+        .reel-action-btn { cursor: pointer; text-align: center; font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .reel-action-btn span.icon { font-size: 28px; }
+
+        /* UPLOAD & EDITING SUITE + SMART EMOJI & HASHTAGS */
+        .upload-container { background: #000; color: #fff; height: calc(100vh - 100px); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow-y: auto; }
+        .preview-screen { flex: 1; min-height: 220px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #aaa; border-bottom: 1px solid #333; overflow: hidden; position: relative; cursor: pointer; background: #050505; }
+        .media-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; }
+        .preview-screen img, .preview-screen video { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ADVANCED EDITING CONTROLS BAR */
+        .editing-toolbar { display: flex; gap: 10px; padding: 10px 15px; background: #121212; border-bottom: 1px solid #262626; overflow-x: auto; align-items: center; flex-shrink: 0; scrollbar-width: none; }
+        .editing-toolbar::-webkit-scrollbar { display: none; }
+        .edit-tool-chip { background: #262626; color: #fff; border: 1px solid #444; padding: 6px 14px; border-radius: 16px; font-size: 12px; cursor: pointer; white-space: nowrap; font-weight: 500; }
+        .edit-tool-chip:hover { background: #363636; }
+
+        /* SMART AUTO-EMOJI & HASHTAG SUGGESTION BAR */
+        .emoji-suggestion-bar { display: flex; gap: 8px; padding: 8px 15px; background: #181818; border-bottom: 1px solid #262626; overflow-x: auto; align-items: center; min-height: 44px; scrollbar-width: none; }
+        .emoji-suggestion-bar::-webkit-scrollbar { display: none; }
+        .suggested-emoji-chip { background: #2a2a2a; border: 1px solid #444; font-size: 16px; padding: 4px 10px; border-radius: 12px; cursor: pointer; flex-shrink: 0; transition: transform 0.1s; }
+        .suggested-emoji-chip:active { transform: scale(0.9); background: #3a3a3a; }
+        .suggested-tag-chip { background: #00376b; color: #70b5ff; border: 1px solid #005fcc; font-size: 11.5px; padding: 4px 10px; border-radius: 12px; cursor: pointer; flex-shrink: 0; font-weight: 600; }
+
+        .upload-action-bar { padding: 10px 15px; background: #121212; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #262626; z-index: 10; flex-shrink: 0; }
+        .final-upload-btn { background: #0095f6; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .final-upload-btn:hover { background: #1877f2; }
+
+        /* CHAT SECTION */
+        #chat-tab { background: #000; height: calc(100vh - 100px); display: flex; flex-direction: column; }
+        .chat-header-bar { padding: 15px; background: #121212; border-bottom: 1px solid #262626; font-weight: bold; font-size: 16px; }
+        .chat-conversations-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .chat-user-row { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; cursor: pointer; border-bottom: 1px solid #1a1a1a; transition: background 0.2s; }
+        .chat-user-row:hover { background: #181818; }
+        .chat-room-view { display: none; flex-direction: column; height: calc(100vh - 100px); background: #000; }
+        .room-messages-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13.5px; line-height: 1.4; word-break: break-word; }
+        .chat-bubble.sent { background: #0084ff; align-self: flex-end; color: #fff; border-bottom-right-radius: 2px; }
+        .chat-bubble.received { background: #262626; align-self: flex-start; color: #fff; border-bottom-left-radius: 2px; }
+        .chat-input-area { display: flex; padding: 10px 15px; background: #121212; border-top: 1px solid #262626; align-items: center; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 10px 14px; background: #262626; border: 1px solid #444; border-radius: 20px; color: #fff; outline: none; font-size: 13px; }
+        .chat-input-area button { background: #0095f6; color: #fff; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 13px; }
+
+        /* PROFILE SECTION */
+        .profile-header-box { padding: 20px; background: #000; display: flex; align-items: center; justify-content: space-around; border-bottom: 1px solid #262626; }
+        .profile-pic-container { width: 80px; height: 80px; border-radius: 50%; background: #333; position: relative; cursor: pointer; background-size: cover; background-position: center; border: 2px solid #555; }
+        .profile-stats-box { display: flex; gap: 20px; text-align: center; font-size: 13px; }
+        .stat-item { cursor: pointer; }
+        .stat-num { font-weight: bold; display: block; font-size: 16px; }
+
+        .profile-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #262626; margin-top: 1px; }
+        .profile-grid-item { width: 100%; height: 125px; background: #111; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .profile-grid-item img, .profile-grid-item video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* BOTTOM NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; background: #000; border-top: 1px solid #262626; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .bottom-nav a { text-decoration: none; font-size: 22px; color: #fff; opacity: 0.8; transition: opacity 0.2s; }
+        .bottom-nav a:hover { opacity: 1; }
+
+        /* MODAL LIST VIEW */
+        #users-list-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; align-items: center; justify-content: center; }
+        .users-modal-content { background: #181818; width: 90%; max-width: 340px; border-radius: 12px; border: 1px solid #333; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
+        .users-modal-header { padding: 14px 18px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 15px; }
+        .users-modal-body { max-height: 280px; overflow-y: auto; padding: 10px; }
+        .user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #262626; font-size: 13.5px; }
+    </style>
 </head>
 <body>
 
-<div id="app-container">
+    <!-- AUTH SCREEN -->
+    <div id="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-logo">Universe Pro</div>
+            <form onsubmit="handleAuthSubmit(event)">
+                <input type="text" id="name-input" class="auth-input" placeholder="Full Name" style="display: none;">
+                <input type="text" id="username-input" class="auth-input" placeholder="Phone number, username, or email" required>
+                <input type="password" id="password-input" class="auth-input" placeholder="Password" required>
+                <button type="submit" id="auth-submit-btn" class="auth-btn">Log In</button>
+            </form>
+        </div>
+        <div class="switch-auth">
+            <span id="switch-text">Don't have an account?</span> 
+            <a onclick="toggleAuthMode()" id="switch-btn-link">Sign up</a>
+        </div>
+    </div>
 
-    <!-- मेन कंटेंट एरिया -->
-    <div class="main-content">
-        
-        <!-- 1. होम सेक्शन -->
-        <div id="home" class="tab-section active">
-            <div class="top-header">
-                <h2>Universe Pro</h2>
-            </div>
-            <!-- डमी पोस्ट -->
-            <div class="post">
-                <div class="post-header">
-                    <!-- इस अवतार पर क्लिक करने से दूसरे व्यक्ति की प्रोफाइल खुलेगी -->
-                    <img src="https://i.pravatar.cc/150?img=11" alt="User" class="avatar" onclick="openUserProfile('Rahul Sharma', 'https://i.pravatar.cc/150?img=11')">
-                    <div>
-                        <strong>Rahul Sharma</strong>
-                        <div style="font-size: 12px; color: #888;">2 hours ago</div>
-                    </div>
-                </div>
-                <div class="post-content"></div>
-                <div style="margin-top: 10px;"><i class="far fa-heart"></i> <i class="far fa-comment"></i></div>
-            </div>
-        </div>
+    <!-- FULLSCREEN MEDIA MODAL -->
+    <div id="fullscreen-modal">
+        <div class="close-modal-btn" onclick="closeFullscreen()">&times;</div>
+        <div class="fullscreen-body" id="fullscreen-content-box"></div>
+        <div class="fullscreen-toolbar" id="fullscreen-toolbar-box">
+            <button class="tool-btn" onclick="downloadCurrentMedia()">💾 Download</button>
+            <button class="tool-btn" onclick="shareCurrentMedia()">🔗 Share</button>
+            <button class="tool-btn" id="modal-delete-btn" style="background: #ed4956;" onclick="deleteCurrentFullscreenPost()">🗑️ Delete</button>
+        </div>
+    </div>
 
-        <!-- 2. सर्च और ग्लोबल चैट सेक्शन (अपडेटेड) -->
-        <div id="search" class="tab-section">
-            <div class="search-container">
-                <div class="search-box">
-                    <i class="fas fa-search" style="color: #888;"></i>
-                    <input type="text" placeholder="Search anyone...">
-                </div>
-                <!-- अनजाने लोगों से या पब्लिक चैट करने के लिए ग्लोबल बटन -->
-                <button class="global-chat-btn" onclick="alert('Global Chat Room Opened!')">
-                    <i class="fas fa-globe"></i> Chat
-                </button>
-            </div>
-            <div style="padding: 15px; color: #888; text-align: center; margin-top: 50px;">
-                <i class="fas fa-users" style="font-size: 40px; margin-bottom: 10px; color: #444;"></i>
-                <p>Search for people or join the global conversation.</p>
-            </div>
-        </div>
+    <!-- AVAILABLE USERS POPUP MODAL -->
+    <div id="users-list-modal" onclick="closeUsersModal(event)">
+        <div class="users-modal-content" onclick="event.stopPropagation()">
+            <div class="users-modal-header">
+                <span id="users-modal-title">Available Users</span>
+                <span style="cursor:pointer; font-size: 20px;" onclick="document.getElementById('users-list-modal').style.display='none'">&times;</span>
+            </div>
+            <div class="users-modal-body" id="users-modal-list-body"></div>
+        </div>
+    </div>
 
-        <!-- 3. रील्स सेक्शन (यहां कोई सर्च बार नहीं है) -->
-        <div id="reels" class="tab-section">
-            <div class="reel-container">
-                <div style="color: #fff; font-size: 20px;">Reel Playing...</div>
-                <div class="reel-actions">
-                    <i class="fas fa-heart"></i>
-                    <i class="fas fa-comment"></i>
-                    <i class="fas fa-share"></i>
-                </div>
-            </div>
-        </div>
+    <!-- MAIN APP DASHBOARD -->
+    <div id="main-app-wrapper">
+        <div class="insta-header">
+            <h2>Universe Pro</h2>
+            <div class="header-icons">
+                <span onclick="togglePlusDropdown(event)">➕</span>
+                <span onclick="switchTab('chat-tab', event)">🤍</span>
+                
+                <div id="plus-dropdown-menu">
+                    <div class="dropdown-item" onclick="selectUploadType('post')">📷 Post</div>
+                    <div class="dropdown-item" onclick="selectUploadType('reel')">🎬 Reel (Long Video)</div>
+                    <div class="dropdown-item" onclick="selectUploadType('story')">⭕ Story</div>
+                </div>
+            </div>
+        </div>
 
-        <!-- 4. खुद की प्रोफाइल (ऊपर से सर्च और चैट हटाया गया) -->
-        <div id="profile" class="tab-section">
-            <div class="top-header">
-                <h2>My Profile</h2>
-                <!-- यहां से चैट और सर्च आइकन हटा दिए गए हैं -->
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="profile-header-info">
-                <img src="https://i.pravatar.cc/150?img=50" alt="My Profile" class="avatar">
-                <h3>Adit Bhai</h3>
-                <p style="color: #888; font-size: 14px; margin-top: 5px;">Web Developer | Gamer</p>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px;">
-                <div style="width: 33%; height: 120px; background: #262626;"></div>
-                <div style="width: 33%; height: 120px; background: #333;"></div>
-                <div style="width: 33%; height: 120px; background: #262626;"></div>
-            </div>
-        </div>
-    </div>
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content active">
+            <div class="stories-container" id="stories-tray-container"></div>
+            <div id="feed-container"></div>
+        </div>
 
-    <!-- 5. दूसरे व्यक्ति की प्रोफाइल स्क्रीन (क्लिक करने पर खुलेगी) -->
-    <div id="other-user-profile">
-        <div class="top-header">
-            <button class="back-btn" onclick="closeUserProfile()"><i class="fas fa-arrow-left"></i></button>
-            <h2 id="other-user-name">User Name</h2>
-            <i class="fas fa-ellipsis-v"></i>
-        </div>
-        <div class="profile-header-info">
-            <img id="other-user-img" src="" alt="User" class="avatar" style="cursor: default;">
-            <h3 id="other-user-title">User Name</h3>
-            
-            <!-- एक्शन बटन्स (+ और प्राइवेट चैट) -->
-            <div class="action-buttons">
-                <button class="btn-add" onclick="alert('Follow request sent!')">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <button class="btn-private-chat" onclick="alert('Private chat opened with this user!')">
-                    <i class="fas fa-comment-alt"></i> Chat
-                </button>
-            </div>
-        </div>
-    </div>
+        <!-- Search Tab -->
+        <div id="search-tab" class="tab-content">
+            <div style="padding: 12px 15px; background: #000; border-bottom: 1px solid #262626;">
+                <input type="text" id="live-search-input" oninput="performLiveSearch(this.value)" style="width: 100%; padding: 10px 14px; border-radius: 8px; border: none; background: #262626; color:#fff; font-size: 14px; outline: none;" placeholder="Search registered users & posts instantly...">
+            </div>
+            <div id="search-results-container" style="padding: 15px;"></div>
+        </div>
 
-    <!-- बॉटम नेविगेशन बार -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home', this)"><i class="fas fa-home"></i></div>
-        <div class="nav-item" onclick="switchTab('search', this)"><i class="fas fa-search"></i></div>
-        <div class="nav-item" onclick="switchTab('reels', this)"><i class="fas fa-video"></i></div>
-        <div class="nav-item" onclick="switchTab('profile', this)"><i class="fas fa-user"></i></div>
-    </div>
+        <!-- Reels Tab -->
+        <div id="reels-tab" class="tab-content">
+            <div id="reels-container"></div>
+        </div>
 
-</div>
+        <!-- Upload & Editing Tab with Smart Auto-Emoji & Hashtag Bar -->
+        <div id="upload-tab" class="tab-content">
+            <div class="upload-container">
+                <div class="preview-screen" id="preview-area" onclick="document.getElementById('file-selector').click()">
+                    <div class="media-wrapper" id="media-transform-box">
+                        <span id="preview-placeholder">📁 Tap here to select Long Video or Photo</span>
+                    </div>
+                </div>
+                <input type="file" id="file-selector" style="display: none;" accept="video/*,image/*" onchange="previewMedia(event)">
+                
+                <!-- EDITING TOOLS SUITE -->
+                <div class="editing-toolbar">
+                    <div class="edit-tool-chip" onclick="applyFilter('brightness')">💡 Brightness</div>
+                    <div class="edit-tool-chip" onclick="applyFilter('contrast')">🌓 Contrast</div>
+                    <div class="edit-tool-chip" onclick="applyFilter('grayscale')">🎞️ B&W Filter</div>
+                    <div class="edit-tool-chip" onclick="applyFilter('sepia')">📜 Vintage</div>
+                    <div class="edit-tool-chip" onclick="resetFilters()">🔄 Reset Filters</div>
+                </div>
 
-<script>
-    // टैब्स बदलने का लॉजिक
-    function switchTab(tabId, element) {
-        // सारे सेक्शन छुपाओ
-        document.querySelectorAll('.tab-section').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        // नेविगेशन आइकॉन से एक्टिव क्लास हटाओ
-        document.querySelectorAll('.nav-item').forEach(nav => {
-            nav.classList.remove('active');
-        });
+                <!-- SMART AUTO-EMOJI & HASHTAG SUGGESTION BAR -->
+                <div class="emoji-suggestion-bar" id="smart-emoji-bar">
+                    <span style="font-size: 11px; color: #8e8e8e; white-space: nowrap; margin-right: 4px;">Smart:</span>
+                    <div class="suggested-emoji-chip" onclick="insertSuggestedText('😂')">😂</div>
+                    <div class="suggested-emoji-chip" onclick="insertSuggestedText('❤️')">❤️</div>
+                    <div class="suggested-emoji-chip" onclick="insertSuggestedText('🔥')">🔥</div>
+                    <div class="suggested-tag-chip" onclick="insertSuggestedText(' #universepro')">#universepro</div>
+                    <div class="suggested-tag-chip" onclick="insertSuggestedText(' #trending')">#trending</div>
+                </div>
 
-        // जो क्लिक हुआ है उसे दिखाओ
-        document.getElementById(tabId).classList.add('active');
-        element.classList.add('active');
-    }
+                <div class="upload-action-bar" id="upload-bottom-bar">
+                    <input type="text" id="post-caption-input" placeholder="Write a caption (Type words for auto emojis)..." oninput="detectSmartEmojis(this.value)" style="flex: 1; background: #262626; border: none; padding: 10px 14px; color: #fff; border-radius: 6px; font-size: 13.5px; outline: none; margin-right: 10px;">
+                    <button class="final-upload-btn" onclick="publishContent()">Upload</button>
+                </div>
+            </div>
+        </div>
 
-    // किसी दूसरे की प्रोफाइल खोलने का लॉजिक (अकेले आदमी से बात करने के लिए)
-    function openUserProfile(name, imageSrc) {
-        document.getElementById('other-user-name').innerText = name;
-        document.getElementById('other-user-title').innerText = name;
-        document.getElementById('other-user-img').src = imageSrc;
-        
-        document.getElementById('other-user-profile').classList.add('open');
-    }
+        <!-- Chat Tab -->
+        <div id="chat-tab" class="tab-content">
+            <div id="chat-conversations-view" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="chat-header-bar">Direct Messages (Chats)</div>
+                <div class="chat-conversations-list" id="chat-conversations-list-box"></div>
+            </div>
+            
+            <div id="chat-active-room-view" class="chat-room-view">
+                <div class="chat-header-bar" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span id="active-chat-room-title" style="cursor: pointer;" onclick="backToConversationsList()">⬅ Chat Room</span>
+                    <span style="font-size: 12px; color: #0095f6; cursor: pointer;" onclick="backToConversationsList()">Back</span>
+                </div>
+                <div class="room-messages-box" id="room-messages-box"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-message-input" placeholder="Type a message..." onkeypress="handleChatKey(event)">
+                    <button onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
+        </div>
 
-    // दूसरे की प्रोफाइल बंद करने का लॉजिक
-    function closeUserProfile() {
-        document.getElementById('other-user-profile').classList.remove('open');
-    }
-</script>
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content">
+            <div class="profile-header-box">
+                <div class="profile-pic-container" id="my-profile-pic-box" onclick="document.getElementById('profile-pic-selector').click()"></div>
+                <input type="file" id="profile-pic-selector" style="display: none;" accept="image/*" onchange="uploadProfilePic(event)">
+                <div class="profile-stats-box">
+                    <div class="stat-item"><span class="stat-num" id="profile-posts-count">0</span>posts</div>
+                    <div class="stat-item" onclick="showAvailableUsersModal()"><span class="stat-num" id="profile-followers-count" style="color:#0095f6;">0</span>followers</div>
+                    <div class="stat-item"><span class="stat-num">0</span>following</div>
+                </div>
+            </div>
+            <div style="padding: 15px; background: #000; border-bottom: 1px solid #262626;">
+                <h3 style="font-size: 16px; font-weight: bold;" id="profile-display-name">Adit bhai</h3>
+                <p style="font-size: 13px; color: #aaa; margin-top: 4px;">Welcome to my Universe Pro profile 🚀</p>
+                <div style="margin-top: 15px;">
+                    <button onclick="handleLogout()" style="width: 100%; background: #ed4956; color: #fff; border: none; padding: 9px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13.5px;">Log Out</button>
+                </div>
+            </div>
+            <div id="profile-posts-grid" class="profile-posts-grid"></div>
+        </div>
 
-</body>
-</html>
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <a href="#" onclick="switchTab('home-tab', event)">🏠</a>
+            <a href="#" onclick="switchTab('search-tab', event)">🔍</a>
+            <a href="#" onclick="switchTab('upload-tab', event)">➕</a>
+            <a href="#" onclick="switchTab('reels-tab', event)">🎬</a>
+            <a href="#" onclick="switchTab('profile-tab', event)">👤</a>
+        </div>
+    </div>
+
+    <script>
+        let isSignUpMode = false;
+        let selectedFileObjectUrl = ""; 
+        let selectedFileType = "";
+        let currentUploadMode = "post";
+        let activeFullscreenPostId = null;
+        let currentFilterStyle = "";
+        let activeChatUser = null;
+
+        let allUniverseUsers = JSON.parse(localStorage.getItem('universe_registered_users')) || [];
+        let postsData = JSON.parse(localStorage.getItem('universe_posts')) || [];
+        let storiesData = JSON.parse(localStorage.getItem('universe_stories')) || [];
+        let seenStories = JSON.parse(localStorage.getItem('universe_seen_stories')) || [];
+        let chatsData = JSON.parse(localStorage.getItem('universe_chats')) || {};
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedName = localStorage.getItem('universe_fullname');
+            const savedSessionToken = localStorage.getItem('universe_logged_in');
+            const savedProfilePic = localStorage.getItem('universe_profile_pic');
+
+            if (savedName && savedSessionToken === 'true') {
+                applyUserSession(savedName);
+            }
+            if (savedProfilePic) {
+                document.querySelectorAll('.post-profile-pic, .profile-pic-container').forEach(el => {
+                    el.style.backgroundImage = `url(${savedProfilePic})`;
+                });
+            }
+            renderStoriesTray();
+            renderFeed();
+            renderReels();
+            renderProfilePostsGrid();
+            renderChatConversations();
+
+            window.addEventListener('click', function(e) {
+                if(!e.target.closest('.header-icons')) {
+                    document.getElementById('plus-dropdown-menu').style.display = 'none';
+                }
+                if(!e.target.closest('.post-options-container')) {
+                    document.querySelectorAll('.post-dropdown-menu').forEach(m => m.style.display = 'none');
+                }
+            });
+        });
+
+        function detectSmartEmojis(text) {
+            let lower = text.toLowerCase();
+            let bar = document.getElementById('smart-emoji-bar');
+            let emojis = ['😂', '❤️', '🔥', '🎉', '🚀', '😎', '✨', '👏', '🎂', '💖'];
+
+            if (lower.includes('haha') || lower.includes('lol') || lower.includes('fun') || lower.includes('has')) {
+                emojis = ['😂', '🤣', '😆', '😅', '😜', '💀'];
+            } else if (lower.includes('love') || lower.includes('pyaar') || lower.includes('dil') || lower.includes('heart')) {
+                emojis = ['❤️', '💖', '💘', '💙', '😍', '😘', '💕'];
+            } else if (lower.includes('party') || lower.includes('birthday') || lower.includes('jashn') || lower.includes('happy')) {
+                emojis = ['🎂', '🎉', '🥳', '🎁', '🎈', '🥂', '🍾'];
+            } else if (lower.includes('fire') || lower.includes('ag') || lower.includes('pro') || lower.includes('killer')) {
+                emojis = ['🔥', '⚡', '🚀', '👑', '💪', '💯'];
+            } else if (lower.includes('sad') || lower.includes('rona') || lower.includes('dukh')) {
+                emojis = ['😢', '😭', '💔', '😔', '🥺'];
+            }
+
+            let html = `<span style="font-size: 11px; color: #8e8e8e; white-space: nowrap; margin-right: 4px;">Smart:</span>`;
+            emojis.forEach(emo => {
+                html += `<div class="suggested-emoji-chip" onclick="insertSuggestedText('${emo}')">${emo}</div>`;
+            });
+            html += `<div class="suggested-tag-chip" onclick="insertSuggestedText(' #universepro')">#universepro</div>`;
+            html += `<div class="suggested-tag-chip" onclick="insertSuggestedText(' #trending')">#trending</div>`;
+            bar.innerHTML = html;
+        }
+
+        function insertSuggestedText(textToAdd) {
+            let captionInput = document.getElementById('post-caption-input');
+            captionInput.value += textToAdd;
+            captionInput.focus();
+        }
+
+        function togglePlusDropdown(e) {
+            e.stopPropagation();
+            let menu = document.getElementById('plus-dropdown-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function togglePostOptions(e, postId) {
+            e.stopPropagation();
+            document.querySelectorAll('.post-dropdown-menu').forEach(m => {
+                if(m.id !== `post-menu-${postId}`) m.style.display = 'none';
+            });
+            let menu = document.getElementById(`post-menu-${postId}`);
+            if(menu) {
+                menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+
+        function selectUploadType(type) {
+            currentUploadMode = type;
+            document.getElementById('plus-dropdown-menu').style.display = 'none';
+            switchTab('upload-tab');
+            document.getElementById('preview-placeholder').innerText = `📁 Select file for ${type.toUpperCase()} (Long video supported)`;
+        }
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            const nameInput = document.getElementById('name-input');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const switchText = document.getElementById('switch-text');
+            const switchBtnLink = document.getElementById('switch-btn-link');
+
+            if (isSignUpMode) {
+                nameInput.style.display = 'block';
+                nameInput.required = true;
+                submitBtn.innerText = 'Sign Up';
+                switchText.innerText = 'Have an account?';
+                switchBtnLink.innerText = 'Log in';
+            } else {
+        c
