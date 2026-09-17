@@ -1,78 +1,1040 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universe Pro</title>
-
-    <!-- Mobile App Installable & PWA Meta Tags -->
-    <meta name="theme-color" content="#000000">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Universe Pro">
-
-    <!-- Aapka purana CSS ya Styling yahan ho toh rehne dein -->
+    <title>Universe Pro - Ultimate Edition</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        .install-container {
-            margin-top: 20px;
-        }
-        #installAppBtn {
-            display: none; 
-            padding: 12px 24px; 
-            background-color: #007bff; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px;
-            font-weight: bold; 
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,123,255,0.3);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #000; color: #fff; user-select: none; }
+
+        /* AUTH SCREEN */
+        #auth-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #000; padding: 20px; }
+        .auth-card { background: #121212; border: 1px solid #333; width: 100%; max-width: 350px; padding: 40px 30px; text-align: center; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .auth-logo { font-size: 42px; font-weight: bold; font-family: cursive, sans-serif; margin-bottom: 30px; letter-spacing: -1px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-input { width: 100%; padding: 11px 14px; background: #262626; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 13px; margin-bottom: 10px; outline: none; }
+        .auth-btn { width: 100%; padding: 10px; background: #0095f6; color: #fff; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; margin-top: 10px; cursor: pointer; transition: background 0.2s; }
+        .auth-btn:hover { background: #1877f2; }
+        .switch-auth { margin-top: 15px; font-size: 14px; color: #aaa; background: #121212; border: 1px solid #333; padding: 15px; width: 100%; max-width: 350px; border-radius: 8px; text-align: center; }
+        .switch-auth a { color: #0095f6; font-weight: 600; text-decoration: none; cursor: pointer; }
+
+        /* MAIN APP WRAPPER */
+        #main-app-wrapper { display: none; padding-top: 50px; padding-bottom: 60px; background-color: #000; min-height: 100vh; }
+        
+        /* HEADER */
+        .insta-header { position: fixed; top: 0; left: 0; width: 100%; height: 50px; background: #000; border-bottom: 1px solid #262626; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 1000; }
+        .insta-header h2 { font-size: 24px; font-weight: bold; font-family: cursive, sans-serif; letter-spacing: -0.5px; }
+        .header-icons { display: flex; gap: 20px; font-size: 22px; cursor: pointer; align-items: center; position: relative; }
+        
+        /* PLUS DROPDOWN MENU */
+        #plus-dropdown-menu { display: none; position: absolute; right: 40px; top: 40px; background: #262626; border: 1px solid #444; border-radius: 8px; width: 160px; box-shadow: 0 4px 15px rgba(0,0,0,0.7); z-index: 2000; overflow: hidden; }
+        .dropdown-item { padding: 12px 15px; font-size: 13.5px; color: #fff; border-bottom: 1px solid #333; cursor: pointer; text-align: left; transition: background 0.2s; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background: #363636; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* STORIES TRAY */
+        .stories-container { display: flex; gap: 12px; padding: 12px 15px; background: #000; border-bottom: 1px solid #262626; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .stories-container::-webkit-scrollbar { display: none; }
+        .story-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex-shrink: 0; }
+        .story-ring { width: 66px; height: 66px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); display: flex; align-items: center; justify-content: center; position: relative; }
+        .story-ring.seen { background: #555; }
+        .story-avatar { width: 60px; height: 60px; border-radius: 50%; background: #222; background-size: cover; background-position: center; border: 2px solid #000; }
+        .story-username { font-size: 11px; color: #f5f5f5; margin-top: 5px; max-width: 68px; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+        .my-story-add-badge { position: absolute; bottom: 2px; right: 2px; background: #0095f6; color: #fff; width: 20px; height: 20px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #000; font-weight: bold; }
+
+        /* POST CARD */
+        .post-card { background: #000; border-bottom: 1px solid #262626; margin-bottom: 15px; position: relative; }
+        .post-header { display: flex; align-items: center; padding: 10px 15px; justify-content: space-between; }
+        .user-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .post-profile-pic { width: 32px; height: 32px; border-radius: 50%; background: #333; background-size: cover; background-position: center; }
+        .username { font-weight: 600; font-size: 13.5px; color: #fff; }
+        
+        .post-options-container { position: relative; }
+        .three-dots-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; padding: 5px; }
+        .post-dropdown-menu { display: none; position: absolute; right: 0; top: 30px; background: #262626; border: 1px solid #444; border-radius: 6px; width: 150px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.6); }
+        .post-dropdown-item { padding: 10px 12px; font-size: 13px; color: #fff; cursor: pointer; border-bottom: 1px solid #333; }
+        .post-dropdown-item:last-child { border-bottom: none; color: #ed4956; }
+        .post-dropdown-item:hover { background: #363636; }
+
+        .post-media { width: 100%; max-height: 480px; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
+        .post-media img, .post-media video { width: 100%; height: auto; max-height: 480px; object-fit: contain; }
+        
+        .post-actions { display: flex; justify-content: space-between; padding: 10px 15px; font-size: 22px; align-items: center; }
+        .action-left { display: flex; gap: 15px; cursor: pointer; }
+        .action-right { display: flex; gap: 15px; cursor: pointer; font-size: 20px; }
+
+        .post-details { padding: 0 15px 12px 15px; font-size: 14px; color: #fff; }
+        .likes-count { font-weight: 600; margin-bottom: 5px; cursor: pointer; font-size: 13px; }
+        .caption { font-size: 13.5px; line-height: 1.4; }
+        
+        .comments-list { margin-top: 5px; max-height: 130px; overflow-y: auto; display: none; background: #121212; padding: 8px; border-radius: 6px; }
+        .comments-list.open { display: block; }
+        .comment-item { margin-top: 4px; font-size: 13px; border-bottom: 1px solid #222; padding-bottom: 4px; color: #ddd; }
+        .comment-input-box { display: flex; border-top: 1px solid #262626; padding: 8px 15px; align-items: center; background: #000; }
+        .comment-input-box input { flex: 1; border: none; outline: none; font-size: 13px; background: transparent; color: #fff; }
+        .comment-input-box button { background: none; border: none; color: #0095f6; font-weight: 600; cursor: pointer; font-size: 13px; }
+        .toggle-comment-btn { font-size: 12px; color: #8e8e8e; cursor: pointer; margin-top: 5px; display: inline-block; }
+
+        /* FULLSCREEN MEDIA MODAL */
+        #fullscreen-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; }
+        .fullscreen-body { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; position: relative; }
+        #fullscreen-modal img, #fullscreen-modal video { max-width: 100%; max-height: 80vh; object-fit: contain; }
+        .fullscreen-toolbar { display: flex; gap: 20px; padding: 15px; background: rgba(20,20,20,0.9); border-radius: 30px; margin-bottom: 20px; align-items: center; }
+        .tool-btn { background: #262626; color: #fff; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+        .tool-btn:hover { background: #363636; }
+        .close-modal-btn { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 26px; cursor: pointer; background: rgba(255,255,255,0.2); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2001; }
+
+        /* REELS TAB */
+        #reels-tab { background: #000; height: calc(100vh - 100px); overflow-y: scroll; scroll-snap-type: y mandatory; }
+        .reel-item { width: 100%; height: calc(100vh - 100px); scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
+        .reel-item video { width: 100%; height: 100%; object-fit: contain; background: #000; cursor: pointer; }
+        .reel-overlay-info { position: absolute; bottom: 25px; left: 15px; right: 75px; color: #fff; z-index: 10; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; }
+        .reel-user { font-weight: bold; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .reel-caption { font-size: 13.5px; opacity: 0.9; }
+        .reel-side-actions { position: absolute; right: 15px; bottom: 35px; display: flex; flex-direction: column; gap: 20px; align-items: center; color: #fff; z-index: 10; font-size: 26px; }
+        .reel-action-btn { cursor: pointer; text-align: center; font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .reel-action-btn span.icon { font-size: 28px; }
+
+        /* UPLOAD & EDITING SUITE + SMART EMOJI & HASHTAGS */
+        .upload-container { background: #000; color: #fff; height: calc(100vh - 100px); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow-y: auto; }
+        .preview-screen { flex: 1; min-height: 220px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #aaa; border-bottom: 1px solid #333; overflow: hidden; position: relative; cursor: pointer; background: #050505; }
+        .media-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; }
+        .preview-screen img, .preview-screen video { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ADVANCED EDITING CONTROLS BAR */
+        .editing-toolbar { display: flex; gap: 10px; padding: 10px 15px; background: #121212; border-bottom: 1px solid #262626; overflow-x: auto; align-items: center; flex-shrink: 0; scrollbar-width: none; }
+        .editing-toolbar::-webkit-scrollbar { display: none; }
+        .edit-tool-chip { background: #262626; color: #fff; border: 1px solid #444; padding: 6px 14px; border-radius: 16px; font-size: 12px; cursor: pointer; white-space: nowrap; font-weight: 500; }
+        .edit-tool-chip:hover { background: #363636; }
+
+        /* SMART AUTO-EMOJI & HASHTAG SUGGESTION BAR */
+        .emoji-suggestion-bar { display: flex; gap: 8px; padding: 8px 15px; background: #181818; border-bottom: 1px solid #262626; overflow-x: auto; align-items: center; min-height: 44px; scrollbar-width: none; }
+        .emoji-suggestion-bar::-webkit-scrollbar { display: none; }
+        .suggested-emoji-chip { background: #2a2a2a; border: 1px solid #444; font-size: 16px; padding: 4px 10px; border-radius: 12px; cursor: pointer; flex-shrink: 0; transition: transform 0.1s; }
+        .suggested-emoji-chip:active { transform: scale(0.9); background: #3a3a3a; }
+        .suggested-tag-chip { background: #00376b; color: #70b5ff; border: 1px solid #005fcc; font-size: 11.5px; padding: 4px 10px; border-radius: 12px; cursor: pointer; flex-shrink: 0; font-weight: 600; }
+
+        .upload-action-bar { padding: 10px 15px; background: #121212; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #262626; z-index: 10; flex-shrink: 0; }
+        .final-upload-btn { background: #0095f6; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .final-upload-btn:hover { background: #1877f2; }
+
+        /* CHAT SECTION */
+        #chat-tab { background: #000; height: calc(100vh - 100px); display: flex; flex-direction: column; }
+        .chat-header-bar { padding: 15px; background: #121212; border-bottom: 1px solid #262626; font-weight: bold; font-size: 16px; }
+        .chat-conversations-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .chat-user-row { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; cursor: pointer; border-bottom: 1px solid #1a1a1a; transition: background 0.2s; }
+        .chat-user-row:hover { background: #181818; }
+        .chat-room-view { display: none; flex-direction: column; height: calc(100vh - 100px); background: #000; }
+        .room-messages-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13.5px; line-height: 1.4; word-break: break-word; }
+        .chat-bubble.sent { background: #0084ff; align-self: flex-end; color: #fff; border-bottom-right-radius: 2px; }
+        .chat-bubble.received { background: #262626; align-self: flex-start; color: #fff; border-bottom-left-radius: 2px; }
+        .chat-input-area { display: flex; padding: 10px 15px; background: #121212; border-top: 1px solid #262626; align-items: center; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 10px 14px; background: #262626; border: 1px solid #444; border-radius: 20px; color: #fff; outline: none; font-size: 13px; }
+        .chat-input-area button { background: #0095f6; color: #fff; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 13px; }
+
+        /* PROFILE SECTION */
+        .profile-header-box { padding: 20px; background: #000; display: flex; align-items: center; justify-content: space-around; border-bottom: 1px solid #262626; }
+        .profile-pic-container { width: 80px; height: 80px; border-radius: 50%; background: #333; position: relative; cursor: pointer; background-size: cover; background-position: center; border: 2px solid #555; }
+        .profile-stats-box { display: flex; gap: 20px; text-align: center; font-size: 13px; }
+        .stat-item { cursor: pointer; }
+        .stat-num { font-weight: bold; display: block; font-size: 16px; }
+
+        .profile-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #262626; margin-top: 1px; }
+        .profile-grid-item { width: 100%; height: 125px; background: #111; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .profile-grid-item img, .profile-grid-item video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* BOTTOM NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; background: #000; border-top: 1px solid #262626; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .bottom-nav a { text-decoration: none; font-size: 22px; color: #fff; opacity: 0.8; transition: opacity 0.2s; }
+        .bottom-nav a:hover { opacity: 1; }
+
+        /* MODAL LIST VIEW */
+        #users-list-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; align-items: center; justify-content: center; }
+        .users-modal-content { background: #181818; width: 90%; max-width: 340px; border-radius: 12px; border: 1px solid #333; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
+        .users-modal-header { padding: 14px 18px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 15px; }
+        .users-modal-body { max-height: 280px; overflow-y: auto; padding: 10px; }
+        .user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #262626; font-size: 13.5px; }
     </style>
 </head>
 <body>
 
-    <!-- Aapka App ka Main Content yahan rahega -->
-    <h1>Universe Pro</h1>
-    <p>Aapka social media web application tayar hai!</p>
-
-    <!-- Phone mein App Download / Install karne ka Button -->
-    <div class="install-container">
-        <button id="installAppBtn">📥 Download Universe Pro App</button>
+    <!-- AUTH SCREEN -->
+    <div id="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-logo">Universe Pro</div>
+            <form onsubmit="handleAuthSubmit(event)">
+                <input type="text" id="name-input" class="auth-input" placeholder="Full Name" style="display: none;">
+                <input type="text" id="username-input" class="auth-input" placeholder="Phone number, username, or email" required>
+                <input type="password" id="password-input" class="auth-input" placeholder="Password" required>
+                <button type="submit" id="auth-submit-btn" class="auth-btn">Log In</button>
+            </form>
+        </div>
+        <div class="switch-auth">
+            <span id="switch-text">Don't have an account?</span> 
+            <a onclick="toggleAuthMode()" id="switch-btn-link">Sign up</a>
+        </div>
     </div>
 
-    <!-- PWA Install Script -->
+    <!-- FULLSCREEN MEDIA MODAL -->
+    <div id="fullscreen-modal">
+        <div class="close-modal-btn" onclick="closeFullscreen()">&times;</div>
+        <div class="fullscreen-body" id="fullscreen-content-box"></div>
+        <div class="fullscreen-toolbar" id="fullscreen-toolbar-box">
+            <button class="tool-btn" onclick="downloadCurrentMedia()">💾 Download</button>
+            <button class="tool-btn" onclick="shareCurrentMedia()">🔗 Share</button>
+            <button class="tool-btn" id="modal-delete-btn" style="background: #ed4956;" onclick="deleteCurrentFullscreenPost()">🗑️ Delete</button>
+        </div>
+    </div>
+
+    <!-- AVAILABLE USERS POPUP MODAL -->
+    <div id="users-list-modal" onclick="closeUsersModal(event)">
+        <div class="users-modal-content" onclick="event.stopPropagation()">
+            <div class="users-modal-header">
+                <span id="users-modal-title">Available Users</span>
+                <span style="cursor:pointer; font-size: 20px;" onclick="document.getElementById('users-list-modal').style.display='none'">&times;</span>
+            </div>
+            <div class="users-modal-body" id="users-modal-list-body"></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP DASHBOARD -->
+    <div id="main-app-wrapper">
+        <div class="insta-header">
+            <h2>Universe Pro</h2>
+            <div class="header-icons">
+                <span onclick="togglePlusDropdown(event)">➕</span>
+                <span onclick="switchTab('chat-tab', event)">🤍</span>
+                
+                <div id="plus-dropdown-menu">
+                    <div class="dropdown-item" onclick="selectUploadType('post')">📷 Post</div>
+                    <div class="dropdown-item" onclick="selectUploadType('reel')">🎬 Reel (Long Video)</div>
+                    <div class="dropdown-item" onclick="selectUploadType('story')">⭕ Story</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content active">
+            <div class="stories-container" id="stories-tray-container"></div>
+            <div id="feed-container"></div>
+        </div>
+
+        <!-- Search Tab -->
+        <div id="search-tab" class="tab-content">
+            <div style="padding: 12px 15px; background: #000; border-bottom: 1px solid #262626;">
+                <input type="text" id="live-search-input" oninput="performLiveSearch(this.value)" style="width: 100%; padding: 10px 14px; border-radius: 8px; border: none; background: #262626; color:#fff; font-size: 14px; outline: none;" placeholder="Search registered users & posts instantly...">
+            </div>
+            <div id="search-results-container" style="padding: 15px;"></div>
+        </div>
+
+        <!-- Reels Tab -->
+        <div id="reels-tab" class="tab-content">
+            <div id="reels-container"></div>
+        </div>
+
+        <!-- Upload & Editing Tab with Smart Auto-Emoji & Hashtag Bar -->
+        <div id="upload-tab" class="tab-content">
+            <div class="upload-container">
+                <div class="preview-screen" id="preview-area" onclick="document.getElementById('file-selector').click()">
+                    <div class="media-wrapper" id="media-transform-box">
+                        <span id="preview-placeholder">📁 Tap here to select Long Video or Photo</span>
+                    </div>
+                </div>
+                <input type="file" id="file-selector" style="display: none;" accept="video/*,image/*" onchange="previewMedia(event)">
+                
+                <!-- EDITING TOOLS SUITE -->
+                <div class="editing-toolbar">
+                    <div class="edit-tool-chip" onclick="applyFilter('brightness')">💡 Brightness</div>
+                    <div class="edit-tool-chip" onclick="applyFilter('contrast')">🌓 Contrast</div>
+                    <div class="edit-tool-chip" onclick="applyFilter('grayscale')">🎞️ B&W Filter</div>
+                    <div class="edit-tool-chip" onclick="applyFilter('sepia')">📜 Vintage</div>
+                    <div class="edit-tool-chip" onclick="resetFilters()">🔄 Reset Filters</div>
+                </div>
+
+                <!-- SMART AUTO-EMOJI & HASHTAG SUGGESTION BAR -->
+                <div class="emoji-suggestion-bar" id="smart-emoji-bar">
+                    <span style="font-size: 11px; color: #8e8e8e; white-space: nowrap; margin-right: 4px;">Smart:</span>
+                    <div class="suggested-emoji-chip" onclick="insertSuggestedText('😂')">😂</div>
+                    <div class="suggested-emoji-chip" onclick="insertSuggestedText('❤️')">❤️</div>
+                    <div class="suggested-emoji-chip" onclick="insertSuggestedText('🔥')">🔥</div>
+                    <div class="suggested-tag-chip" onclick="insertSuggestedText(' #universepro')">#universepro</div>
+                    <div class="suggested-tag-chip" onclick="insertSuggestedText(' #trending')">#trending</div>
+                </div>
+
+                <div class="upload-action-bar" id="upload-bottom-bar">
+                    <input type="text" id="post-caption-input" placeholder="Write a caption (Type words for auto emojis)..." oninput="detectSmartEmojis(this.value)" style="flex: 1; background: #262626; border: none; padding: 10px 14px; color: #fff; border-radius: 6px; font-size: 13.5px; outline: none; margin-right: 10px;">
+                    <button class="final-upload-btn" onclick="publishContent()">Upload</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Tab -->
+        <div id="chat-tab" class="tab-content">
+            <div id="chat-conversations-view" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="chat-header-bar">Direct Messages (Chats)</div>
+                <div class="chat-conversations-list" id="chat-conversations-list-box"></div>
+            </div>
+            
+            <div id="chat-active-room-view" class="chat-room-view">
+                <div class="chat-header-bar" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span id="active-chat-room-title" style="cursor: pointer;" onclick="backToConversationsList()">⬅ Chat Room</span>
+                    <span style="font-size: 12px; color: #0095f6; cursor: pointer;" onclick="backToConversationsList()">Back</span>
+                </div>
+                <div class="room-messages-box" id="room-messages-box"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-message-input" placeholder="Type a message..." onkeypress="handleChatKey(event)">
+                    <button onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content">
+            <div class="profile-header-box">
+                <div class="profile-pic-container" id="my-profile-pic-box" onclick="document.getElementById('profile-pic-selector').click()"></div>
+                <input type="file" id="profile-pic-selector" style="display: none;" accept="image/*" onchange="uploadProfilePic(event)">
+                <div class="profile-stats-box">
+                    <div class="stat-item"><span class="stat-num" id="profile-posts-count">0</span>posts</div>
+                    <div class="stat-item" onclick="showAvailableUsersModal()"><span class="stat-num" id="profile-followers-count" style="color:#0095f6;">0</span>followers</div>
+                    <div class="stat-item"><span class="stat-num">0</span>following</div>
+                </div>
+            </div>
+            <div style="padding: 15px; background: #000; border-bottom: 1px solid #262626;">
+                <h3 style="font-size: 16px; font-weight: bold;" id="profile-display-name">Adit bhai</h3>
+                <p style="font-size: 13px; color: #aaa; margin-top: 4px;">Welcome to my Universe Pro profile 🚀</p>
+                <div style="margin-top: 15px;">
+                    <button onclick="handleLogout()" style="width: 100%; background: #ed4956; color: #fff; border: none; padding: 9px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13.5px;">Log Out</button>
+                </div>
+            </div>
+            <div id="profile-posts-grid" class="profile-posts-grid"></div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <a href="#" onclick="switchTab('home-tab', event)">🏠</a>
+            <a href="#" onclick="switchTab('search-tab', event)">🔍</a>
+            <a href="#" onclick="switchTab('upload-tab', event)">➕</a>
+            <a href="#" onclick="switchTab('reels-tab', event)">🎬</a>
+            <a href="#" onclick="switchTab('profile-tab', event)">👤</a>
+        </div>
+    </div>
+
     <script>
-        let deferredPrompt;
-        const installBtn = document.getElementById('installAppBtn');
+        let isSignUpMode = false;
+        let selectedFileObjectUrl = ""; 
+        let selectedFileType = "";
+        let currentUploadMode = "post";
+        let activeFullscreenPostId = null;
+        let currentFilterStyle = "";
+        let activeChatUser = null;
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'inline-block'; // Jab app install hone layak hogi tab button dikhega
-        });
+        let allUniverseUsers = JSON.parse(localStorage.getItem('universe_registered_users')) || [];
+        let postsData = JSON.parse(localStorage.getItem('universe_posts')) || [];
+        let storiesData = JSON.parse(localStorage.getItem('universe_stories')) || [];
+        let seenStories = JSON.parse(localStorage.getItem('universe_seen_stories')) || [];
+        let chatsData = JSON.parse(localStorage.getItem('universe_chats')) || {};
 
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User ne Universe Pro install kar liya!');
-                }
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedName = localStorage.getItem('universe_fullname');
+            const savedSessionToken = localStorage.getItem('universe_logged_in');
+            const savedProfilePic = localStorage.getItem('universe_profile_pic');
+
+            if (savedName && savedSessionToken === 'true') {
+                applyUserSession(savedName);
             }
-        });
-    </script>
+            if (savedProfilePic) {
+                document.querySelectorAll('.post-profile-pic, .profile-pic-container').forEach(el => {
+                    el.style.backgroundImage = `url(${savedProfilePic})`;
+                });
+            }
+            renderStoriesTray();
+            renderFeed();
+            renderReels();
+            renderProfilePostsGrid();
+            renderChatConversations();
 
+            window.addEventListener('click', function(e) {
+                if(!e.target.closest('.header-icons')) {
+                    document.getElementById('plus-dropdown-menu').style.display = 'none';
+                }
+                if(!e.target.closest('.post-options-container')) {
+                    document.querySelectorAll('.post-dropdown-menu').forEach(m => m.style.display = 'none');
+                }
+            });
+        });
+
+        function detectSmartEmojis(text) {
+            let lower = text.toLowerCase();
+            let bar = document.getElementById('smart-emoji-bar');
+            let emojis = ['😂', '❤️', '🔥', '🎉', '🚀', '😎', '✨', '👏', '🎂', '💖'];
+
+            if (lower.includes('haha') || lower.includes('lol') || lower.includes('fun') || lower.includes('has')) {
+                emojis = ['😂', '🤣', '😆', '😅', '😜', '💀'];
+            } else if (lower.includes('love') || lower.includes('pyaar') || lower.includes('dil') || lower.includes('heart')) {
+                emojis = ['❤️', '💖', '💘', '💙', '😍', '😘', '💕'];
+            } else if (lower.includes('party') || lower.includes('birthday') || lower.includes('jashn') || lower.includes('happy')) {
+                emojis = ['🎂', '🎉', '🥳', '🎁', '🎈', '🥂', '🍾'];
+            } else if (lower.includes('fire') || lower.includes('ag') || lower.includes('pro') || lower.includes('killer')) {
+                emojis = ['🔥', '⚡', '🚀', '👑', '💪', '💯'];
+            } else if (lower.includes('sad') || lower.includes('rona') || lower.includes('dukh')) {
+                emojis = ['😢', '😭', '💔', '😔', '🥺'];
+            }
+
+            let html = `<span style="font-size: 11px; color: #8e8e8e; white-space: nowrap; margin-right: 4px;">Smart:</span>`;
+            emojis.forEach(emo => {
+                html += `<div class="suggested-emoji-chip" onclick="insertSuggestedText('${emo}')">${emo}</div>`;
+            });
+            html += `<div class="suggested-tag-chip" onclick="insertSuggestedText(' #universepro')">#universepro</div>`;
+            html += `<div class="suggested-tag-chip" onclick="insertSuggestedText(' #trending')">#trending</div>`;
+            bar.innerHTML = html;
+        }
+
+        function insertSuggestedText(textToAdd) {
+            let captionInput = document.getElementById('post-caption-input');
+            captionInput.value += textToAdd;
+            captionInput.focus();
+        }
+
+        function togglePlusDropdown(e) {
+            e.stopPropagation();
+            let menu = document.getElementById('plus-dropdown-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function togglePostOptions(e, postId) {
+            e.stopPropagation();
+            document.querySelectorAll('.post-dropdown-menu').forEach(m => {
+                if(m.id !== `post-menu-${postId}`) m.style.display = 'none';
+            });
+            let menu = document.getElementById(`post-menu-${postId}`);
+            if(menu) {
+                menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+
+        function selectUploadType(type) {
+            currentUploadMode = type;
+            document.getElementById('plus-dropdown-menu').style.display = 'none';
+            switchTab('upload-tab');
+            document.getElementById('preview-placeholder').innerText = `📁 Select file for ${type.toUpperCase()} (Long video supported)`;
+        }
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            const nameInput = document.getElementById('name-input');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const switchText = document.getElementById('switch-text');
+            const switchBtnLink = document.getElementById('switch-btn-link');
+
+            if (isSignUpMode) {
+                nameInput.style.display = 'block';
+                nameInput.required = true;
+                submitBtn.innerText = 'Sign Up';
+                switchText.innerText = 'Have an account?';
+                switchBtnLink.innerText = 'Log in';
+            } else {
+                nameInput.style.display = 'none';
+                nameInput.required = false;
+                submitBtn.innerText = 'Log In';
+                switchText.innerText = "Don't have an account?";
+                switchBtnLink.innerText = 'Sign up';
+            }
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            let usernameVal = document.getElementById('username-input').value.trim();
+            let displayName = isSignUpMode ? (document.getElementById('name-input').value.trim() || usernameVal) : (localStorage.getItem('universe_fullname') || usernameVal);
+
+            if (!allUniverseUsers.some(u => u.name === displayName)) {
+                allUniverseUsers.push({ id: "ID_" + Math.floor(1000 + Math.random() * 9000), name: displayName, handle: "@" + usernameVal.replace(/[^a-zA-Z0-9]/g, "") });
+                localStorage.setItem('universe_registered_users', JSON.stringify(allUniverseUsers));
+            }
+
+            localStorage.setItem('universe_fullname', displayName);
+            localStorage.setItem('universe_logged_in', 'true');
+            applyUserSession(displayName);
+        }
+
+        function applyUserSession(name) {
+            document.getElementById('profile-display-name').innerText = name;
+            document.getElementById('auth-wrapper').style.display = 'none';
+            document.getElementById('main-app-wrapper').style.display = 'block';
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('universe_logged_in');
+            location.reload();
+        }
+
+        function switchTab(tabId, event) {
+            if(event) event.preventDefault();
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            if(tabId !== 'reels-tab') {
+                document.querySelectorAll('.reel-video-player').forEach(vid => vid.pause());
+            }
+
+            if(tabId === 'profile-tab') {
+                document.getElementById('profile-posts-count').innerText = postsData.length;
+                document.getElementById('profile-followers-count').innerText = allUniverseUsers.length;
+                renderProfilePostsGrid();
+            } else if(tabId === 'reels-tab') {
+                renderReels();
+            } else if(tabId === 'home-tab') {
+                renderStoriesTray();
+                renderFeed();
+            } else if(tabId === 'chat-tab') {
+                renderChatConversations();
+            }
+        }
+
+        function showAvailableUsersModal() {
+            let modal = document.getElementById('users-list-modal');
+            let listBody = document.getElementById('users-modal-list-body');
+            document.getElementById('users-modal-title').innerText = `Available Users (${allUniverseUsers.length})`;
+            
+            let html = "";
+            if(allUniverseUsers.length === 0) {
+                html = `<div style="text-align:center; color:#888; padding:15px;">No available users yet.</div>`;
+            } else {
+                allUniverseUsers.forEach(u => {
+                    html += `<div class="user-row"><span><b>${u.name}</b> (${u.handle || '@user'})</span><span style="color:#0095f6; font-size:12px; cursor:pointer;" onclick="openChatWith('${u.name}')">Message 💬</span></div>`;
+                });
+            }
+            listBody.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function closeUsersModal(e) {
+            document.getElementById('users-list-modal').style.display = 'none';
+        }
+
+        function uploadProfilePic(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const picUrl = e.target.result;
+                    localStorage.setItem('universe_profile_pic', picUrl);
+                    document.querySelectorAll('.post-profile-pic, .profile-pic-container').forEach(el => {
+                        el.style.backgroundImage = `url(${picUrl})`;
+                    });
+                    renderStoriesTray();
+                    alert("✨ Profile photo updated!");
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewMedia(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFileType = file.type;
+                selectedFileObjectUrl = URL.createObjectURL(file);
+                renderPreviewElement();
+            }
+        }
+
+        function renderPreviewElement() {
+            const transformBox = document.getElementById('media-transform-box');
+            if(selectedFileType.startsWith('video/')) {
+                transformBox.innerHTML = `<video src="${selectedFileObjectUrl}" controls style="filter: ${currentFilterStyle}; width: 100%; height: 100%; object-fit: contain;"></video>`;
+            } else {
+                transformBox.innerHTML = `<img src="${selectedFileObjectUrl}" alt="Preview" style="filter: ${currentFilterStyle}; width: 100%; height: 100%; object-fit: contain;">`;
+            }
+        }
+
+        function applyFilter(filterType) {
+            if(filterType === 'brightness') currentFilterStyle = 'brightness(1.3)';
+            else if(filterType === 'contrast') currentFilterStyle = 'contrast(1.4)';
+            else if(filterType === 'grayscale') currentFilterStyle = 'grayscale(100%)';
+            else if(filterType === 'sepia') currentFilterStyle = 'sepia(80%)';
+            renderPreviewElement();
+        }
+
+        function resetFilters() {
+            currentFilterStyle = '';
+            renderPreviewElement();
+        }
+
+        function openFullscreen(postId) {
+            activeFullscreenPostId = postId;
+            let post = postsData.find(p => p.id === postId) || storiesData.find(s => s.id === postId);
+            if(!post) return;
+
+            const modal = document.getElementById('fullscreen-modal');
+            const box = document.getElementById('fullscreen-content-box');
+            let isVid = post.fileType && post.fileType.startsWith('video/');
+            
+            if(isVid) {
+                box.innerHTML = `<video src="${post.mediaUrl}" controls autoplay style="filter: ${post.filter || ''};"></video>`;
+            } else {
+                box.innerHTML = `<img src="${post.mediaUrl}" alt="Fullscreen Media" style="filter: ${post.filter || ''};">`;
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeFullscreen() {
+            document.getElementById('fullscreen-modal').style.display = 'none';
+            document.getElementById('fullscreen-content-box').innerHTML = '';
+            activeFullscreenPostId = null;
+        }
+
+        function downloadCurrentMedia() {
+            let post = postsData.find(p => p.id === activeFullscreenPostId) || storiesData.find(s => s.id === activeFullscreenPostId);
+            if(!post) return;
+            let a = document.createElement('a');
+            a.href = post.mediaUrl;
+            let extension = post.fileType && post.fileType.startsWith('video/') ? 'mp4' : 'jpg';
+            a.download = `universe_${post.id}.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("💾 File downloaded successfully!");
+        }
+
+        function shareCurrentMedia() {
+            let post = postsData.find(p => p.id === activeFullscreenPostId);
+            if(!post) return;
+            if (navigator.share) {
+                navigator.share({ title: 'Universe Pro Post', text: post.caption, url: post.mediaUrl }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(post.mediaUrl);
+                alert("🔗 Media link copied to clipboard!");
+            }
+        }
+
+        function deleteCurrentFullscreenPost() {
+            if(confirm("Delete this content?")) {
+                postsData = postsData.filter(p => p.id !== activeFullscreenPostId);
+                storiesData = storiesData.filter(s => s.id !== activeFullscreenPostId);
+                localStorage.setItem('universe_posts', JSON.stringify(postsData));
+                localStorage.setItem('universe_stories', JSON.stringify(storiesData));
+                closeFullscreen();
+                renderFeed();
+                renderReels();
+                renderStoriesTray();
+                renderProfilePostsGrid();
+            }
+        }
+
+        function renderStoriesTray() {
+            const trayContainer = document.getElementById('stories-tray-container');
+            let myName = localStorage.getItem('universe_fullname') || "Adit bhai";
+            let myProfilePic = localStorage.getItem('universe_profile_pic') || '';
+            let myAvatarStyle = myProfilePic ? `background-image: url(${myProfilePic});` : '';
+
+            let hasMyStory = storiesData.some(s => s.username === myName);
+            let myRingClass = hasMyStory && !seenStories.includes("MY_STORY") ? "" : "seen";
+
+            let trayHTML = `
+                <div class="story-item" onclick="handleMyStoryClick()">
+                    <div class="story-ring ${myRingClass}">
+                        <div class="story-avatar" style="${myAvatarStyle}"></div>
+                        <div class="my-story-add-badge">+</div>
+                    </div>
+                    <span class="story-username">Your Story</span>
+                </div>
+            `;
+
+            let friendStories = storiesData.filter(s => s.username !== myName);
+            let uniqueUsers = [...new Set(friendStories.map(s => s.username))];
+
+            uniqueUsers.forEach(uname => {
+                let isSeen = seenStories.includes(uname) ? "seen" : "";
+                trayHTML += `
+                    <div class="story-item" onclick="viewUserStory('${uname}')">
+                        <div class="story-ring ${isSeen}">
+                            <div class="story-avatar"></div>
+                        </div>
+                        <span class="story-username">${uname}</span>
+                    </div>
+                `;
+            });
+
+            trayContainer.innerHTML = trayHTML;
+        }
+
+        function handleMyStoryClick() {
+            let myName = localStorage.getItem('universe_fullname') || "Adit bhai";
+            let myStories = storiesData.filter(s => s.username === myName);
+            if(myStories.length > 0) {
+                seenStories.push("MY_STORY");
+                localStorage.setItem('universe_seen_stories', JSON.stringify(seenStories));
+                let latestStory = myStories[myStories.length - 1];
+                openFullscreen(latestStory.id);
+            } else {
+                selectUploadType('story');
+            }
+        }
+
+        function viewUserStory(username) {
+            seenStories.push(username);
+            localStorage.setItem('universe_seen_stories', JSON.stringify(seenStories));
+            let userStory = storiesData.find(s => s.username === username);
+            if(userStory) {
+                openFullscreen(userStory.id);
+            }
+        }
+
+        function renderFeed() {
+            const feedContainer = document.getElementById('feed-container');
+            let feedHTML = "";
+            let savedProfilePic = localStorage.getItem('universe_profile_pic') || '';
+
+            postsData.forEach((post) => {
+                let commentsHTML = "";
+                if(post.comments) {
+                    post.comments.forEach(c => { commentsHTML += `<div class="comment-item"><b>${c.user}</b> ${c.text}</div>`; });
+                }
+                let avatarStyle = savedProfilePic ? `background-image: url(${savedProfilePic});` : '';
+                let isVid = post.fileType && post.fileType.startsWith('video/');
+                let mediaTag = isVid ? `<video src="${post.mediaUrl}" controls style="filter: ${post.filter || ''};"></video>` : `<img src="${post.mediaUrl}" alt="Post" style="filter: ${post.filter || ''};">`;
+
+                feedHTML += `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="user-info" onclick="openChatWith('${post.username}')">
+                                <div class="post-profile-pic" style="${avatarStyle}"></div>
+                                <span class="username">${post.username}</span>
+                            </div>
+                            <div class="post-options-container">
+                                <button class="three-dots-btn" onclick="togglePostOptions(event, ${post.id})">⋮</button>
+                                <div class="post-dropdown-menu" id="post-menu-${post.id}">
+                                    <div class="post-dropdown-item" onclick="openFullscreen(${post.id})">🔍 View Full</div>
+                                    <div class="post-dropdown-item" onclick="downloadCurrentMediaById(${post.id})">💾 Download</div>
+                                    <div class="post-dropdown-item" onclick="shareCurrentMediaById(${post.id})">🔗 Share</div>
+                                    <div class="post-dropdown-item" onclick="deletePost(${post.id})">🗑️ Delete</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-media" onclick="openFullscreen(${post.id})">
+                            ${mediaTag}
+                        </div>
+                        <div class="post-actions">
+                            <div class="action-left">
+                                <span onclick="toggleLike(${post.id})">${post.isLiked ? '❤️' : '🤍'}</span>
+                                <span onclick="toggleCommentBox(${post.id})" style="cursor:pointer;">💬</span>
+                            </div>
+                            <div class="action-right" style="font-size: 18px;">
+                                <span onclick="shareCurrentMediaById(${post.id})" style="cursor:pointer;" title="Share">🔗</span>
+                            </div>
+                        </div>
+                        <div class="post-details">
+                            <div class="likes-count">${post.likes} likes</div>
+                            <div class="caption"><b>${post.username}</b> ${post.caption}</div>
+                            <span class="toggle-comment-btn" onclick="toggleCommentBox(${post.id})">💬 View / Add Comments (${post.comments.length})</span>
+                            <div class="comments-list" id="comments-box-${post.id}">${commentsHTML}</div>
+                        </div>
+                        <div class="comment-input-box">
+                            <input type="text" placeholder="Add a comment..." id="comment-input-${post.id}" onkeypress="handleCommentKey(event, ${post.id})">
+                            <button onclick="postComment(${post.id})">Post</button>
+                        </div>
+                    </div>
+                `;
+            });
+            feedContainer.innerHTML = feedHTML || `<div style="padding: 40px; text-align: center; color: #8e8e8e;">No posts yet. Upload a video or photo via (+) icon!</div>`;
+        }
+
+        function downloadCurrentMediaById(id) {
+            let post = postsData.find(p => p.id === id);
+            if(!post) return;
+            let a = document.createElement('a');
+            a.href = post.mediaUrl;
+            let ext = post.fileType && post.fileType.startsWith('video/') ? 'mp4' : 'jpg';
+            a.download = `universe_${post.id}.${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("💾 File downloaded successfully!");
+        }
+
+        function shareCurrentMediaById(id) {
+            let post = postsData.find(p => p.id === id);
+            if(!post) return;
+            if (navigator.share) {
+                navigator.share({ title: 'Universe Pro Post', text: post.caption, url: post.mediaUrl }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(post.mediaUrl);
+                alert("🔗 Media link copied to clipboard!");
+            }
+        }
+
+        function toggleCommentBox(postId) {
+            const box = document.getElementById(`comments-box-${postId}`);
+            if(box) box.classList.toggle('open');
+        }
+
+        function renderReels() {
+            const reelsContainer = document.getElementById('reels-container');
+            let videoPosts = postsData.filter(post => post.fileType && post.fileType.startsWith('video/'));
+
+            if (videoPosts.length === 0) {
+                reelsContainer.innerHTML = `<div style="height: calc(100vh - 100px); display: flex; align-items: center; justify-content: center; color: #8e8e8e; font-size: 15px; text-align: center; padding: 20px;">No reels uploaded yet. Select 'Reel' from (+) menu to upload any long video file!</div>`;
+                return;
+            }
+
+            let reelsHTML = "";
+            videoPosts.forEach((post) => {
+                reelsHTML += `
+                    <div class="reel-item">
+                        <video src="${post.mediaUrl}" class="reel-video-player" loop playsinline preload="auto" controls style="filter: ${post.filter || ''};"></video>
+                        <div class="reel-overlay-info">
+                            <div class="reel-user"><div class="post-profile-pic" style="width:26px; height:26px; ${localStorage.getItem('universe_profile_pic') ? 'background-image: url(' + localStorage.getItem('universe_profile_pic') + ');' : ''}"></div> ${post.username}</div>
+                            <div class="reel-caption">${post.caption}</div>
+                        </div>
+                        <div class="reel-side-actions">
+                            <div class="reel-action-btn" onclick="toggleReelLike(${post.id})">
+                                <span class="icon">${post.isLiked ? '❤️' : '🤍'}</span>
+                                <span style="font-size: 11px;">${post.likes}</span>
+                            </div>
+                            <div class="reel-action-btn" onclick="openFullscreen(${post.id})">
+                                <span class="icon">📥</span>
+                                <span style="font-size: 11px;">Save</span>
+                            </div>
+                            <div class="reel-action-btn" onclick="deletePost(${post.id})">
+                                <span class="icon">🗑️</span>
+                                <span style="font-size: 11px;">Del</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            reelsContainer.innerHTML = reelsHTML;
+
+            const reelItems = document.querySelectorAll('.reel-item');
+            const observerOptions = { root: reelsContainer, threshold: 0.5 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (video) {
+                        if (entry.isIntersecting) {
+                            document.querySelectorAll('.reel-video-player').forEach(v => {
+                                if (v !== video) v.pause();
+                            });
+                            video.play().catch(err => console.log("Autoplay restricted:", err));
+                        } else {
+                            video.pause();
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            reelItems.forEach(item => observer.observe(item));
+        }
+
+        function toggleReelLike(id) {
+            let post = postsData.find(p => p.id === id);
+            if(post) {
+                post.isLiked = !post.isLiked;
+                post.likes += post.isLiked ? 1 : -1;
+                localStorage.setItem('universe_posts', JSON.stringify(postsData));
+                renderReels();
+            }
+        }
+
+        function renderProfilePostsGrid() {
+            const gridContainer = document.getElementById('profile-posts-grid');
+            let gridHTML = "";
+            postsData.forEach(post => {
+                let isVid = post.fileType && post.fileType.startsWith('video/');
+                let mediaPreviewTag = isVid ? `<video src="${post.mediaUrl}" style="filter: ${post.filter || ''};"></video>` : `<img src="${post.mediaUrl}" alt="Grid item" style="filter: ${post.filter || ''};">`;
+                gridHTML += `<div class="profile-grid-item" onclick="openFullscreen(${post.id})">${mediaPreviewTag}</div>`;
+            });
+            gridContainer.innerHTML = gridHTML || `<div style="padding: 20px; text-align: center; color: #8e8e8e; grid-column: span 3;">No posts yet</div>`;
+        }
+
+        function deletePost(id) {
+            if(confirm("Delete this post?")) {
+                postsData = postsData.filter(p => p.id !== id);
+                localStorage.setItem('universe_posts', JSON.stringify(postsData));
+                renderFeed();
+                renderReels();
+                renderProfilePostsGrid();
+            }
+        }
+
+        function toggleLike(id) {
+            let post = postsData.find(p => p.id === id);
+            if(post) {
+                post.isLiked = !post.isLiked;
+                post.likes += post.isLiked ? 1 : -1;
+                localStorage.setItem('universe_posts', JSON.stringify(postsData));
+                renderFeed();
+            }
+        }
+
+        function postComment(postId) {
+            let inputEl = document.getElementById(`comment-input-${postId}`);
+            let text = inputEl.value.trim();
+            if(!text) return;
+            let currentUser = localStorage.getItem('universe_fullname') || "Adit bhai";
+            let post = postsData.find(p => p.id === postId);
+            if(post) {
+                post.comments.push({ user: currentUser, text: text });
+                localStorage.setItem('universe_posts', JSON.stringify(postsData));
+                inputEl.value = "";
+                renderFeed();
+                document.getElementById(`comments-box-${postId}`).classList.add('open');
+            }
+        }
+
+        function handleCommentKey(e, postId) { if(e.key === 'Enter') postComment(postId); }
+
+        /* REAL-TIME CHAT SYSTEM */
+        function renderChatConversations() {
+            let listContainer = document.getElementById('chat-conversations-list-box');
+            let currentUser = localStorage.getItem('universe_fullname') || "Adit bhai";
+            let otherUsers = allUniverseUsers.filter(u => u.name !== currentUser);
+
+            if(otherUsers.length === 0) {
+                listContainer.innerHTML = `<div style="padding: 30px; text-align: center; color: #888;">No other users found. Connect with users via Followers list!</div>`;
+                return;
+            }
+
+            let html = "";
+            otherUsers.forEach(u => {
+                let roomKey = [currentUser, u.name].sort().join("_");
+                let messages = chatsData[roomKey] || [];
+                let lastMsg = messages.length > 0 ? messages[messages.length - 1].text : "Tap to start conversation...";
+
+                html += `
+                    <div class="chat-user-row" onclick="openChatWith('${u.name}')">
+                        <div class="post-profile-pic" style="width:42px; height:42px;"></div>
+                        <div style="flex:1;">
+                            <div style="font-weight:600; font-size:14px;">${u.name}</div>
+                            <div style="font-size:12px; color:#8e8e8e; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;">${lastMsg}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        function openChatWith(userName) {
+            let myName = localStorage.getItem('universe_fullname') || "Adit bhai";
+            if(userName === myName) { alert("You cannot chat with yourself!"); return; }
+            activeChatUser = userName;
+
+            document.getElementById('chat-conversations-view').style.display = 'none';
+            document.getElementById('chat-active-room-view').style.display = 'flex';
+            document.getElementById('active-chat-room-title').innerText = `💬 Chat with ${userName}`;
+            renderRoomMessages();
+            document.getElementById('users-list-modal').style.display = 'none';
+        }
+
+        function backToConversationsList() {
+            activeChatUser = null;
+            document.getElementById('chat-active-room-view').style.display = 'none';
+            document.getElementById('chat-conversations-view').style.display = 'flex';
+            renderChatConversations();
+        }
+
+        function renderRoomMessages() {
+            let box = document.getElementById('room-messages-box');
+            let myName = localStorage.getItem('universe_fullname') || "Adit bhai";
+            let roomKey = [myName, activeChatUser].sort().join("_");
+            let messages = chatsData[roomKey] || [];
+
+            let html = "";
+            if(messages.length === 0) {
+                html = `<div style="text-align:center; color:#666; margin-top:30px; font-size:13px;">Say hello to ${activeChatUser}! 👋</div>`;
+            } else {
+                messages.forEach(m => {
+                    let bubbleClass = m.sender === myName ? 'sent' : 'received';
+                    html += `<div class="chat-bubble ${bubbleClass}">${m.text}</div>`;
+                });
+            }
+            box.innerHTML = html;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            let input = document.getElementById('chat-message-input');
+            let text = input.value.trim();
+            if(!text || !activeChatUser) return;
+
+            let myName = localStorage.getItem('universe_fullname') || "Adit bhai";
+            let roomKey = [myName, activeChatUser].sort().join("_");
+
+            if(!chatsData[roomKey]) chatsData[roomKey] = [];
+            chatsData[roomKey].push({ sender: myName, text: text, timestamp: Date.now() });
+
+            localStorage.setItem('universe_chats', JSON.stringify(chatsData));
+            input.value = "";
+            renderRoomMessages();
+        }
+
+        function handleChatKey(e) { if(e.key === 'Enter') sendChatMessage(); }
+
+        /* LIVE SEARCH SYSTEM */
+        function performLiveSearch(query) {
+            let resBox = document.getElementById('search-results-container');
+            let q = query.toLowerCase().trim();
+            if(!q) { resBox.innerHTML = `<div style="color:#888; text-align:center; padding:20px;">Type something to search users & posts...</div>`; return; }
+
+            let matchedUsers = allUniverseUsers.filter(u => u.name.toLowerCase().includes(q));
+            let matchedPosts = postsData.filter(p => p.caption.toLowerCase().includes(q) || p.username.toLowerCase().includes(q));
+
+            let html = `<div style="font-weight:bold; font-size:14px; margin-bottom:10px;">Users (${matchedUsers.length})</div>`;
+            matchedUsers.forEach(u => {
+                html += `<div class="user-row" style="background:#121212; border-radius:6px; margin-bottom:6px;" onclick="openChatWith('${u.name}')"><span><b>${u.name}</b></span><span style="color:#0095f6;">Message</span></div>`;
+            });
+
+            html += `<div style="font-weight:bold; font-size:14px; margin-top:20px; margin-bottom:10px;">Posts (${matchedPosts.length})</div>`;
+            matchedPosts.forEach(p => {
+                html += `<div style="background:#121212; padding:10px; border-radius:6px; margin-bottom:8px; font-size:13px; cursor:pointer;" onclick="openFullscreen(${p.id})"><b>${p.username}:</b> ${p.caption}</div>`;
+            });
+
+            resBox.innerHTML = html || `<div style="color:#888; text-align:center; padding:20px;">No results found for "${query}"</div>`;
+        }
+
+        function publishContent() {
+            if (!selectedFileObjectUrl) { alert("Please select a file first!"); return; }
+            let caption = document.getElementById('post-caption-input').value.trim() || "New Universe Pro Media 🚀";
+            let name = localStorage.getItem('universe_fullname') || "Adit bhai";
+
+            let newEntry = {
+                id: Date.now(),
+                username: name,
+                fileType: selectedFileType,
+                mediaUrl: selectedFileObjectUrl,
+                filter: currentFilterStyle,
+                likes: 0, 
+                isLiked: false, 
+                caption: caption, 
+                comments: []
+            };
+
+            if (currentUploadMode === 'story') {
+                storiesData.push(newEntry);
+                localStorage.setItem('universe_stories', JSON.stringify(storiesData));
+                alert("⭕ Story uploaded successfully!");
+                switchTab('home-tab');
+            } else if (currentUploadMode === 'reel') {
+                postsData.unshift(newEntry);
+                localStorage.setItem('universe_posts', JSON.stringify(postsData));
+                alert("🎬 Long Video Reel uploaded successfully!");
+                switchTab('reels-tab');
+            } else {
+                postsData.unshift(newEntry);
+                localStorage.setItem('universe_posts', JSON.stringify(postsData));
+                alert("🎉 Post uploaded successfully!");
+                switchTab('home-tab');
+            }
+
+            document.getElementById('media-transform-box').innerHTML = `<span id="preview-placeholder">📁 Tap here to select File</span>`;
+            document.getElementById('post-caption-input').value = "";
+            selectedFileObjectUrl = "";
+            selectedFileType = "";
+            currentFilterStyle = "";
+        }
+    </script>
 </body>
 </html>
