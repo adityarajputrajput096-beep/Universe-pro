@@ -55,12 +55,9 @@ main{width:min(650px,100%);margin:auto}
 .post-media{width:100%;max-height:650px;background:#050505;display:flex;justify-content:center;align-items:center;cursor:pointer;position:relative;overflow:hidden;border-radius:4px}
 .post-media img,.post-media video{width:100%;max-height:650px;object-fit:contain}
 
-.heart-pop{position:absolute;font-size:80px;color:var(--like);pointer-events:none;animation:pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;opacity:0}
-@keyframes pop{0%{transform:scale(0);opacity:0}50%{transform:scale(1.2);opacity:1}100%{transform:scale(1);opacity:0}}
-
 .actions{display:flex;justify-content:space-between;padding:10px 14px;font-size:23px}
-.actions-left{display:flex;gap:17px}
-.action{border:0;background:none;color:#fff;font-size:22px;cursor:pointer}
+.actions-left{display:flex;gap:17px;align-items:center}
+.action,.delete-btn{border:0;background:none;color:#fff;font-size:22px;cursor:pointer}
 .liked{color:var(--like)}
 .details{padding:0 14px 14px;font-size:14px}
 .likes{font-weight:700;margin-bottom:6px}
@@ -89,7 +86,6 @@ main{width:min(650px,100%);margin:auto}
 
 .profile-actions{display:flex;gap:8px;padding:0 18px 15px}
 .secondary{flex:1;background:#262626;color:#fff;border:1px solid #444;padding:9px;border-radius:8px;font-weight:700}
-.secondary.following-btn{background:#1a1a1a;color:#888;border-color:#333}
 
 .user-profile{padding-bottom:30px}
 .user-head{display:flex;gap:20px;padding:24px 18px;align-items:center}
@@ -123,28 +119,28 @@ main{width:min(650px,100%);margin:auto}
 
 /* Bottom Nav */
 .bottom {
-    position: fixed;
-    bottom: env(safe-area-inset-bottom);
-    left: 0;
-    right: 0;
-    height: 56px;
-    background: dark blur (0,0,0,0.9);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid var(--card-border);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 100;
+  position: fixed;
+  bottom: env(safe-area-inset-bottom);
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: rgba(0,0,0,0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
 }
 .bottom button {
-    background: black ;
-    border: 0;
-    color: var(--muted);
-    font-size: 22px;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-size: 22px;
 }
 .bottom button.active-nav {
-    color: #fff;
-    transform: scale(1.1);
+  color: #fff;
+  transform: scale(1.1);
 }
 
 /* Modals */
@@ -184,6 +180,7 @@ main{width:min(650px,100%);margin:auto}
 <div id="app">
 <header class="header">
   <div class="brand">Universe Pro</div>
+  <div class="header-icons">
     <button class="icon-btn" onclick="openChatList()">💬</button>
     <button class="icon-btn" onclick="openUpload()">➕</button>
   </div>
@@ -274,8 +271,7 @@ main{width:min(650px,100%);margin:auto}
 </main>
 
 <nav class="bottom">
-</button>>
-</button><button id="nav-home" class="active-nav" onclick="showTab('home')">🏠</button>
+  <button id="nav-home" class="active-nav" onclick="showTab('home')">🏠</button>
   <button id="nav-search" onclick="showTab('search')">🔍</button>
   <button id="nav-upload" onclick="openUpload()">➕</button>
   <button id="nav-reels" onclick="showTab('reels')">🎬</button>
@@ -323,7 +319,7 @@ main{width:min(650px,100%);margin:auto}
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getDatabase, ref, set, get, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
@@ -454,10 +450,7 @@ main{width:min(650px,100%);margin:auto}
           <div class="actions-left">
             <button class="action ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
             <button class="action" onclick="openComments('${post.id}')">💬</button>
-            <!-- Delete Button with Emoji -->
-<button class="delete-btn" onclick="deletePost('${post.id}')" title="Delete Post">
-    🗑️
-</button>
+            ${post.userId === currentUid ? `<button class="delete-btn" onclick="deletePost('${post.id}')" title="Delete Post">🗑️</button>` : ''}
           </div>
           <button class="action" onclick="savePost('${post.id}')">${isSaved?'🔖':'📑'}</button>
         </div>
@@ -490,6 +483,13 @@ main{width:min(650px,100%);margin:auto}
     if(idx >= 0) saved.splice(idx, 1);
     else saved.push(currentUid);
     set(ref(db, `posts/${postId}/saved`), saved);
+  };
+
+  window.deletePost = (postId) => {
+    if (confirm('Are you sure you want to delete this post?')) {
+      remove(ref(db, `posts/${postId}`));
+      toast('Post deleted');
+    }
   };
 
   // Uploading
@@ -526,6 +526,75 @@ main{width:min(650px,100%);margin:auto}
     window.showTab('home');
     toast('Post published live!');
   };
+
+  // Stories
+  function renderStories() {
+    let box = document.getElementById('stories');
+    if(!box) return;
+    let html = `<div class="story" onclick="document.getElementById('storyFileInput').click()">
+      <div class="ring add-story-ring"><div class="avatar">+</div></div>
+      <div style="margin-top:4px">Your story</div>
+    </div>`;
+
+    Object.keys(dbStories).forEach(k => {
+      let s = dbStories[k];
+      let u = dbUsers[s.userId] || {};
+      html += `<div class="story" onclick="viewStory('${k}')">
+        <div class="ring"><div class="avatar" ${avatarStyle(u.pic)}></div></div>
+        <div style="margin-top:4px">${esc(u.username || 'user')}</div>
+      </div>`;
+    });
+    box.innerHTML = html;
+  }
+
+  window.handleStoryUpload = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      push(ref(db, 'stories'), {
+        userId: currentUid,
+        data: r.result,
+        time: Date.now()
+      });
+      toast('Story uploaded!');
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.viewStory = (storyId) => {
+    let s = dbStories[storyId];
+    if(!s) return;
+    let u = dbUsers[s.userId] || {};
+    document.getElementById('storyUser').textContent = u.username || 'Story';
+    document.getElementById('storyBody').innerHTML = `<img src="${s.data}" style="width:100%;max-height:60vh;object-fit:contain">`;
+    document.getElementById('storyModal').classList.remove('hidden');
+  };
+
+  window.closeStory = () => {
+    document.getElementById('storyModal').classList.add('hidden');
+  };
+
+  // Reels
+  function renderReels() {
+    let box = document.getElementById('reelsList');
+    if(!box) return;
+    let reels = Object.keys(dbPosts).filter(k => dbPosts[k].type === 'video').map(k => ({id: k, ...dbPosts[k]}));
+    box.innerHTML = reels.map(r => {
+      let u = dbUsers[r.userId] || {};
+      return `<div class="reel">
+        <video src="${r.data}" loop onclick="this.paused ? this.play() : this.pause()"></video>
+        <div class="reel-info">
+          <b>@${esc(u.username||'user')}</b>
+          <p style="margin-top:4px">${esc(r.caption||'')}</p>
+        </div>
+        <div class="reel-actions">
+          <button class="action" onclick="likePost('${r.id}')">♥</button>
+          <button class="action" onclick="openComments('${r.id}')">💬</button>
+        </div>
+      </div>`;
+    }).join('') || '<div style="padding:40px;text-align:center;color:#777">No video reels available</div>';
+  }
 
   // Comments
   window.openComments = (postId) => {
@@ -567,6 +636,22 @@ main{width:min(650px,100%);margin:auto}
     renderCommentsList();
   };
 
+  // Search
+  window.searchUsers = (query) => {
+    let q = query.toLowerCase().trim();
+    let box = document.getElementById('searchResults');
+    if(!q) { box.innerHTML = ''; return; }
+    let matches = Object.keys(dbUsers)
+      .filter(id => id !== currentUid && ((dbUsers[id].username||'').includes(q) || (dbUsers[id].name||'').toLowerCase().includes(q)))
+      .map(id => dbUsers[id]);
+    box.innerHTML = matches.map(u => `
+      <div class="search-result" onclick="openUser('${u.id}')">
+        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+        <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
+      </div>
+    `).join('') || '<div style="padding:15px;color:#777">No users found</div>';
+  };
+
   // Profile & Nav Functions
   window.showTab = (id) => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
@@ -574,6 +659,13 @@ main{width:min(650px,100%);margin:auto}
     document.querySelectorAll('.bottom button').forEach(b => b.classList.remove('active-nav'));
     let navBtn = document.getElementById('nav-' + id);
     if(navBtn) navBtn.classList.add('active-nav');
+  };
+
+  window.switchProfileTab = (tab) => {
+    profileTab = tab;
+    document.getElementById('btnMyPosts').classList.toggle('active', tab === 'posts');
+    document.getElementById('btnSavedPosts').classList.toggle('active', tab === 'saved');
+    renderProfile();
   };
 
   function renderProfile() {
@@ -602,6 +694,48 @@ main{width:min(650px,100%);margin:auto}
       toast('Profile photo updated!');
     };
     r.readAsDataURL(f);
+  };
+
+  window.openUser = (userId) => {
+    if(userId === currentUid) return window.showTab('profile');
+    profileUser = userId;
+    let u = dbUsers[userId] || {};
+    let myObj = dbUsers[currentUid] || {};
+    document.getElementById('personAvatar').style.backgroundImage = u.pic ? `url('${u.pic}')` : '';
+    document.getElementById('personName').textContent = u.name || 'User';
+    document.getElementById('personUsername').textContent = '@' + (u.username || 'user');
+    
+    let isFollowing = (myObj.following || []).includes(userId);
+    let btn = document.getElementById('personFollowBtn');
+    btn.textContent = isFollowing ? 'Unfollow' : 'Follow';
+    btn.className = isFollowing ? 'secondary' : 'primary';
+
+    let followersCount = Object.keys(dbUsers).filter(k => (dbUsers[k].following || []).includes(userId)).length;
+    document.getElementById('personFollowerCount').textContent = followersCount;
+    document.getElementById('personFollowingCount').textContent = (u.following || []).length;
+
+    let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === userId);
+    document.getElementById('personGrid').innerHTML = userPosts.map(k => {
+      let p = dbPosts[k];
+      return `<div class="grid-item">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
+    }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
+
+    window.showTab('personProfile');
+  };
+
+  window.toggleFollowPerson = () => {
+    if(!profileUser) return;
+    let myObj = dbUsers[currentUid] || {};
+    let following = myObj.following || [];
+    let idx = following.indexOf(profileUser);
+    if(idx >= 0) following.splice(idx, 1);
+    else following.push(profileUser);
+    update(ref(db, `users/${currentUid}`), { following });
+    openUser(profileUser);
+  };
+
+  window.startProfileChat = () => {
+    if(profileUser) window.openChatWith(profileUser);
   };
 
   // Realtime Chat
@@ -656,9 +790,7 @@ main{width:min(650px,100%);margin:auto}
     inp.value = '';
   };
 
-  // -------------------------------------------------------------
   // VIDEO CALL FEATURE (WebRTC + Firebase Signaling)
-  // -------------------------------------------------------------
   window.startVideoCall = async () => {
     if(!activeChat) return toast('Select a chat to call');
     document.getElementById('videoModal').classList.remove('hidden');
@@ -726,109 +858,9 @@ main{width:min(650px,100%);margin:auto}
       peerConnection.close();
       peerConnection = null;
     }
-    document.getElementById('localVideo').srcObject = null;
-    document.getElementById('remoteVideo').srcObject = null;
     document.getElementById('videoModal').classList.add('hidden');
-    toast('Call Ended');
-  };
-
-  // Stories & Reels
-  function renderStories() {
-    let s = document.getElementById('stories');
-    let myObj = dbUsers[currentUid] || {};
-    let addBtn = `<div class="story" onclick="document.getElementById('storyFileInput').click()">
-      <div class="ring add-story-ring"><div class="avatar" ${avatarStyle(myObj.pic)}>+</div></div>
-      <div>Your Story</div>
-    </div>`;
-
-    let storiesHtml = Object.keys(dbStories).map(uId => {
-      let u = dbUsers[uId] || {};
-      return `<div class="story" onclick="openUserStory('${uId}')">
-        <div class="ring"><div class="avatar" ${avatarStyle(u.pic)}></div></div>
-        <div>${esc(u.username || 'User')}</div>
-      </div>`;
-    }).join('');
-
-    s.innerHTML = addBtn + storiesHtml;
-  }
-
-  window.handleStoryUpload = (e) => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => {
-      set(ref(db, `stories/${currentUid}`), { data: r.result, time: Date.now() });
-      toast('Story added live!');
-    };
-    r.readAsDataURL(f);
-  };
-
-  window.openUserStory = (uId) => {
-    let st = dbStories[uId];
-    if(!st) return;
-    let u = dbUsers[uId] || {};
-    document.getElementById('storyUser').textContent = u.username || 'Story';
-    document.getElementById('storyBody').innerHTML = `<img src="${st.data}" style="width:100%;max-height:70vh;object-fit:contain">`;
-    document.getElementById('storyModal').classList.remove('hidden');
-  };
-
-  window.closeStory = () => document.getElementById('storyModal').classList.add('hidden');
-
-  function renderReels() {
-    let list = document.getElementById('reelsList');
-    let reels = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).filter(p => p.type === 'video');
-    list.innerHTML = reels.map(p => {
-      let u = dbUsers[p.userId] || {};
-      return `<div class="reel">
-        <video src="${p.data}" controls loop></video>
-        <div class="reel-info"><b>@${esc(u.username||'user')}</b><div>${esc(p.caption||'')}</div></div>
-      </div>`;
-    }).join('') || '<div style="padding:40px;text-align:center;color:#777">No reels uploaded yet</div>';
-  }
-
-  window.searchUsers = (q) => {
-    q = q.trim().toLowerCase();
-    let box = document.getElementById('searchResults');
-    if(!q) return box.innerHTML = '<div style="padding:30px;text-align:center;color:#777">Search username</div>';
-    let matched = Object.keys(dbUsers).map(k => dbUsers[k]).filter(u => u.username?.includes(q) || u.name?.toLowerCase().includes(q));
-    box.innerHTML = matched.map(u => `<div class="search-result" onclick="openUser('${u.id}')">
-      <div class="small-avatar" ${avatarStyle(u.pic)}></div>
-      <div><b>${esc(u.username)}</b><div style="color:#888">${esc(u.name)}</div></div>
-    </div>`).join('') || '<div style="padding:30px;text-align:center;color:#777">No users found</div>';
-  };
-
-  window.openUser = (uId) => {
-    profileUser = uId;
-    let u = dbUsers[uId] || {};
-    document.getElementById('personAvatar').style.backgroundImage = u.pic ? `url('${u.pic}')` : '';
-    document.getElementById('personName').textContent = u.name || '';
-    document.getElementById('personUsername').textContent = '@' + (u.username || '');
-    
-    let myObj = dbUsers[currentUid] || {};
-    let isFollowing = (myObj.following || []).includes(uId);
-    let btn = document.getElementById('personFollowBtn');
-    btn.textContent = isFollowing ? 'Following' : 'Follow';
-    btn.className = isFollowing ? 'secondary following-btn' : 'primary';
-
-    let userPosts = Object.keys(dbPosts).map(k => dbPosts[k]).filter(p => p.userId === uId);
-    document.getElementById('personGrid').innerHTML = userPosts.map(p => `<div class="grid-item">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
-    window.showTab('personProfile');
-  };
-
-  window.toggleFollowPerson = () => {
-    if(!profileUser) return;
-    let myObj = dbUsers[currentUid] || {};
-    let following = myObj.following || [];
-    let idx = following.indexOf(profileUser);
-    if(idx >= 0) following.splice(idx, 1);
-    else following.push(profileUser);
-    set(ref(db, `users/${currentUid}/following`), following);
-    window.openUser(profileUser);
-  };
-
-  window.startProfileChat = () => {
-    if(profileUser) window.openChatWith(profileUser);
+    toast('Call ended');
   };
 </script>
 </body>
-</html>a
+</html>
