@@ -275,9 +275,9 @@ main{width:min(650px,100%);margin:auto}
 </main>
 
 <nav class="bottom">
-  <!-- Post Header ya Action Bar mein ye button add karein -->
-<button class="delete-btn" onclick="deletePost('POST_ID_HERE')">
-    <i class="fas fa-trash"></i>
+<button class="delete-btn" onclick="deletePost('${post.id}')" title="Delete Post">
+    🗑️
+</button>>
 </button><button id="nav-home" class="active-nav" onclick="showTab('home')">🏠</button>
   <button id="nav-search" onclick="showTab('search')">🔍</button>
   <button id="nav-upload" onclick="openUpload()">➕</button>
