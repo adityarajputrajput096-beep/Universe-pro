@@ -909,3 +909,403 @@ main{width:min(650px,100%);margin:auto}
 </script>
 </body>
 </html>
+<!-- Free Fire Style 2D Battle Royale HTML Game -->
+<div id="game-tab-container" style="position: relative; width: 100%; max-width: 800px; margin: 0 auto; background: #111; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: sans-serif;">
+    
+    <!-- Game Canvas -->
+    <canvas id="actionGameCanvas" style="display: block; width: 100%; height: 380px; background: #1a237e;"></canvas>
+
+    <!-- Mobile Touch Controls -->
+    <div id="mobile-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #0d0d12; touch-action: manipulation; -webkit-user-select: none; user-select: none;">
+        <div style="display: flex; gap: 8px;">
+            <button id="btn-left" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #333; background: #222; color: #fff; font-size: 18px; font-weight: bold;">◀</button>
+            <button id="btn-right" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #333; background: #222; color: #fff; font-size: 18px; font-weight: bold;">▶</button>
+        </div>
+        
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="btn-medkit" style="width: 48px; height: 48px; border-radius: 12px; border: 2px solid #2ecc71; background: #27ae60; color: #fff; font-size: 16px; font-weight: bold;">💊</button>
+            <button id="btn-bike" style="width: 48px; height: 48px; border-radius: 12px; border: 2px solid #f39c12; background: #d35400; color: #fff; font-size: 16px; font-weight: bold;">🏍️</button>
+            <button id="btn-shoot" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ff4757; background: #e74c3c; color: #fff; font-size: 20px;">🔥</button>
+            <button id="btn-jump" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #333; background: #222; color: #fff; font-size: 18px; font-weight: bold;">▲</button>
+        </div>
+    </div>
+
+    <!-- Free Fire Style Game Engine Script -->
+    <script>
+        (function() {
+            const canvas = document.getElementById('actionGameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = 800;
+            canvas.height = 380;
+
+            let score = 0;
+            let gameOver = false;
+
+            // Player Setup
+            const player = {
+                x: 80,
+                y: 250,
+                width: 30,
+                height: 45,
+                vx: 0,
+                vy: 0,
+                baseSpeed: 4,
+                speed: 4,
+                jumpPower: -12,
+                grounded: false,
+                color: '#2980b9',
+                facing: 'right',
+                health: 100,
+                maxHealth: 100,
+                medkits: 2,
+                isHealing: false,
+                healTimer: 0,
+                onBike: false
+            };
+
+            // Bike Setup
+            const bike = {
+                x: 220,
+                y: canvas.height - 30 - 25,
+                width: 50,
+                height: 25,
+                color: '#e67e22',
+                speed: 8
+            };
+
+            // Covers (Boxes/Walls)
+            const covers = [
+                { x: 300, y: canvas.height - 30 - 50, width: 45, height: 50, color: '#7f8c8d' },
+                { x: 550, y: canvas.height - 30 - 60, width: 50, height: 60, color: '#95a5a6' }
+            ];
+
+            const gravity = 0.6;
+            const bullets = [];
+            const enemyBullets = [];
+            const enemies = [];
+            const medkitItems = [];
+            const particles = [];
+
+            const keys = { left: false, right: false };
+
+            // Enemy Spawner
+            function spawnEnemy() {
+                if (enemies.length >= 4 || gameOver) return;
+                const spawnX = Math.random() * (canvas.width - 300) + 250;
+                enemies.push({
+                    x: spawnX,
+                    y: canvas.height - 30 - 45,
+                    width: 30,
+                    height: 45,
+                    color: '#c0392b',
+                    health: 50,
+                    lastShot: Date.now()
+                });
+            }
+
+            for(let i = 0; i < 2; i++) spawnEnemy();
+            setInterval(spawnEnemy, 4000);
+
+            // Controls
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+                if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+                if ((e.key === 'ArrowUp' || e.key === 'w') && player.grounded) {
+                    player.vy = player.jumpPower;
+                    player.grounded = false;
+                }
+                if (e.key === ' ' || e.key === 'f') shootBullet();
+                if (e.key === 'e' || e.key === 'E') useMedkit();
+                if (e.key === 'r' || e.key === 'R') toggleBike();
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+                if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+            });
+
+            function bindTouch(btnId, startFn, endFn) {
+                const btn = document.getElementById(btnId);
+                btn.addEventListener('touchstart', (e) => { e.preventDefault(); startFn(); });
+                btn.addEventListener('touchend', (e) => { e.preventDefault(); if(endFn) endFn(); });
+                btn.addEventListener('mousedown', () => startFn());
+                btn.addEventListener('mouseup', () => { if(endFn) endFn(); });
+            }
+
+            bindTouch('btn-left', () => keys.left = true, () => keys.left = false);
+            bindTouch('btn-right', () => keys.right = true, () => keys.right = false);
+            bindTouch('btn-jump', () => {
+                if (player.grounded) {
+                    player.vy = player.jumpPower;
+                    player.grounded = false;
+                }
+            });
+            bindTouch('btn-shoot', () => shootBullet());
+            bindTouch('btn-medkit', () => useMedkit());
+            bindTouch('btn-bike', () => toggleBike());
+
+            function useMedkit() {
+                if (player.medkits > 0 && player.health < player.maxHealth && !player.isHealing) {
+                    player.isHealing = true;
+                    player.healTimer = 120; // 2 Seconds
+                }
+            }
+
+            function toggleBike() {
+                const distToBike = Math.abs((player.x + player.width / 2) - (bike.x + bike.width / 2));
+                if (distToBike < 60) {
+                    player.onBike = !player.onBike;
+                }
+            }
+
+            function shootBullet() {
+                if (gameOver || player.isHealing) return;
+                const dir = player.facing === 'right' ? 1 : -1;
+                const startX = player.facing === 'right' ? player.x + player.width : player.x;
+
+                bullets.push({
+                    x: startX,
+                    y: player.y + 15,
+                    vx: dir * (player.onBike ? 14 : 10),
+                    radius: 3
+                });
+            }
+
+            function addParticles(x, y, color) {
+                for (let i = 0; i < 5; i++) {
+                    particles.push({
+                        x: x, y: y,
+                        vx: (Math.random() - 0.5) * 4,
+                        vy: (Math.random() - 0.5) * 4,
+                        life: 12,
+                        color: color
+                    });
+                }
+            }
+
+            // Game Logic Loop
+            function update() {
+                if (gameOver) return;
+
+                // Healing Logic
+                if (player.isHealing) {
+                    player.healTimer--;
+                    if (player.healTimer <= 0) {
+                        player.health = player.maxHealth;
+                        player.medkits--;
+                        player.isHealing = false;
+                    }
+                }
+
+                // Movement Logic (Normal vs Bike)
+                player.speed = player.onBike ? bike.speed : player.baseSpeed;
+
+                if (keys.left) {
+                    player.vx = -player.speed;
+                    player.facing = 'left';
+                } else if (keys.right) {
+                    player.vx = player.speed;
+                    player.facing = 'right';
+                } else {
+                    player.vx = 0;
+                }
+
+                player.x += player.vx;
+                player.vy += gravity;
+                player.y += player.vy;
+
+                if (player.onBike) {
+                    bike.x = player.x - 10;
+                    bike.y = player.y + 20;
+                }
+
+                // Ground Check
+                if (player.y + player.height >= canvas.height - 30) {
+                    player.y = canvas.height - 30 - player.height;
+                    player.vy = 0;
+                    player.grounded = true;
+                }
+
+                // Player Bullets Update
+                bullets.forEach((b, index) => {
+                    b.x += b.vx;
+                    if (b.x < 0 || b.x > canvas.width) bullets.splice(index, 1);
+
+                    // Cover Collision with Player Bullets
+                    covers.forEach(c => {
+                        if (b.x > c.x && b.x < c.x + c.width && b.y > c.y && b.y < c.y + c.height) {
+                            addParticles(b.x, b.y, '#7f8c8d');
+                            bullets.splice(index, 1);
+                        }
+                    });
+
+                    // Bullet Hits Enemy
+                    enemies.forEach((e, eIndex) => {
+                        if (b.x > e.x && b.x < e.x + e.width && b.y > e.y && b.y < e.y + e.height) {
+                            e.health -= 25;
+                            addParticles(b.x, b.y, '#e74c3c');
+                            bullets.splice(index, 1);
+
+                            if (e.health <= 0) {
+                                score += 100;
+                                if (Math.random() > 0.5) medkitItems.push({ x: e.x, y: e.y + 20 });
+                                enemies.splice(eIndex, 1);
+                            }
+                        }
+                    });
+                });
+
+                // Enemy AI & Shooting
+                enemies.forEach(e => {
+                    if (Date.now() - e.lastShot > 2500) {
+                        const dir = player.x < e.x ? -6 : 6;
+                        enemyBullets.push({ x: e.x, y: e.y + 15, vx: dir });
+                        e.lastShot = Date.now();
+                    }
+
+                    // Bike Crush Enemy
+                    if (player.onBike && player.x < e.x + e.width && player.x + player.width > e.x &&
+                        player.y < e.y + e.height && player.y + player.height > e.y) {
+                        e.health = 0;
+                        score += 150;
+                        addParticles(e.x, e.y, '#e74c3c');
+                    }
+                });
+
+                // Enemy Bullets vs Cover & Player
+                enemyBullets.forEach((eb, index) => {
+                    eb.x += eb.vx;
+                    if (eb.x < 0 || eb.x > canvas.width) enemyBullets.splice(index, 1);
+
+                    // Cover Blocks Enemy Bullet
+                    covers.forEach(c => {
+                        if (eb.x > c.x && eb.x < c.x + c.width && eb.y > c.y && eb.y < c.y + c.height) {
+                            addParticles(eb.x, eb.y, '#7f8c8d');
+                            enemyBullets.splice(index, 1);
+                        }
+                    });
+
+                    // Enemy Bullet Hits Player
+                    if (eb.x > player.x && eb.x < player.x + player.width && eb.y > player.y && eb.y < player.y + player.height) {
+                        player.health -= 15;
+                        addParticles(eb.x, eb.y, '#e74c3c');
+                        enemyBullets.splice(index, 1);
+                        if (player.health <= 0) gameOver = true;
+                    }
+                });
+
+                // Medkit Pickup
+                medkitItems.forEach((m, index) => {
+                    if (player.x < m.x + 20 && player.x + player.width > m.x &&
+                        player.y < m.y + 20 && player.y + player.height > m.y) {
+                        player.medkits++;
+                        medkitItems.splice(index, 1);
+                    }
+                });
+
+                // Particle update
+                particles.forEach((p, i) => {
+                    p.x += p.vx; p.y += p.vy; p.life--;
+                    if (p.life <= 0) particles.splice(i, 1);
+                });
+            }
+
+            // Render Function
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Ground
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+
+                // Covers (Walls/Crates)
+                covers.forEach(c => {
+                    ctx.fillStyle = c.color;
+                    ctx.fillRect(c.x, c.y, c.width, c.height);
+                    ctx.strokeStyle = '#2c3e50';
+                    ctx.strokeRect(c.x, c.y, c.width, c.height);
+                });
+
+                // Bike (when not ridden)
+                if (!player.onBike) {
+                    ctx.fillStyle = bike.color;
+                    ctx.fillRect(bike.x, bike.y, bike.width, bike.height);
+                }
+
+                // Player
+                ctx.fillStyle = player.color;
+                ctx.fillRect(player.x, player.y, player.width, player.height);
+
+                // Bike Wheels (When riding)
+                if (player.onBike) {
+                    ctx.fillStyle = '#333';
+                    ctx.beginPath();
+                    ctx.arc(player.x - 5, player.y + player.height, 8, 0, Math.PI * 2);
+                    ctx.arc(player.x + player.width + 5, player.y + player.height, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Enemies
+                enemies.forEach(e => {
+                    ctx.fillStyle = e.color;
+                    ctx.fillRect(e.x, e.y, e.width, e.height);
+                });
+
+                // Bullets
+                ctx.fillStyle = '#f1c40f';
+                bullets.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, 3, 0, Math.PI * 2); ctx.fill(); });
+
+                ctx.fillStyle = '#e74c3c';
+                enemyBullets.forEach(eb => { ctx.beginPath(); ctx.arc(eb.x, eb.y, 4, 0, Math.PI * 2); ctx.fill(); });
+
+                // Medkit Drops
+                medkitItems.forEach(m => {
+                    ctx.fillStyle = '#2ecc71';
+                    ctx.fillRect(m.x, m.y, 16, 16);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillText('+', m.x + 4, m.y + 12);
+                });
+
+                // Particles
+                particles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, 3, 3);
+                });
+
+                // UI Overlay
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(`Kills/Score: ${score}`, 20, 25);
+                ctx.fillText(`Medkits: 💊 x${player.medkits}`, 180, 25);
+
+                // Health Bar
+                ctx.fillStyle = '#333';
+                ctx.fillRect(20, 35, 140, 10);
+                ctx.fillStyle = player.health > 30 ? '#2ecc71' : '#e74c3c';
+                ctx.fillRect(20, 35, (player.health / player.maxHealth) * 140, 10);
+
+                if (player.isHealing) {
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.fillText('Healing...', player.x, player.y - 10);
+                }
+
+                if (gameOver) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.font = 'bold 36px sans-serif';
+                    ctx.fillText('ELIMINATED!', canvas.width / 2 - 110, canvas.height / 2);
+                }
+            }
+
+            function gameLoop() {
+                update();
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
+
+            gameLoop();
+        })();
+    </script>
+</div>
