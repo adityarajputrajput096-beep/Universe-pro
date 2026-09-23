@@ -357,7 +357,7 @@ main{width:min(650px,100%);margin:auto}
   }
 
   function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
-  function avatarStyle(pic){ return pic ? `style="background-image:url('${pic}')"` : '' }
+  function avatarStyle(pic){ return pic ? `style="background-image:url('${pic}');background-size:cover;background-position:center;"` : '' }
 
   // Realtime Listeners
   onAuthStateChanged(auth, user => {
@@ -618,7 +618,7 @@ main{width:min(650px,100%);margin:auto}
       let c = comments[k];
       let u = dbUsers[c.userId] || {};
       return `<div class="comment-item">
-        <div class="small-avatar" style="width:24px;height:24px;${u.pic?`background-image:url('${u.pic}')`:''}"></div>
+        <div class="small-avatar" style="width:24px;height:24px;${u.pic?`background-image:url('${u.pic}');background-size:cover;background-position:center;`:''}"></div>
         <div><b>${esc(u.username||'user')}:</b> ${esc(c.text)}</div>
       </div>`;
     }).join('') || '<p style="color:#777;text-align:center">No comments yet.</p>';
