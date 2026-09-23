@@ -671,7 +671,14 @@ main{width:min(650px,100%);margin:auto}
 
   function renderProfile() {
     let myObj = dbUsers[currentUid] || {};
-    document.getElementById('myAvatar').style.backgroundImage = myObj.pic ? `url('${myObj.pic}')` : '';
+    let avatarElem = document.getElementById('myAvatar');
+    if (myObj.pic) {
+      avatarElem.style.backgroundImage = `url('${myObj.pic}')`;
+      avatarElem.style.backgroundSize = 'cover';
+      avatarElem.style.backgroundPosition = 'center';
+    } else {
+      avatarElem.style.backgroundImage = 'none';
+    }
     document.getElementById('myName').textContent = myObj.name || '';
     let myPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
     document.getElementById('postCount').textContent = myPosts.length;
@@ -702,7 +709,14 @@ main{width:min(650px,100%);margin:auto}
     profileUser = userId;
     let u = dbUsers[userId] || {};
     let myObj = dbUsers[currentUid] || {};
-    document.getElementById('personAvatar').style.backgroundImage = u.pic ? `url('${u.pic}')` : '';
+    let pAvatar = document.getElementById('personAvatar');
+    if (u.pic) {
+      pAvatar.style.backgroundImage = `url('${u.pic}')`;
+      pAvatar.style.backgroundSize = 'cover';
+      pAvatar.style.backgroundPosition = 'center';
+    } else {
+      pAvatar.style.backgroundImage = 'none';
+    }
     document.getElementById('personName').textContent = u.name || 'User';
     document.getElementById('personUsername').textContent = '@' + (u.username || 'user');
     
@@ -711,9 +725,11 @@ main{width:min(650px,100%);margin:auto}
     btn.textContent = isFollowing ? 'Unfollow' : 'Follow';
     btn.className = isFollowing ? 'secondary' : 'primary';
 
-    let followersCount = Object.keys(dbUsers).filter(k => (dbUsers[k].following || []).includes(userId)).length;
-    document.getElementById('personFollowerCount').textContent = followersCount;
-    document.getElementById('personFollowingCount').textContent = (u.following || []).length;
+    let followerCount = Object.keys(dbUsers).filter(k => (dbUsers[k].following || []).includes(userId)).length;
+    let followingCount = (u.following || []).length;
+
+    document.getElementById('personFollowerCount').textContent = followerCount;
+    document.getElementById('personFollowingCount').textContent = followingCount;
 
     let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === userId);
     document.getElementById('personGrid').innerHTML = userPosts.map(k => {
@@ -725,142 +741,183 @@ main{width:min(650px,100%);margin:auto}
   };
 
   window.toggleFollowPerson = () => {
-    if(!profileUser) return;
+    if (!profileUser) return;
     let myObj = dbUsers[currentUid] || {};
     let following = myObj.following || [];
     let idx = following.indexOf(profileUser);
-    if(idx >= 0) following.splice(idx, 1);
-    else following.push(profileUser);
-    update(ref(db, `users/${currentUid}`), { following });
-    openUser(profileUser);
+
+    if (idx >= 0) {
+      following.splice(idx, 1);
+    } else {
+      following.push(profileUser);
+    }
+
+    update(ref(db, `users/${currentUid}`), { following: following });
+    window.openUser(profileUser);
   };
 
-  window.startProfileChat = () => {
-    if(profileUser) window.openChatWith(profileUser);
-  };
+  // Chat Functions
+  function getChatRoomId(uid1, uid2) {
+    return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
+  }
 
-  // Realtime Chat
-  window.openChatList = () => { window.showTab('chat'); window.backChats(); };
-  window.backChats = () => {
+  window.openChatList = () => {
+    window.showTab('chat');
     document.getElementById('chatListView').classList.remove('hidden');
     document.getElementById('chatRoom').classList.add('hidden');
-    activeChat = null;
+    renderChats();
   };
 
   function renderChats() {
-    let box = document.getElementById('chatList');
-    let users = Object.keys(dbUsers).filter(k => k !== currentUid).map(k => dbUsers[k]);
-    box.innerHTML = users.map(u => `<div class="chat-row" onclick="openChatWith('${u.id}')">
-      <div class="small-avatar" ${avatarStyle(u.pic)}></div>
-      <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
-    </div>`).join('') || '<div style="padding:20px;text-align:center;color:#777">No users found</div>';
+    let list = document.getElementById('chatList');
+    let otherUsers = Object.keys(dbUsers).filter(id => id !== currentUid);
+    list.innerHTML = otherUsers.map(id => {
+      let u = dbUsers[id];
+      return `<div class="chat-row" onclick="startChatWith('${id}')">
+        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+        <div><b>${esc(u.username || 'user')}</b><div style="font-size:12px;color:#888">${esc(u.name || '')}</div></div>
+      </div>`;
+    }).join('') || '<div style="padding:20px;text-align:center;color:#777">No users found</div>';
   }
 
-  window.openChatWith = (userId) => {
-    window.showTab('chat');
-    activeChat = userId;
-    let u = dbUsers[userId] || {};
+  window.startChatWith = (otherUid) => {
+    activeChat = otherUid;
+    let u = dbUsers[otherUid] || {};
     document.getElementById('chatTitle').textContent = u.username || 'Chat';
     document.getElementById('chatListView').classList.add('hidden');
     document.getElementById('chatRoom').classList.remove('hidden');
     renderMessages();
   };
 
+  window.startProfileChat = () => {
+    if(profileUser) window.startChatWith(profileUser);
+  };
+
+  window.backChats = () => {
+    activeChat = null;
+    document.getElementById('chatListView').classList.remove('hidden');
+    document.getElementById('chatRoom').classList.add('hidden');
+  };
+
   function renderMessages() {
     if(!activeChat) return;
-    let chatKey = [currentUid, activeChat].sort().join('_');
-    let msgs = dbChats[chatKey] || {};
+    let roomId = getChatRoomId(currentUid, activeChat);
+    let msgs = dbChats[roomId] || {};
     let box = document.getElementById('messages');
     box.innerHTML = Object.keys(msgs).map(k => {
       let m = msgs[k];
-      return `<div class="bubble ${m.from === currentUid ? 'sent' : 'received'}">${esc(m.text)}</div>`;
+      let sent = m.sender === currentUid;
+      return `<div class="bubble ${sent ? 'sent' : 'received'}">${esc(m.text)}</div>`;
     }).join('');
     box.scrollTop = box.scrollHeight;
   }
 
   window.sendMessage = () => {
-    let inp = document.getElementById('messageInput');
-    let txt = inp.value.trim();
+    let input = document.getElementById('messageInput');
+    let txt = input.value.trim();
     if(!txt || !activeChat) return;
-    let chatKey = [currentUid, activeChat].sort().join('_');
-    push(ref(db, `chats/${chatKey}`), {
-      from: currentUid,
+    let roomId = getChatRoomId(currentUid, activeChat);
+    push(ref(db, `chats/${roomId}`), {
+      sender: currentUid,
       text: txt,
       time: Date.now()
     });
-    inp.value = '';
+    input.value = '';
   };
 
-  // VIDEO CALL FEATURE (WebRTC + Firebase Signaling)
+  // WebRTC Video Call Implementation
   window.startVideoCall = async () => {
-    if(!activeChat) return toast('Select a chat to call');
+    if(!activeChat) return;
     document.getElementById('videoModal').classList.remove('hidden');
-    isCamOn = true;
-    isMicOn = true;
-    updateCallButtons();
-
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       document.getElementById('localVideo').srcObject = localStream;
       
       peerConnection = new RTCPeerConnection(rtcServers);
       localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
+      
       peerConnection.ontrack = event => {
         document.getElementById('remoteVideo').srcObject = event.streams[0];
       };
 
-      toast('Starting video call...');
+      let roomId = getChatRoomId(currentUid, activeChat);
+      let callRef = ref(db, `calls/${roomId}`);
+
+      peerConnection.onicecandidate = event => {
+        if(event.candidate) {
+          push(ref(db, `calls/${roomId}/offerCandidates`), event.candidate.toJSON());
+        }
+      };
+
+      const offerDescription = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offerDescription);
+
+      const offer = {
+        sdp: offerDescription.sdp,
+        type: offerDescription.type,
+      };
+
+      await set(callRef, { offer });
+
+      onValue(callRef, snapshot => {
+        const data = snapshot.val();
+        if (peerConnection && data && data.answer && !peerConnection.currentRemoteDescription) {
+          const answerDescription = new RTCSessionDescription(data.answer);
+          peerConnection.setRemoteDescription(answerDescription);
+        }
+      });
+
+      onValue(ref(db, `calls/${roomId}/answerCandidates`), snapshot => {
+        snapshot.forEach(child => {
+          if (peerConnection) {
+            const candidate = new RTCIceCandidate(child.val());
+            peerConnection.addIceCandidate(candidate);
+          }
+        });
+      });
+
     } catch (err) {
-      toast('Camera/Microphone access denied');
+      toast('Camera/Mic permission denied or not supported');
       window.endCall();
     }
   };
 
   window.toggleCamera = () => {
-    if (!localStream) return;
-    let videoTrack = localStream.getVideoTracks()[0];
-    if (videoTrack) {
-      isCamOn = !isCamOn;
-      videoTrack.enabled = isCamOn;
-      updateCallButtons();
-      toast(isCamOn ? 'Camera Turned On' : 'Camera Off');
+    if(localStream) {
+      let videoTrack = localStream.getVideoTracks()[0];
+      if(videoTrack) {
+        isCamOn = !isCamOn;
+        videoTrack.enabled = isCamOn;
+        document.getElementById('btnToggleCam').classList.toggle('off', !isCamOn);
+      }
     }
   };
 
   window.toggleMic = () => {
-    if (!localStream) return;
-    let audioTrack = localStream.getAudioTracks()[0];
-    if (audioTrack) {
-      isMicOn = !isMicOn;
-      audioTrack.enabled = isMicOn;
-      updateCallButtons();
-      toast(isMicOn ? 'Microphone On' : 'Muted');
+    if(localStream) {
+      let audioTrack = localStream.getAudioTracks()[0];
+      if(audioTrack) {
+        isMicOn = !isMicOn;
+        audioTrack.enabled = isMicOn;
+        document.getElementById('btnToggleMic').classList.toggle('off', !isMicOn);
+      }
     }
   };
 
-  function updateCallButtons() {
-    let camBtn = document.getElementById('btnToggleCam');
-    let micBtn = document.getElementById('btnToggleMic');
-    
-    camBtn.textContent = isCamOn ? '📹' : '📷🚫';
-    camBtn.classList.toggle('off', !isCamOn);
-
-    micBtn.textContent = isMicOn ? '🎙️' : '🎙️🚫';
-    micBtn.classList.toggle('off', !isMicOn);
-  }
-
   window.endCall = () => {
-    if (localStream) {
+    if(localStream) {
       localStream.getTracks().forEach(track => track.stop());
       localStream = null;
     }
-    if (peerConnection) {
+    if(peerConnection) {
       peerConnection.close();
       peerConnection = null;
     }
     document.getElementById('videoModal').classList.add('hidden');
-    toast('Call ended');
+    if(activeChat) {
+      let roomId = getChatRoomId(currentUid, activeChat);
+      remove(ref(db, `calls/${roomId}`));
+    }
   };
 </script>
 </body>
