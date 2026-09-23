@@ -117,14 +117,8 @@ main{width:min(650px,100%);margin:auto}
 .preview{height:380px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .preview img,.preview video{max-width:100%;max-height:100%}
 
-/* Games Tab - Free Fire 2D Action Style */
-.games-container{padding:16px}
-.game-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center;position:relative;overflow:hidden}
-.game-card h3{margin-bottom:10px}
-.ff-controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px;touch-action:none}
-.ff-btn{background:#262626;color:#fff;border:1px solid #444;padding:10px 16px;border-radius:8px;font-weight:700;font-size:14px;user-select:none}
-.ff-btn:active{background:var(--accent)}
-.ff-btn-fire{background:#ff3040;border-color:#ff5566;padding:12px 24px;font-size:16px}
+/* Games Tab */
+.games-container{padding:16px;text-align:center;color:var(--muted)}
 
 /* Bottom Nav */
 .bottom {
@@ -212,20 +206,8 @@ main{width:min(650px,100%);margin:auto}
 
 <section id="games" class="tab">
   <div class="games-container">
-    <div class="game-card">
-      <h3>🔥 Free Fire 2D Survival 🔥</h3>
-      <p id="gameStatus" style="color:var(--muted);margin-bottom:10px">Kills: 0 | HP: 100</p>
-      
-      <canvas id="ffCanvas" width="340" height="320" style="background:#1b2810; border:2px solid #333; border-radius:10px; display:block; margin:auto; cursor:crosshair;"></canvas>
-      
-      <div class="ff-controls">
-        <button class="ff-btn" ontouchstart="ffMove('left')" onclick="ffMove('left')">◀ LEFT</button>
-        <button class="ff-btn ff-btn-fire" ontouchstart="ffShoot()" onclick="ffShoot()">🔥 FIRE</button>
-        <button class="ff-btn" ontouchstart="ffMove('right')" onclick="ffMove('right')">RIGHT ▶</button>
-      </div>
-      
-      <button class="secondary" style="margin-top:15px;" onclick="resetFFGame()">Restart Match</button>
-    </div>
+    <h3>🎮 Games Hub</h3>
+    <p style="margin-top:20px;">New games coming soon!</p>
   </div>
 </section>
 
@@ -368,13 +350,6 @@ main{width:min(650px,100%);margin:auto}
   let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
   let activeCommentPostId = null, profileTab = 'posts';
-
-  // 2D Free Fire Game Engine State
-  let player = { x: 155, y: 270, w: 30, h: 30, hp: 100, kills: 0 };
-  let bullets = [];
-  let enemies = [];
-  let ffLoopId = null;
-  let isFFRunning = false;
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -688,12 +663,6 @@ main{width:min(650px,100%);margin:auto}
     document.querySelectorAll('.bottom button').forEach(b => b.classList.remove('active-nav'));
     let navBtn = document.getElementById('nav-' + id);
     if(navBtn) navBtn.classList.add('active-nav');
-    
-    if(id === 'games') {
-      startFFGame();
-    } else {
-      stopFFGame();
-    }
   };
 
   window.switchProfileTab = (tab) => {
@@ -709,147 +678,132 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('myName').textContent = myObj.name || '';
     let myPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
     document.getElementById('postCount').textContent = myPosts.length;
+    document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(currentUid)).length;
+    document.getElementById('followingCount').textContent = (myObj.following || []).length;
     
-    let grid = document.getElementById('myGrid');
-    let list = profileTab === 'posts' ? myPosts.map(k => dbPosts[k]) : Object.keys(dbPosts).filter(k => (dbPosts[k].saved||[]).includes(currentUid)).map(k => dbPosts[k]);
-    grid.innerHTML = list.map(p => `<div class="grid-item">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`).join('');
+    let gridPosts = profileTab === 'posts' ? myPosts : Object.keys(dbPosts).filter(k => (dbPosts[k].saved || []).includes(currentUid));
+    let gridBox = document.getElementById('myGrid');
+    gridBox.innerHTML = gridPosts.map(k => {
+      let p = dbPosts[k];
+      return `<div class="grid-item">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
+    }).join('') || '<div style="grid-column:span 3;padding:30px;text-align:center;color:#666">No posts here</div>';
   }
 
-  // Free Fire 2D Action Engine Functions
-  function startFFGame() {
-    if(isFFRunning) return;
-    isFFRunning = true;
-    let canvas = document.getElementById('ffCanvas');
-    if(!canvas) return;
-    
-    // Key Controls for PC
-    window.addEventListener('keydown', handleFFKeyDown);
-    
-    ffLoopId = setInterval(updateFFGame, 1000 / 30);
-  }
-
-  function stopFFGame() {
-    isFFRunning = false;
-    clearInterval(ffLoopId);
-    window.removeEventListener('keydown', handleFFKeyDown);
-  }
-
-  function handleFFKeyDown(e) {
-    if(e.key === 'ArrowLeft' || e.key === 'a') ffMove('left');
-    if(e.key === 'ArrowRight' || e.key === 'd') ffMove('right');
-    if(e.key === ' ' || e.key === 'f') ffShoot();
-  }
-
-  window.ffMove = (dir) => {
-    if(dir === 'left' && player.x > 10) player.x -= 20;
-    if(dir === 'right' && player.x < 300) player.x += 20;
+  window.changeProfilePic = () => document.getElementById('profileInput').click();
+  window.saveProfilePic = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      update(ref(db, 'users/' + currentUid), { pic: r.result });
+      toast('Profile photo updated!');
+    };
+    r.readAsDataURL(f);
   };
 
-  window.ffShoot = () => {
-    bullets.push({ x: player.x + 12, y: player.y, r: 4, speed: 12 });
+  // User Profile View
+  window.openUser = (uid) => {
+    if(uid === currentUid) return window.showTab('profile');
+    profileUser = uid;
+    let u = dbUsers[uid] || {};
+    document.getElementById('personAvatar').style.backgroundImage = u.pic ? `url('${u.pic}')` : '';
+    document.getElementById('personName').textContent = u.name || '';
+    document.getElementById('personUsername').textContent = '@' + (u.username || '');
+    
+    let followers = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(uid)).length;
+    document.getElementById('personFollowerCount').textContent = followers;
+    document.getElementById('personFollowingCount').textContent = (u.following || []).length;
+    
+    let isFollowing = (dbUsers[currentUid]?.following || []).includes(uid);
+    let btn = document.getElementById('personFollowBtn');
+    btn.textContent = isFollowing ? 'Unfollow' : 'Follow';
+    btn.className = isFollowing ? 'secondary' : 'primary';
+
+    let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === uid);
+    document.getElementById('personGrid').innerHTML = userPosts.map(k => {
+      let p = dbPosts[k];
+      return `<div class="grid-item">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
+    }).join('') || '<div style="grid-column:span 3;padding:30px;text-align:center;color:#666">No posts</div>';
+
+    window.showTab('personProfile');
   };
 
-  window.resetFFGame = () => {
-    player = { x: 155, y: 270, w: 30, h: 30, hp: 100, kills: 0 };
-    bullets = [];
-    enemies = [];
-    document.getElementById('gameStatus').textContent = `Kills: 0 | HP: 100`;
+  window.toggleFollowPerson = () => {
+    if(!profileUser) return;
+    let myFollowing = dbUsers[currentUid]?.following || [];
+    let idx = myFollowing.indexOf(profileUser);
+    if(idx >= 0) myFollowing.splice(idx, 1);
+    else myFollowing.push(profileUser);
+    set(ref(db, `users/${currentUid}/following`), myFollowing);
   };
 
-  function updateFFGame() {
-    let canvas = document.getElementById('ffCanvas');
-    if(!canvas) return;
-    let ctx = canvas.getContext('2d');
-
-    // Clear Screen
-    ctx.fillStyle = "#1b2810";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw Ground Grid Pattern
-    ctx.strokeStyle = "#293d18";
-    ctx.lineWidth = 1;
-    for(let i = 0; i < canvas.width; i += 40) {
-      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-    }
-
-    // Update & Draw Bullets
-    ctx.fillStyle = "#ffeb3b";
-    for(let i = bullets.length - 1; i >= 0; i--) {
-      let b = bullets[i];
-      b.y -= b.speed;
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-      ctx.fill();
-      if(b.y < 0) bullets.splice(i, 1);
-    }
-
-    // Spawn Enemy Bots
-    if(Math.random() < 0.04 && enemies.length < 5) {
-      enemies.push({ x: Math.random() * 300 + 10, y: -20, w: 28, h: 28, hp: 30, speed: Math.random() * 2 + 1 });
-    }
-
-    // Update & Draw Enemies
-    for(let i = enemies.length - 1; i >= 0; i--) {
-      let e = enemies[i];
-      e.y += e.speed;
-
-      // Enemy Body (Red - Bot)
-      ctx.fillStyle = "#e53935";
-      ctx.fillRect(e.x, e.y, e.w, e.h);
-
-      // Enemy Helmet
-      ctx.fillStyle = "#555";
-      ctx.fillRect(e.x + 4, e.y - 4, 20, 6);
-
-      // Bullet Hit Check
-      for(let j = bullets.length - 1; j >= 0; j--) {
-        let b = bullets[j];
-        if(b.x > e.x && b.x < e.x + e.w && b.y > e.y && b.y < e.y + e.h) {
-          e.hp -= 15;
-          bullets.splice(j, 1);
-          if(e.hp <= 0) {
-            enemies.splice(i, 1);
-            player.kills++;
-            document.getElementById('gameStatus').textContent = `Kills: ${player.kills} | HP: ${player.hp}`;
-            break;
-          }
-        }
-      }
-
-      // Check Enemy Collision with Player
-      if(e && e.y + e.h >= player.y && e.x + e.w >= player.x && e.x <= player.x + player.w) {
-        player.hp -= 10;
-        enemies.splice(i, 1);
-        document.getElementById('gameStatus').textContent = `Kills: ${player.kills} | HP: ${player.hp}`;
-        if(player.hp <= 0) {
-          toast(`Game Over! Total Kills: ${player.kills}`);
-          resetFFGame();
-        }
-      }
-
-      if(e && e.y > canvas.height) enemies.splice(i, 1);
-    }
-
-    // Draw Player Character (Free Fire Survivor - Blue/Gold)
-    ctx.fillStyle = "#0095f6";
-    ctx.fillRect(player.x, player.y, player.w, player.h);
-
-    // Armor Vest
-    ctx.fillStyle = "#ffd7000";
-    ctx.fillRect(player.x + 4, player.y + 6, 22, 18);
-
-    // Gun Barrel
-    ctx.fillStyle = "#888";
-    ctx.fillRect(player.x + 12, player.y - 8, 6, 10);
-
-    // Health Bar Header
-    ctx.fillStyle = "#ff3040";
-    ctx.fillRect(10, 100, 100, 8);
-    ctx.fillStyle = "#4caf50";
-    ctx.fillRect(10, 10, Math.max(0, player.hp), 8);
-    ctx.strokeStyle = "#fff";
-    ctx.strokeRect(10, 10, 100, 8);
+  // Chats
+  window.openChatList = () => { window.showTab('chat'); window.backChats(); };
+  
+  function renderChats() {
+    let list = document.getElementById('chatList');
+    let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
+    list.innerHTML = users.map(u => `
+      <div class="chat-row" onclick="enterChat('${u.id}')">
+        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+        <div><b>${esc(u.username)}</b><div style="color:#777;font-size:12px">${esc(u.name)}</div></div>
+      </div>
+    `).join('') || '<div style="padding:20px;color:#777;text-align:center">No users available to chat</div>';
   }
+
+  window.enterChat = (uid) => {
+    activeChat = uid;
+    let u = dbUsers[uid] || {};
+    document.getElementById('chatTitle').textContent = u.username || 'Chat';
+    document.getElementById('chatListView').classList.add('hidden');
+    document.getElementById('chatRoom').classList.remove('hidden');
+    renderMessages();
+  };
+
+  window.backChats = () => {
+    activeChat = null;
+    document.getElementById('chatListView').classList.remove('hidden');
+    document.getElementById('chatRoom').classList.add('hidden');
+  };
+
+  window.startProfileChat = () => {
+    if(profileUser) {
+      window.showTab('chat');
+      window.enterChat(profileUser);
+    }
+  };
+
+  function renderMessages() {
+    if(!activeChat) return;
+    let chatId = [currentUid, activeChat].sort().join('_');
+    let msgs = dbChats[chatId] || {};
+    let box = document.getElementById('messages');
+    box.innerHTML = Object.keys(msgs).map(k => {
+      let m = msgs[k];
+      let isMe = m.sender === currentUid;
+      return `<div class="bubble ${isMe?'sent':'received'}">${esc(m.text)}</div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  }
+
+  window.sendMessage = () => {
+    let inp = document.getElementById('messageInput');
+    let txt = inp.value.trim();
+    if(!txt || !activeChat) return;
+    let chatId = [currentUid, activeChat].sort().join('_');
+    push(ref(db, `chats/${chatId}`), {
+      sender: currentUid,
+      text: txt,
+      time: Date.now()
+    });
+    inp.value = '';
+  };
+
+  // Video Call Dummy Stubs
+  window.startVideoCall = () => document.getElementById('videoModal').classList.remove('hidden');
+  window.endCall = () => document.getElementById('videoModal').classList.add('hidden');
+  window.toggleCamera = () => toast('Camera toggled');
+  window.toggleMic = () => toast('Mic toggled');
 </script>
 </body>
 </html>
