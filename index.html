@@ -58,6 +58,7 @@ main{width:min(650px,100%);margin:auto}
 .actions{display:flex;justify-content:space-between;padding:10px 14px;font-size:23px}
 .actions-left{display:flex;gap:17px;align-items:center}
 .action,.delete-btn{border:0;background:none;color:#fff;font-size:22px;cursor:pointer}
+.delete-btn:hover{opacity:0.8;transform:scale(1.1)}
 .liked{color:var(--like)}
 .details{padding:0 14px 14px;font-size:14px}
 .likes{font-weight:700;margin-bottom:6px}
@@ -117,9 +118,6 @@ main{width:min(650px,100%);margin:auto}
 .preview{height:380px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .preview img,.preview video{max-width:100%;max-height:100%}
 
-/* Games Tab */
-.games-container{padding:16px;text-align:center;color:var(--muted)}
-
 /* Bottom Nav */
 .bottom {
   position: fixed;
@@ -139,7 +137,7 @@ main{width:min(650px,100%);margin:auto}
   background: transparent;
   border: 0;
   color: var(--muted);
-  font-size: 20px;
+  font-size: 22px;
 }
 .bottom button.active-nav {
   color: #fff;
@@ -202,13 +200,6 @@ main{width:min(650px,100%);margin:auto}
 
 <section id="reels" class="tab">
   <div class="reels" id="reelsList"></div>
-</section>
-
-<section id="games" class="tab">
-  <div class="games-container">
-    <h3>🎮 Games Hub</h3>
-    <p style="margin-top:20px;">New games coming soon!</p>
-  </div>
 </section>
 
 <section id="upload" class="tab">
@@ -285,7 +276,6 @@ main{width:min(650px,100%);margin:auto}
   <button id="nav-search" onclick="showTab('search')">🔍</button>
   <button id="nav-upload" onclick="openUpload()">➕</button>
   <button id="nav-reels" onclick="showTab('reels')">🎬</button>
-  <button id="nav-games" onclick="showTab('games')">🎮</button>
   <button id="nav-profile" onclick="showTab('profile')">👤</button>
 </nav>
 </div>
@@ -350,6 +340,13 @@ main{width:min(650px,100%);margin:auto}
   let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
   let activeCommentPostId = null, profileTab = 'posts';
+
+  // Video Call WebRTC State
+  let localStream = null;
+  let peerConnection = null;
+  let isCamOn = true;
+  let isMicOn = true;
+  const rtcServers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -681,12 +678,11 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(currentUid)).length;
     document.getElementById('followingCount').textContent = (myObj.following || []).length;
     
-    let gridPosts = profileTab === 'posts' ? myPosts : Object.keys(dbPosts).filter(k => (dbPosts[k].saved || []).includes(currentUid));
-    let gridBox = document.getElementById('myGrid');
-    gridBox.innerHTML = gridPosts.map(k => {
+    let gridPosts = profileTab === 'posts' ? myPosts : Object.keys(dbPosts).filter(k => (dbPosts[k].saved||[]).includes(currentUid));
+    document.getElementById('myGrid').innerHTML = gridPosts.map(k => {
       let p = dbPosts[k];
-      return `<div class="grid-item">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
-    }).join('') || '<div style="grid-column:span 3;padding:30px;text-align:center;color:#666">No posts here</div>';
+      return `<div class="grid-item">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`;
+    }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
   }
 
   window.changeProfilePic = () => document.getElementById('profileInput').click();
@@ -695,93 +691,89 @@ main{width:min(650px,100%);margin:auto}
     if(!f) return;
     let r = new FileReader();
     r.onload = () => {
-      update(ref(db, 'users/' + currentUid), { pic: r.result });
+      update(ref(db, `users/${currentUid}`), { pic: r.result });
       toast('Profile photo updated!');
     };
     r.readAsDataURL(f);
   };
 
-  // User Profile View
-  window.openUser = (uid) => {
-    if(uid === currentUid) return window.showTab('profile');
-    profileUser = uid;
-    let u = dbUsers[uid] || {};
+  window.openUser = (userId) => {
+    if(userId === currentUid) return window.showTab('profile');
+    profileUser = userId;
+    let u = dbUsers[userId] || {};
+    let myObj = dbUsers[currentUid] || {};
     document.getElementById('personAvatar').style.backgroundImage = u.pic ? `url('${u.pic}')` : '';
-    document.getElementById('personName').textContent = u.name || '';
-    document.getElementById('personUsername').textContent = '@' + (u.username || '');
+    document.getElementById('personName').textContent = u.name || 'User';
+    document.getElementById('personUsername').textContent = '@' + (u.username || 'user');
     
-    let followers = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(uid)).length;
-    document.getElementById('personFollowerCount').textContent = followers;
-    document.getElementById('personFollowingCount').textContent = (u.following || []).length;
-    
-    let isFollowing = (dbUsers[currentUid]?.following || []).includes(uid);
+    let isFollowing = (myObj.following || []).includes(userId);
     let btn = document.getElementById('personFollowBtn');
     btn.textContent = isFollowing ? 'Unfollow' : 'Follow';
     btn.className = isFollowing ? 'secondary' : 'primary';
 
-    let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === uid);
+    let followersCount = Object.keys(dbUsers).filter(k => (dbUsers[k].following || []).includes(userId)).length;
+    document.getElementById('personFollowerCount').textContent = followersCount;
+    document.getElementById('personFollowingCount').textContent = (u.following || []).length;
+
+    let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === userId);
     document.getElementById('personGrid').innerHTML = userPosts.map(k => {
       let p = dbPosts[k];
       return `<div class="grid-item">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
-    }).join('') || '<div style="grid-column:span 3;padding:30px;text-align:center;color:#666">No posts</div>';
+    }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
 
     window.showTab('personProfile');
   };
 
   window.toggleFollowPerson = () => {
     if(!profileUser) return;
-    let myFollowing = dbUsers[currentUid]?.following || [];
-    let idx = myFollowing.indexOf(profileUser);
-    if(idx >= 0) myFollowing.splice(idx, 1);
-    else myFollowing.push(profileUser);
-    set(ref(db, `users/${currentUid}/following`), myFollowing);
+    let myObj = dbUsers[currentUid] || {};
+    let following = myObj.following || [];
+    let idx = following.indexOf(profileUser);
+    if(idx >= 0) following.splice(idx, 1);
+    else following.push(profileUser);
+    update(ref(db, `users/${currentUid}`), { following });
+    openUser(profileUser);
   };
 
-  // Chats
+  window.startProfileChat = () => {
+    if(profileUser) window.openChatWith(profileUser);
+  };
+
+  // Realtime Chat
   window.openChatList = () => { window.showTab('chat'); window.backChats(); };
-  
+  window.backChats = () => {
+    document.getElementById('chatListView').classList.remove('hidden');
+    document.getElementById('chatRoom').classList.add('hidden');
+    activeChat = null;
+  };
+
   function renderChats() {
-    let list = document.getElementById('chatList');
-    let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
-    list.innerHTML = users.map(u => `
-      <div class="chat-row" onclick="enterChat('${u.id}')">
-        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
-        <div><b>${esc(u.username)}</b><div style="color:#777;font-size:12px">${esc(u.name)}</div></div>
-      </div>
-    `).join('') || '<div style="padding:20px;color:#777;text-align:center">No users available to chat</div>';
+    let box = document.getElementById('chatList');
+    let users = Object.keys(dbUsers).filter(k => k !== currentUid).map(k => dbUsers[k]);
+    box.innerHTML = users.map(u => `<div class="chat-row" onclick="openChatWith('${u.id}')">
+      <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+      <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
+    </div>`).join('') || '<div style="padding:20px;text-align:center;color:#777">No users found</div>';
   }
 
-  window.enterChat = (uid) => {
-    activeChat = uid;
-    let u = dbUsers[uid] || {};
+  window.openChatWith = (userId) => {
+    window.showTab('chat');
+    activeChat = userId;
+    let u = dbUsers[userId] || {};
     document.getElementById('chatTitle').textContent = u.username || 'Chat';
     document.getElementById('chatListView').classList.add('hidden');
     document.getElementById('chatRoom').classList.remove('hidden');
     renderMessages();
   };
 
-  window.backChats = () => {
-    activeChat = null;
-    document.getElementById('chatListView').classList.remove('hidden');
-    document.getElementById('chatRoom').classList.add('hidden');
-  };
-
-  window.startProfileChat = () => {
-    if(profileUser) {
-      window.showTab('chat');
-      window.enterChat(profileUser);
-    }
-  };
-
   function renderMessages() {
     if(!activeChat) return;
-    let chatId = [currentUid, activeChat].sort().join('_');
-    let msgs = dbChats[chatId] || {};
+    let chatKey = [currentUid, activeChat].sort().join('_');
+    let msgs = dbChats[chatKey] || {};
     let box = document.getElementById('messages');
     box.innerHTML = Object.keys(msgs).map(k => {
       let m = msgs[k];
-      let isMe = m.sender === currentUid;
-      return `<div class="bubble ${isMe?'sent':'received'}">${esc(m.text)}</div>`;
+      return `<div class="bubble ${m.from === currentUid ? 'sent' : 'received'}">${esc(m.text)}</div>`;
     }).join('');
     box.scrollTop = box.scrollHeight;
   }
@@ -790,20 +782,86 @@ main{width:min(650px,100%);margin:auto}
     let inp = document.getElementById('messageInput');
     let txt = inp.value.trim();
     if(!txt || !activeChat) return;
-    let chatId = [currentUid, activeChat].sort().join('_');
-    push(ref(db, `chats/${chatId}`), {
-      sender: currentUid,
+    let chatKey = [currentUid, activeChat].sort().join('_');
+    push(ref(db, `chats/${chatKey}`), {
+      from: currentUid,
       text: txt,
       time: Date.now()
     });
     inp.value = '';
   };
 
-  // Video Call Dummy Stubs
-  window.startVideoCall = () => document.getElementById('videoModal').classList.remove('hidden');
-  window.endCall = () => document.getElementById('videoModal').classList.add('hidden');
-  window.toggleCamera = () => toast('Camera toggled');
-  window.toggleMic = () => toast('Mic toggled');
+  // VIDEO CALL FEATURE (WebRTC + Firebase Signaling)
+  window.startVideoCall = async () => {
+    if(!activeChat) return toast('Select a chat to call');
+    document.getElementById('videoModal').classList.remove('hidden');
+    isCamOn = true;
+    isMicOn = true;
+    updateCallButtons();
+
+    try {
+      localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      document.getElementById('localVideo').srcObject = localStream;
+      
+      peerConnection = new RTCPeerConnection(rtcServers);
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+      peerConnection.ontrack = event => {
+        document.getElementById('remoteVideo').srcObject = event.streams[0];
+      };
+
+      toast('Starting video call...');
+    } catch (err) {
+      toast('Camera/Microphone access denied');
+      window.endCall();
+    }
+  };
+
+  window.toggleCamera = () => {
+    if (!localStream) return;
+    let videoTrack = localStream.getVideoTracks()[0];
+    if (videoTrack) {
+      isCamOn = !isCamOn;
+      videoTrack.enabled = isCamOn;
+      updateCallButtons();
+      toast(isCamOn ? 'Camera Turned On' : 'Camera Off');
+    }
+  };
+
+  window.toggleMic = () => {
+    if (!localStream) return;
+    let audioTrack = localStream.getAudioTracks()[0];
+    if (audioTrack) {
+      isMicOn = !isMicOn;
+      audioTrack.enabled = isMicOn;
+      updateCallButtons();
+      toast(isMicOn ? 'Microphone On' : 'Muted');
+    }
+  };
+
+  function updateCallButtons() {
+    let camBtn = document.getElementById('btnToggleCam');
+    let micBtn = document.getElementById('btnToggleMic');
+    
+    camBtn.textContent = isCamOn ? '📹' : '📷🚫';
+    camBtn.classList.toggle('off', !isCamOn);
+
+    micBtn.textContent = isMicOn ? '🎙️' : '🎙️🚫';
+    micBtn.classList.toggle('off', !isMicOn);
+  }
+
+  window.endCall = () => {
+    if (localStream) {
+      localStream.getTracks().forEach(track => track.stop());
+      localStream = null;
+    }
+    if (peerConnection) {
+      peerConnection.close();
+      peerConnection = null;
+    }
+    document.getElementById('videoModal').classList.add('hidden');
+    toast('Call ended');
+  };
 </script>
 </body>
 </html>
