@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Universe Pro - Complete Live App</title>
+<title>Universe Pro - Shop & Live App</title>
 
 <style>
 :root{
@@ -63,6 +63,15 @@ main{width:min(650px,100%);margin:auto}
 .likes{font-weight:700;margin-bottom:6px}
 .caption b{margin-right:6px}
 .comment-link{color:var(--muted);font-size:13px;margin-top:6px;cursor:pointer}
+
+/* Shop / Store Tab */
+.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px}
+.product-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.product-img{width:100%;aspect-ratio:1;background:#080808;background-size:cover;background-position:center}
+.product-info{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.product-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-price{color:#2ecc71;font-weight:800;font-size:16px}
+.product-desc{font-size:12px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 /* Search Tab */
 .search-box{padding:13px;border-bottom:1px solid var(--card-border)}
@@ -128,7 +137,7 @@ main{width:min(650px,100%);margin:auto}
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--card-border);
   display: flex;
-  justify-style: space-around;
+  justify-content: space-around;
   align-items: center;
   z-index: 100;
 }
@@ -195,6 +204,15 @@ main{width:min(650px,100%);margin:auto}
 <section id="search" class="tab">
   <div class="search-box"><input id="searchInput" placeholder="Search people..." oninput="searchUsers(this.value)"></div>
   <div id="searchResults"></div>
+</section>
+
+<!-- Shop & Store Tab -->
+<section id="shop" class="tab">
+  <div class="section-title">
+    <span>🛍️ Shop & Store</span>
+    <button class="primary" style="width:auto;padding:6px 14px;margin:0;font-size:13px;" onclick="openAddProductModal()">+ Add Product</button>
+  </div>
+  <div class="shop-grid" id="shopGrid"></div>
 </section>
 
 <section id="reels" class="tab">
@@ -273,6 +291,7 @@ main{width:min(650px,100%);margin:auto}
 <nav class="bottom">
   <button id="nav-home" class="active-nav" onclick="showTab('home')">🏠</button>
   <button id="nav-search" onclick="showTab('search')">🔍</button>
+  <button id="nav-shop" onclick="showTab('shop')">🛍️</button>
   <button id="nav-upload" onclick="openUpload()">➕</button>
   <button id="nav-reels" onclick="showTab('reels')">🎬</button>
   <button id="nav-profile" onclick="showTab('profile')">👤</button>
@@ -280,6 +299,29 @@ main{width:min(650px,100%);margin:auto}
 </div>
 
 <div id="toast" class="toast"></div>
+
+<!-- Add Product Modal -->
+<div id="productModal" class="modal hidden" onclick="closeAddProductModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>Add Product to Shop</span><button class="action" onclick="closeAddProductModal()">✕</button></div>
+    <div class="modal-body">
+      <input id="prodTitle" class="input" placeholder="Product Name">
+      <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
+      <textarea id="prodDesc" class="input" placeholder="Product Description..." style="height:80px;resize:none;padding:10px;"></textarea>
+      <input id="prodFile" type="file" accept="image/*" style="margin:10px 0" onchange="previewProductImg(event)">
+      <div id="prodPreview" style="height:160px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden">No image selected</div>
+      <button class="primary" onclick="publishProduct()">Publish Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Send Product to Chat Modal -->
+<div id="sendProductModal" class="modal hidden" onclick="closeSendModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>Send Product to Friend</span><button class="action" onclick="closeSendModal()">✕</button></div>
+    <div class="modal-body" id="friendListForSend"></div>
+  </div>
+</div>
 
 <!-- Video Call Modal -->
 <div id="videoModal" class="modal hidden">
@@ -336,9 +378,9 @@ main{width:min(650px,100%);margin:auto}
   const db = getDatabase(app);
 
   let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {};
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
-  let activeCommentPostId = null, profileTab = 'posts';
+  let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null;
 
   // Video Call WebRTC State
   let localStream = null;
@@ -377,6 +419,7 @@ main{width:min(650px,100%);margin:auto}
     onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
     onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; if(activeChat) renderMessages(); });
+    onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); });
   }
 
   function renderAll() {
@@ -385,6 +428,7 @@ main{width:min(650px,100%);margin:auto}
     renderReels();
     renderProfile();
     renderChats();
+    renderShop();
   }
 
   // Auth Handling
@@ -425,6 +469,110 @@ main{width:min(650px,100%);margin:auto}
   };
 
   window.logout = () => signOut(auth);
+
+  // Shop & Store Logic
+  window.openAddProductModal = () => {
+    document.getElementById('prodTitle').value = '';
+    document.getElementById('prodPrice').value = '';
+    document.getElementById('prodDesc').value = '';
+    document.getElementById('prodFile').value = '';
+    document.getElementById('prodPreview').innerHTML = 'No image selected';
+    prodImageData = '';
+    document.getElementById('productModal').classList.remove('hidden');
+  };
+
+  window.closeAddProductModal = () => {
+    document.getElementById('productModal').classList.add('hidden');
+  };
+
+  window.previewProductImg = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      prodImageData = r.result;
+      document.getElementById('prodPreview').innerHTML = `<img src="${prodImageData}" style="max-height:100%;max-width:100%;object-fit:contain">`;
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.publishProduct = () => {
+    let title = document.getElementById('prodTitle').value.trim();
+    let price = document.getElementById('prodPrice').value.trim();
+    let desc = document.getElementById('prodDesc').value.trim();
+    if(!title || !price || !prodImageData) return toast('Please fill all fields & add photo');
+
+    push(ref(db, 'products'), {
+      sellerId: currentUid,
+      title: title,
+      price: price,
+      desc: desc,
+      image: prodImageData,
+      time: Date.now()
+    });
+    closeAddProductModal();
+    toast('Product added to shop!');
+  };
+
+  function renderShop() {
+    let box = document.getElementById('shopGrid');
+    if(!box) return;
+    let products = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
+    box.innerHTML = products.map(p => {
+      let seller = dbUsers[p.sellerId] || {};
+      return `<div class="product-card">
+        <div class="product-img" style="background-image:url('${p.image}')"></div>
+        <div class="product-info">
+          <div class="product-title">${esc(p.title)}</div>
+          <div class="product-price">₹${esc(p.price)}</div>
+          <div class="product-desc">${esc(p.desc)}</div>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button class="primary" style="padding:6px;font-size:11px;margin:0;" onclick="shareProduct('${p.id}')">📤 Send to Friend</button>
+            ${p.sellerId === currentUid ? `<button class="secondary" style="padding:6px;font-size:11px;margin:0;background:#ff3040;border:0" onclick="deleteProduct('${p.id}')">🗑️</button>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('') || '<div style="grid-column:1/-1;padding:40px;text-align:center;color:#777">No products listed in shop yet.</div>';
+  }
+
+  window.deleteProduct = (prodId) => {
+    if(confirm('Delete this product?')) {
+      remove(ref(db, `products/${prodId}`));
+      toast('Product removed');
+    }
+  };
+
+  window.shareProduct = (prodId) => {
+    productToShare = dbProducts[prodId];
+    if(!productToShare) return;
+    let list = document.getElementById('friendListForSend');
+    let otherUsers = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
+    list.innerHTML = otherUsers.map(u => `
+      <div class="chat-row" onclick="sendProductToChat('${u.id}')">
+        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+        <div><b>${esc(u.username)}</b><div style="color:#777;font-size:12px">${esc(u.name)}</div></div>
+      </div>
+    `).join('') || '<div style="padding:20px;text-align:center;color:#777">No friends available to send</div>';
+    document.getElementById('sendProductModal').classList.remove('hidden');
+  };
+
+  window.closeSendModal = () => {
+    document.getElementById('sendProductModal').classList.add('hidden');
+    productToShare = null;
+  };
+
+  window.sendProductToChat = (targetUid) => {
+    if(!productToShare) return;
+    let chatKey = getChatKey(currentUid, targetUid);
+    let msgText = `🛍️ **Product for Sale:**\n*${productToShare.title}*\n💰 Price: ₹${productToShare.price}\n📝 ${productToShare.desc}`;
+    push(ref(db, `chats/${chatKey}/messages`), {
+      sender: currentUid,
+      text: msgText,
+      time: Date.now()
+    });
+    closeSendModal();
+    toast('Product sent to chat!');
+  };
 
   // Feed & Posts
   function renderFeed() {
