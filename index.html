@@ -126,7 +126,7 @@ main{width:min(650px,100%);margin:auto}
 .preview{height:380px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .preview img,.preview video{max-width:100%;max-height:100%}
 
-/* Bottom Nav - Fixed with Proper Spacing */
+/* Bottom Nav */
 .bottom {
   position: fixed;
   bottom: env(safe-area-inset-bottom);
@@ -162,7 +162,6 @@ main{width:min(650px,100%);margin:auto}
 
 /* Fullscreen Media Viewer Modal */
 .media-modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px}
-.media-content{max-width:100%;max-height:100%;object-fit:contain}
 .close-media{position:absolute;top:20px;right:20px;background:none;border:0;color:#fff;font-size:30px;cursor:pointer;z-index:1000}
 
 /* Video Call Styles */
@@ -214,8 +213,8 @@ main{width:min(650px,100%);margin:auto}
 <!-- Shop & Store Tab -->
 <section id="shop" class="tab">
   <div class="section-title">
-    <span>🛍️ Shop & Store</span>
-    <button class="primary" style="width:auto;padding:6px 14px;margin:0;font-size:13px;" onclick="openAddProductModal()">+ Add Product</button>
+    <span>🛍️ Official Store</span>
+    <button id="adminAddBtn" class="primary hidden" style="width:auto;padding:6px 14px;margin:0;font-size:13px;" onclick="openAddProductModal()">+ Admin: Add Item</button>
   </div>
   <div class="shop-grid" id="shopGrid"></div>
 </section>
@@ -311,17 +310,36 @@ main{width:min(650px,100%);margin:auto}
   <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
 </div>
 
-<!-- Add Product Modal -->
+<!-- Product Details / Buy Modal -->
+<div id="buyProductModal" class="modal hidden" onclick="closeBuyModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-head"><span id="buyProdTitle">Product Details</span><button class="action" onclick="closeBuyModal()">✕</button></div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
+      <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;cursor:pointer;" onclick="openMediaFromBuy()"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="buyProdPrice" style="color:#2ecc71;font-size:22px;font-weight:800;">₹0</span>
+        <span style="background:#222;border:1px solid #444;color:#f39c12;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;">★ Premium Quality</span>
+      </div>
+      <div style="background:#1e1e1e;padding:12px;border-radius:8px;border:1px solid #333;">
+        <div style="font-size:13px;color:#aaa;margin-bottom:4px;"><b>Quality & Specifications:</b> High Quality, Official Stock, Best Price</div>
+        <p id="buyProdDesc" style="font-size:14px;color:#fff;white-space:pre-wrap;margin-top:6px;"></p>
+      </div>
+      <button class="primary" style="background:linear-gradient(45deg,#2ecc71,#27ae60);padding:12px;font-size:15px;margin-top:8px;" onclick="proceedToShareProduct()">📤 Send to Friend / Chat</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Add Product Modal -->
 <div id="productModal" class="modal hidden" onclick="closeAddProductModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
-    <div class="modal-head"><span>Add Product to Shop</span><button class="action" onclick="closeAddProductModal()">✕</button></div>
+    <div class="modal-head"><span>Admin Panel: Add Product</span><button class="action" onclick="closeAddProductModal()">✕</button></div>
     <div class="modal-body">
       <input id="prodTitle" class="input" placeholder="Product Name">
       <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
-      <textarea id="prodDesc" class="input" placeholder="Product Description..." style="height:80px;resize:none;padding:10px;"></textarea>
+      <textarea id="prodDesc" class="input" placeholder="Product Description & Quality details..." style="height:80px;resize:none;padding:10px;"></textarea>
       <input id="prodFile" type="file" accept="image/*" style="margin:10px 0" onchange="previewProductImg(event)">
       <div id="prodPreview" style="height:160px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden">No image selected</div>
-      <button class="primary" onclick="publishProduct()">Publish Product</button>
+      <button class="primary" onclick="publishProduct()">Publish Item to Shop</button>
     </div>
   </div>
 </div>
@@ -329,7 +347,7 @@ main{width:min(650px,100%);margin:auto}
 <!-- Send Product to Chat Modal -->
 <div id="sendProductModal" class="modal hidden" onclick="closeSendModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
-    <div class="modal-head"><span>Send Product to Friend</span><button class="action" onclick="closeSendModal()">✕</button></div>
+    <div class="modal-head"><span>Send Item to Friend</span><button class="action" onclick="closeSendModal()">✕</button></div>
     <div class="modal-body" id="friendListForSend"></div>
   </div>
 </div>
@@ -391,7 +409,7 @@ main{width:min(650px,100%);margin:auto}
   let currentUid = null;
   let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
-  let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null;
+  let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null, selectedBuyProduct = null;
 
   // Video Call WebRTC State
   let localStream = null;
@@ -419,6 +437,12 @@ main{width:min(650px,100%);margin:auto}
     } else {
       return `<div class="${cls}">${initial}</div>`;
     }
+  }
+
+  // Admin Verification Function
+  function isAdmin() {
+    let u = dbUsers[currentUid] || {};
+    return u.isAdmin === true || (u.username && (u.username.includes('dinesh') || u.username.includes('adit')));
   }
 
   // Realtime Listeners
@@ -477,7 +501,8 @@ main{width:min(650px,100%);margin:auto}
           username: username,
           email: email,
           pic: '',
-          following: []
+          following: [],
+          isAdmin: username.includes('dinesh') || username.includes('adit')
         });
         toast('Account Created!');
       } else {
@@ -507,8 +532,38 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('mediaModalBody').innerHTML = '';
   };
 
-  // Shop & Store Logic
+  // Shop & Buy Details Logic
+  window.openBuyModal = (prodId) => {
+    selectedBuyProduct = dbProducts[prodId];
+    if(!selectedBuyProduct) return;
+    document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title || 'Product Details';
+    document.getElementById('buyProdPrice').textContent = `₹${selectedBuyProduct.price}`;
+    document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No extra description provided.';
+    document.getElementById('buyProdImg').style.backgroundImage = `url('${selectedBuyProduct.image}')`;
+    document.getElementById('buyProductModal').classList.remove('hidden');
+  };
+
+  window.closeBuyModal = () => {
+    document.getElementById('buyProductModal').classList.add('hidden');
+    selectedBuyProduct = null;
+  };
+
+  window.openMediaFromBuy = () => {
+    if(selectedBuyProduct && selectedBuyProduct.image) {
+      openMediaModal(selectedBuyProduct.image, 'image');
+    }
+  };
+
+  window.proceedToShareProduct = () => {
+    if(!selectedBuyProduct) return;
+    let prod = selectedBuyProduct;
+    closeBuyModal();
+    shareProductObj(prod);
+  };
+
+  // Admin Add Product Logic
   window.openAddProductModal = () => {
+    if(!isAdmin()) return toast('Only Admin can add products!');
     document.getElementById('prodTitle').value = '';
     document.getElementById('prodPrice').value = '';
     document.getElementById('prodDesc').value = '';
@@ -534,6 +589,7 @@ main{width:min(650px,100%);margin:auto}
   };
 
   window.publishProduct = () => {
+    if(!isAdmin()) return toast('Admin privileges required');
     let title = document.getElementById('prodTitle').value.trim();
     let price = document.getElementById('prodPrice').value.trim();
     let desc = document.getElementById('prodDesc').value.trim();
@@ -548,39 +604,45 @@ main{width:min(650px,100%);margin:auto}
       time: Date.now()
     });
     closeAddProductModal();
-    toast('Product added to shop!');
+    toast('Product added to Official Store!');
   };
 
   function renderShop() {
     let box = document.getElementById('shopGrid');
+    let adminBtn = document.getElementById('adminAddBtn');
+    if(adminBtn) {
+      if(isAdmin()) adminBtn.classList.remove('hidden');
+      else adminBtn.classList.add('hidden');
+    }
+
     if(!box) return;
     let products = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
     box.innerHTML = products.map(p => {
-      let seller = dbUsers[p.sellerId] || {};
       return `<div class="product-card">
-        <div class="product-img" style="background-image:url('${p.image}')" onclick="openMediaModal('${p.image}', 'image')"></div>
+        <div class="product-img" style="background-image:url('${p.image}')" onclick="openBuyModal('${p.id}')"></div>
         <div class="product-info">
           <div class="product-title">${esc(p.title)}</div>
           <div class="product-price">₹${esc(p.price)}</div>
           <div class="product-desc">${esc(p.desc)}</div>
           <div style="display:flex;gap:6px;margin-top:6px;">
-            <button class="primary" style="padding:6px;font-size:11px;margin:0;" onclick="shareProduct('${p.id}')">📤 Send to Friend</button>
-            ${p.sellerId === currentUid ? `<button class="secondary" style="padding:6px;font-size:11px;margin:0;background:#ff3040;border:0" onclick="deleteProduct('${p.id}')">🗑️</button>` : ''}
+            <button class="primary" style="padding:8px;font-size:13px;margin:0;background:linear-gradient(45deg,#2ecc71,#27ae60)" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
+            ${isAdmin() ? `<button class="secondary" style="padding:8px;font-size:13px;margin:0;background:#ff3040;border:0" onclick="deleteProduct('${p.id}')">🗑️</button>` : ''}
           </div>
         </div>
       </div>`;
-    }).join('') || '<div style="grid-column:1/-1;padding:40px;text-align:center;color:#777">No products listed in shop yet.</div>';
+    }).join('') || '<div style="grid-column:1/-1;padding:40px;text-align:center;color:#777">No official items listed in store yet.</div>';
   }
 
   window.deleteProduct = (prodId) => {
-    if(confirm('Delete this product?')) {
+    if(!isAdmin()) return toast('Only Admin can delete items!');
+    if(confirm('Remove this product from store?')) {
       remove(ref(db, `products/${prodId}`));
-      toast('Product removed');
+      toast('Item removed from store');
     }
   };
 
-  window.shareProduct = (prodId) => {
-    productToShare = dbProducts[prodId];
+  function shareProductObj(prodObj) {
+    productToShare = prodObj;
     if(!productToShare) return;
     let list = document.getElementById('friendListForSend');
     let otherUsers = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
@@ -591,7 +653,7 @@ main{width:min(650px,100%);margin:auto}
       </div>
     `).join('') || '<div style="padding:20px;text-align:center;color:#777">No friends available to send</div>';
     document.getElementById('sendProductModal').classList.remove('hidden');
-  };
+  }
 
   window.closeSendModal = () => {
     document.getElementById('sendProductModal').classList.add('hidden');
@@ -601,7 +663,7 @@ main{width:min(650px,100%);margin:auto}
   window.sendProductToChat = (targetUid) => {
     if(!productToShare) return;
     let chatKey = getChatKey(currentUid, targetUid);
-    let msgText = `🛍️ **Product for Sale:**\n*${productToShare.title}*\n💰 Price: ₹${productToShare.price}\n📝 ${productToShare.desc}`;
+    let msgText = `🛍️ **Product Purchase Request:**\n*${productToShare.title}*\n💰 Price: ₹${productToShare.price}\n📝 Quality & Details: ${productToShare.desc}`;
     push(ref(db, `chats/${chatKey}/messages`), {
       sender: currentUid,
       text: msgText,
