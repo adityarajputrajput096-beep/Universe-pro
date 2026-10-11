@@ -45,13 +45,13 @@ main{width:min(650px,100%);margin:auto}
 .story{text-align:center;min-width:68px;font-size:11px;cursor:pointer}
 .ring{width:64px;height:64px;padding:2px;border-radius:50%;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);margin:auto}
 .ring.add-story-ring{background:#222;border:2px dashed var(--accent)}
-.avatar{width:100%;height:100%;border-radius:50%;background:#252525;border:2px solid #000;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold}
+.avatar{width:100%;height:100%;border-radius:50%;background:#252525;border:2px solid #000;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;color:#fff}
+.small-avatar{width:36px;height:36px;border-radius:50%;background:#333;background-size:cover;background-position:center;border:1px solid #444;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;color:#fff}
 
 /* Post Cards */
 .post{border-bottom:1px solid var(--card-border);margin-bottom:15px;background:var(--bg)}
 .post-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
 .person{display:flex;gap:10px;align-items:center;cursor:pointer}
-.small-avatar{width:36px;height:36px;border-radius:50%;background:#333;background-size:cover;background-position:center;border:1px solid #444}
 .post-media{width:100%;max-height:650px;background:#050505;display:flex;justify-content:center;align-items:center;cursor:pointer;position:relative;overflow:hidden;border-radius:4px}
 .post-media img,.post-media video{width:100%;max-height:650px;object-fit:contain}
 
@@ -67,7 +67,7 @@ main{width:min(650px,100%);margin:auto}
 /* Shop / Store Tab */
 .shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px}
 .product-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
-.product-img{width:100%;aspect-ratio:1;background:#080808;background-size:cover;background-position:center}
+.product-img{width:100%;aspect-ratio:1;background:#080808;background-size:cover;background-position:center;cursor:pointer}
 .product-info{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
 .product-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .product-price{color:#2ecc71;font-weight:800;font-size:16px}
@@ -81,7 +81,7 @@ main{width:min(650px,100%);margin:auto}
 
 /* Profile Tab */
 .profile-top{display:flex;gap:24px;align-items:center;padding:25px 18px;border-bottom:1px solid var(--card-border)}
-.profile-avatar{width:88px;height:88px;border-radius:50%;background:#222;background-size:cover;background-position:center;border:2px solid #444}
+.profile-avatar{width:88px;height:88px;border-radius:50%;background:#222;background-size:cover;background-position:center;border:2px solid #444;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#fff}
 .stats{display:flex;gap:22px;text-align:center}
 .stat strong{display:block;font-size:18px}
 .bio{padding:15px 18px}
@@ -159,6 +159,11 @@ main{width:min(650px,100%);margin:auto}
 .modal-body{padding:15px;overflow-y:auto;flex:1}
 .comment-item{display:flex;gap:10px;margin-bottom:12px;font-size:13px}
 .toast{position:fixed;left:50%;bottom:75px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:600}
+
+/* Fullscreen Media Viewer Modal */
+.media-modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px}
+.media-content{max-width:100%;max-height:100%;object-fit:contain}
+.close-media{position:absolute;top:20px;right:20px;background:none;border:0;color:#fff;font-size:30px;cursor:pointer;z-index:1000}
 
 /* Video Call Styles */
 .video-container{position:relative;width:min(480px,100%);height:75vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center}
@@ -300,6 +305,12 @@ main{width:min(650px,100%);margin:auto}
 
 <div id="toast" class="toast"></div>
 
+<!-- Fullscreen Media Modal -->
+<div id="mediaModal" class="media-modal hidden" onclick="closeMediaModal()">
+  <button class="close-media" onclick="closeMediaModal()">✕</button>
+  <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
+</div>
+
 <!-- Add Product Modal -->
 <div id="productModal" class="modal hidden" onclick="closeAddProductModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
@@ -398,7 +409,17 @@ main{width:min(650px,100%);margin:auto}
   }
 
   function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
-  function avatarStyle(pic){ return pic ? `style="background-image:url('${pic}')"` : '' }
+  
+  function renderAvatar(u, isSmall = false) {
+    let name = u.username || u.name || 'user';
+    let initial = name.charAt(0).toUpperCase();
+    let cls = isSmall ? 'small-avatar' : 'avatar';
+    if (u && u.pic) {
+      return `<div class="${cls}" style="background-image:url('${u.pic}')"></div>`;
+    } else {
+      return `<div class="${cls}">${initial}</div>`;
+    }
+  }
 
   // Realtime Listeners
   onAuthStateChanged(auth, user => {
@@ -470,6 +491,22 @@ main{width:min(650px,100%);margin:auto}
 
   window.logout = () => signOut(auth);
 
+  // Full Screen Media Modal
+  window.openMediaModal = (data, type) => {
+    let body = document.getElementById('mediaModalBody');
+    if (type === 'video') {
+      body.innerHTML = `<video src="${data}" controls autoplay style="max-width:100%;max-height:100%;object-fit:contain"></video>`;
+    } else {
+      body.innerHTML = `<img src="${data}" style="max-width:100%;max-height:100%;object-fit:contain">`;
+    }
+    document.getElementById('mediaModal').classList.remove('hidden');
+  };
+
+  window.closeMediaModal = () => {
+    document.getElementById('mediaModal').classList.add('hidden');
+    document.getElementById('mediaModalBody').innerHTML = '';
+  };
+
   // Shop & Store Logic
   window.openAddProductModal = () => {
     document.getElementById('prodTitle').value = '';
@@ -521,7 +558,7 @@ main{width:min(650px,100%);margin:auto}
     box.innerHTML = products.map(p => {
       let seller = dbUsers[p.sellerId] || {};
       return `<div class="product-card">
-        <div class="product-img" style="background-image:url('${p.image}')"></div>
+        <div class="product-img" style="background-image:url('${p.image}')" onclick="openMediaModal('${p.image}', 'image')"></div>
         <div class="product-info">
           <div class="product-title">${esc(p.title)}</div>
           <div class="product-price">₹${esc(p.price)}</div>
@@ -549,7 +586,7 @@ main{width:min(650px,100%);margin:auto}
     let otherUsers = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
     list.innerHTML = otherUsers.map(u => `
       <div class="chat-row" onclick="sendProductToChat('${u.id}')">
-        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+        ${renderAvatar(u, true)}
         <div><b>${esc(u.username)}</b><div style="color:#777;font-size:12px">${esc(u.name)}</div></div>
       </div>
     `).join('') || '<div style="padding:20px;text-align:center;color:#777">No friends available to send</div>';
@@ -587,12 +624,12 @@ main{width:min(650px,100%);margin:auto}
       return `<article class="post">
         <div class="post-head">
           <div class="person" onclick="openUser('${post.userId}')">
-            <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+            ${renderAvatar(u, true)}
             <b>${esc(u.username || 'user')}</b>
           </div>
         </div>
-        <div class="post-media">
-          ${post.type === 'video' ? `<video src="${post.data}" controls></video>` : `<img src="${post.data}">`}
+        <div class="post-media" onclick="openMediaModal('${post.data}', '${post.type}')">
+          ${post.type === 'video' ? `<video src="${post.data}"></video>` : `<img src="${post.data}">`}
         </div>
         <div class="actions">
           <div class="actions-left">
@@ -688,7 +725,7 @@ main{width:min(650px,100%);margin:auto}
       let s = dbStories[k];
       let u = dbUsers[s.userId] || {};
       html += `<div class="story" onclick="viewStory('${k}')">
-        <div class="ring"><div class="avatar" ${avatarStyle(u.pic)}></div></div>
+        <div class="ring">${renderAvatar(u, false)}</div>
         <div style="margin-top:4px">${esc(u.username || 'user')}</div>
       </div>`;
     });
@@ -765,7 +802,7 @@ main{width:min(650px,100%);margin:auto}
       let c = comments[k];
       let u = dbUsers[c.userId] || {};
       return `<div class="comment-item">
-        <div class="small-avatar" style="width:24px;height:24px;${u.pic?`background-image:url('${u.pic}')`:''}"></div>
+        ${renderAvatar(u, true)}
         <div><b>${esc(u.username||'user')}:</b> ${esc(c.text)}</div>
       </div>`;
     }).join('') || '<p style="color:#777;text-align:center">No comments yet.</p>';
@@ -794,7 +831,7 @@ main{width:min(650px,100%);margin:auto}
       .map(id => dbUsers[id]);
     box.innerHTML = matches.map(u => `
       <div class="search-result" onclick="openUser('${u.id}')">
-        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+        ${renderAvatar(u, true)}
         <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
       </div>
     `).join('') || '<div style="padding:15px;color:#777">No users found</div>';
@@ -818,7 +855,15 @@ main{width:min(650px,100%);margin:auto}
 
   function renderProfile() {
     let myObj = dbUsers[currentUid] || {};
-    document.getElementById('myAvatar').style.backgroundImage = myObj.pic ? `url('${myObj.pic}')` : '';
+    let avatarBox = document.getElementById('myAvatar');
+    avatarBox.innerHTML = '';
+    if (myObj.pic) {
+      avatarBox.style.backgroundImage = `url('${myObj.pic}')`;
+      avatarBox.textContent = '';
+    } else {
+      avatarBox.style.backgroundImage = 'none';
+      avatarBox.textContent = (myObj.username || myObj.name || 'U').charAt(0).toUpperCase();
+    }
     document.getElementById('myName').textContent = myObj.name || '';
     let myPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
     document.getElementById('postCount').textContent = myPosts.length;
@@ -828,7 +873,7 @@ main{width:min(650px,100%);margin:auto}
     let gridPosts = profileTab === 'posts' ? myPosts : Object.keys(dbPosts).filter(k => (dbPosts[k].saved||[]).includes(currentUid));
     document.getElementById('myGrid').innerHTML = gridPosts.map(k => {
       let p = dbPosts[k];
-      return `<div class="grid-item">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`;
+      return `<div class="grid-item" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`;
     }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
   }
 
@@ -849,7 +894,17 @@ main{width:min(650px,100%);margin:auto}
     profileUser = userId;
     let u = dbUsers[userId] || {};
     let myObj = dbUsers[currentUid] || {};
-    document.getElementById('personAvatar').style.backgroundImage = u.pic ? `url('${u.pic}')` : '';
+    
+    let pAvatar = document.getElementById('personAvatar');
+    pAvatar.innerHTML = '';
+    if (u.pic) {
+      pAvatar.style.backgroundImage = `url('${u.pic}')`;
+      pAvatar.textContent = '';
+    } else {
+      pAvatar.style.backgroundImage = 'none';
+      pAvatar.textContent = (u.username || u.name || 'U').charAt(0).toUpperCase();
+    }
+
     document.getElementById('personName').textContent = u.name || 'User';
     document.getElementById('personUsername').textContent = '@' + (u.username || 'user');
     
@@ -866,7 +921,7 @@ main{width:min(650px,100%);margin:auto}
     let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === userId);
     document.getElementById('personGrid').innerHTML = userPosts.map(k => {
       let p = dbPosts[k];
-      return `<div class="grid-item">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
+      return `<div class="grid-item" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
     }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
 
     window.showTab('personProfile');
@@ -903,7 +958,7 @@ main{width:min(650px,100%);margin:auto}
     let otherUsers = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
     list.innerHTML = otherUsers.map(u => `
       <div class="chat-row" onclick="openChat('${u.id}')">
-        <div class="small-avatar" ${avatarStyle(u.pic)}></div>
+        ${renderAvatar(u, true)}
         <div><b>${esc(u.username || 'user')}</b><div style="color:#777;font-size:12px">${esc(u.name || '')}</div></div>
       </div>
     `).join('') || '<div style="padding:20px;color:#777;text-align:center">No chats available</div>';
