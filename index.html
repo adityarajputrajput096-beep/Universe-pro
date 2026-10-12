@@ -33,8 +33,8 @@ button:active{transform:scale(0.96)}
 #app{display:none;min-height:100vh;padding-top:56px;padding-bottom:65px}
 .header{height:56px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
 .header .brand{font-size:24px;font-weight:800;background:linear-gradient(45deg,#fff,#ccc);-webkit-background-clip:text;color:transparent}
-.header-icons{display:flex;gap:14px;font-size:22px;align-items:center}
-.icon-btn{background:none;border:0;color:#fff;font-size:22px}
+.header-icons{display:flex;gap:12px;font-size:20px;align-items:center}
+.icon-btn{background:none;border:0;color:#fff;font-size:20px}
 
 main{width:min(650px,100%);margin:auto}
 .tab{display:none}.tab.active{display:block}
@@ -148,7 +148,7 @@ main{width:min(650px,100%);margin:auto}
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--card-border);
   display: flex;
-  justify-content: space-around;
+  justify-style: space-around;
   align-items: center;
   z-index: 100;
 }
@@ -165,7 +165,7 @@ main{width:min(650px,100%);margin:auto}
 
 /* Modals */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:15px}
-.modal-card{background:#181818;border:1px solid #333;border-radius:14px;width:min(440px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-card{background:#181818;border:1px solid #333;border-radius:14px;width:min(450px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
 .modal-head{padding:15px;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between;align-items:center;font-weight:700}
 .modal-body{padding:15px;overflow-y:auto;flex:1}
 .comment-item{display:flex;gap:10px;margin-bottom:12px;font-size:13px}
@@ -205,7 +205,7 @@ main{width:min(650px,100%);margin:auto}
 <header class="header">
   <div class="brand">Universe Pro</div>
   <div class="header-icons">
-    <button id="adminOrdersBtn" class="icon-btn hidden" onclick="openAdminOrdersModal()" title="Admin Orders Panel">📦</button>
+    <button class="icon-btn" onclick="openAdminAuthModal()" title="Admin Control Panel">🔐 Admin</button>
     <button class="icon-btn" onclick="openChatList()">💬</button>
     <button class="icon-btn" onclick="openUpload()">➕</button>
   </div>
@@ -226,7 +226,6 @@ main{width:min(650px,100%);margin:auto}
 <section id="shop" class="tab">
   <div class="section-title">
     <span>🛍️ Official Store</span>
-    <button id="adminAddBtn" class="primary hidden" style="width:auto;padding:6px 14px;margin:0;font-size:13px;" onclick="openAddProductModal()">+ Admin: Add Item</button>
   </div>
   <div class="shop-grid" id="shopGrid"></div>
 </section>
@@ -316,10 +315,41 @@ main{width:min(650px,100%);margin:auto}
 
 <div id="toast" class="toast"></div>
 
-<!-- Fullscreen Media Modal -->
-<div id="mediaModal" class="media-modal hidden" onclick="closeMediaModal()">
-  <button class="close-media" onclick="closeMediaModal()">✕</button>
-  <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
+<!-- Password Protected Admin Access Modal -->
+<div id="adminAuthModal" class="modal hidden" onclick="closeAdminAuthModal()">
+  <div class="modal-card" style="width:min(380px,100%);" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>🔐 Admin Protection</span><button class="action" onclick="closeAdminAuthModal()">✕</button></div>
+    <div class="modal-body" style="text-align:center;">
+      <p style="font-size:13px;color:#aaa;margin-bottom:12px;">Enter Admin Password to manage items & customer orders:</p>
+      <input id="adminPassInput" type="password" class="input" placeholder="Enter Password (9911)" style="text-align:center;font-size:18px;letter-spacing:4px;">
+      <button class="primary" onclick="verifyAdminPassword()">Login to Admin Panel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Main Dashboard Modal -->
+<div id="adminMainModal" class="modal hidden" onclick="closeAdminMainModal()">
+  <div class="modal-card" style="width:min(550px,100%);" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>👑 Admin Control Dashboard</span><button class="action" onclick="closeAdminMainModal()">✕</button></div>
+    <div class="modal-body">
+      <!-- Section 1: Add Product -->
+      <div style="background:#1e1e1e;padding:14px;border-radius:10px;border:1px solid #333;margin-bottom:16px;">
+        <b style="font-size:15px;color:#0095f6;display:block;margin-bottom:8px;">➕ Post New Product to Store:</b>
+        <input id="prodTitle" class="input" placeholder="Product Name">
+        <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
+        <textarea id="prodDesc" class="input" placeholder="Product Description & Quality details..." style="height:60px;resize:none;padding:8px;"></textarea>
+        <input id="prodFile" type="file" accept="image/*" style="margin:8px 0" onchange="previewProductImg(event)">
+        <div id="prodPreview" style="height:120px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden">No image selected</div>
+        <button class="primary" onclick="publishProduct()">Publish Item to Shop</button>
+      </div>
+
+      <!-- Section 2: Manage Received Orders -->
+      <div>
+        <b style="font-size:15px;color:#2ecc71;display:block;margin-bottom:10px;">📦 Customer Orders Received:</b>
+        <div id="adminOrdersList"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Product Buy / Details Modal -->
@@ -327,53 +357,36 @@ main{width:min(650px,100%);margin:auto}
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-head"><span id="buyProdTitle">Product Details</span><button class="action" onclick="closeBuyModal()">✕</button></div>
     <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
-      <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;cursor:pointer;" onclick="openMediaFromBuy()"></div>
+      <div id="buyProdImg" style="width:100%;height:200px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;cursor:pointer;" onclick="openMediaFromBuy()"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span id="buyProdPrice" style="color:#2ecc71;font-size:22px;font-weight:800;">₹0</span>
         <span style="background:#222;border:1px solid #444;color:#f39c12;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;">★ Official Product</span>
       </div>
-      <div style="background:#1e1e1e;padding:12px;border-radius:8px;border:1px solid #333;">
-        <div style="font-size:13px;color:#aaa;margin-bottom:4px;"><b>Description & Quality:</b></div>
-        <p id="buyProdDesc" style="font-size:14px;color:#fff;white-space:pre-wrap;"></p>
+      <div style="background:#1e1e1e;padding:10px;border-radius:8px;border:1px solid #333;">
+        <div style="font-size:12px;color:#aaa;margin-bottom:2px;"><b>Description:</b></div>
+        <p id="buyProdDesc" style="font-size:13px;color:#fff;white-space:pre-wrap;"></p>
       </div>
 
-      <!-- Checkout Address Form -->
-      <div style="border-top:1px solid #333;padding-top:10px;">
-        <b style="font-size:14px;display:block;margin-bottom:6px;color:#0095f6;">📦 Delivery Address Details:</b>
+      <!-- Checkout Details Form -->
+      <div style="border-top:1px solid #333;padding-top:10px;display:flex;flex-direction:column;gap:6px;">
+        <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
         <input id="orderName" class="input" placeholder="Your Full Name">
         <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-        <textarea id="orderAddress" class="input" placeholder="Complete Delivery Address (House No, Area, City)..." style="height:60px;resize:none;padding:8px;"></textarea>
+        <textarea id="orderAddress" class="input" placeholder="Write Address Details (e.g. Ramnagar Khajuri Bahraich)..." style="height:60px;resize:none;padding:8px;"></textarea>
       </div>
 
-      <div style="display:flex;gap:8px;">
-        <button class="primary" style="background:linear-gradient(45deg,#2ecc71,#27ae60);padding:12px;font-size:15px;" onclick="placeOrderNow()">🛒 Place Order Now</button>
-        <button class="secondary" style="padding:12px;" onclick="proceedToShareProduct()">📤 Share to Chat</button>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="primary" style="background:linear-gradient(45deg,#2ecc71,#27ae60);padding:12px;font-size:15px;" onclick="placeOrderNow()">🛒 Confirm & Place Order</button>
+        <button class="secondary" style="padding:12px;" onclick="proceedToShareProduct()">📤 Share</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Admin Orders Dashboard Modal (Flipkart Admin Style) -->
-<div id="adminOrdersModal" class="modal hidden" onclick="closeAdminOrdersModal()">
-  <div class="modal-card" style="width:min(550px,100%);" onclick="event.stopPropagation()">
-    <div class="modal-head"><span>📦 Admin Order Management</span><button class="action" onclick="closeAdminOrdersModal()">✕</button></div>
-    <div class="modal-body" id="adminOrdersList"></div>
-  </div>
-</div>
-
-<!-- Admin Add Product Modal -->
-<div id="productModal" class="modal hidden" onclick="closeAddProductModal()">
-  <div class="modal-card" onclick="event.stopPropagation()">
-    <div class="modal-head"><span>Admin Panel: Add Product</span><button class="action" onclick="closeAddProductModal()">✕</button></div>
-    <div class="modal-body">
-      <input id="prodTitle" class="input" placeholder="Product Name">
-      <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
-      <textarea id="prodDesc" class="input" placeholder="Product Description & Quality details..." style="height:80px;resize:none;padding:10px;"></textarea>
-      <input id="prodFile" type="file" accept="image/*" style="margin:10px 0" onchange="previewProductImg(event)">
-      <div id="prodPreview" style="height:160px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden">No image selected</div>
-      <button class="primary" onclick="publishProduct()">Publish Item to Shop</button>
-    </div>
-  </div>
+<!-- Fullscreen Media Modal -->
+<div id="mediaModal" class="media-modal hidden" onclick="closeMediaModal()">
+  <button class="close-media" onclick="closeMediaModal()">✕</button>
+  <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
 </div>
 
 <!-- Send Product to Chat Modal -->
@@ -442,6 +455,7 @@ main{width:min(650px,100%);margin:auto}
   let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null, selectedBuyProduct = null;
+  let isAdminAuthenticated = false;
 
   // Video Call WebRTC State
   let localStream = null;
@@ -455,7 +469,7 @@ main{width:min(650px,100%);margin:auto}
     x.textContent = msg;
     x.style.display = 'block';
     clearTimeout(window.tt);
-    window.tt = setTimeout(()=>x.style.display='none', 2000);
+    window.tt = setTimeout(()=>x.style.display='none', 2200);
   }
 
   function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
@@ -469,12 +483,6 @@ main{width:min(650px,100%);margin:auto}
     } else {
       return `<div class="${cls}">${initial}</div>`;
     }
-  }
-
-  // Admin Verification Function
-  function isAdmin() {
-    let u = dbUsers[currentUid] || {};
-    return u.isAdmin === true || (u.username && (u.username.includes('dinesh') || u.username.includes('adit')));
   }
 
   // Realtime Listeners
@@ -497,7 +505,7 @@ main{width:min(650px,100%);margin:auto}
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
     onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; if(activeChat) renderMessages(); });
     onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); });
-    onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; renderAdminOrders(); });
+    onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
   }
 
   function renderAll() {
@@ -507,7 +515,6 @@ main{width:min(650px,100%);margin:auto}
     renderProfile();
     renderChats();
     renderShop();
-    renderAdminOrders();
   }
 
   // Auth Handling
@@ -535,8 +542,7 @@ main{width:min(650px,100%);margin:auto}
           username: username,
           email: email,
           pic: '',
-          following: [],
-          isAdmin: username.includes('dinesh') || username.includes('adit')
+          following: []
         });
         toast('Account Created!');
       } else {
@@ -549,6 +555,41 @@ main{width:min(650px,100%);margin:auto}
   };
 
   window.logout = () => signOut(auth);
+
+  // Admin Password Protected Panel
+  window.openAdminAuthModal = () => {
+    if (isAdminAuthenticated) {
+      openAdminMainModal();
+    } else {
+      document.getElementById('adminPassInput').value = '';
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+    }
+  };
+
+  window.closeAdminAuthModal = () => {
+    document.getElementById('adminAuthModal').classList.add('hidden');
+  };
+
+  window.verifyAdminPassword = () => {
+    let pass = document.getElementById('adminPassInput').value.trim();
+    if (pass === '9911') {
+      isAdminAuthenticated = true;
+      closeAdminAuthModal();
+      openAdminMainModal();
+      toast('Admin Access Granted!');
+    } else {
+      toast('Incorrect Admin Password!');
+    }
+  };
+
+  window.openAdminMainModal = () => {
+    renderAdminOrders();
+    document.getElementById('adminMainModal').classList.remove('hidden');
+  };
+
+  window.closeAdminMainModal = () => {
+    document.getElementById('adminMainModal').classList.add('hidden');
+  };
 
   // Full Screen Media Modal
   window.openMediaModal = (data, type) => {
@@ -566,7 +607,7 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('mediaModalBody').innerHTML = '';
   };
 
-  // Shop & Buy Checkout Logic
+  // Shop & Buy Details Modal
   window.openBuyModal = (prodId) => {
     selectedBuyProduct = dbProducts[prodId];
     if(!selectedBuyProduct) return;
@@ -576,7 +617,6 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No extra description provided.';
     document.getElementById('buyProdImg').style.backgroundImage = `url('${selectedBuyProduct.image}')`;
     
-    // Auto fill user details if available
     document.getElementById('orderName').value = myObj.name || '';
     document.getElementById('orderPhone').value = '';
     document.getElementById('orderAddress').value = '';
@@ -595,7 +635,6 @@ main{width:min(650px,100%);margin:auto}
     }
   };
 
-  // Place Order (Sends Order Request to Admin Panel)
   window.placeOrderNow = () => {
     if(!selectedBuyProduct) return;
     let name = document.getElementById('orderName').value.trim();
@@ -603,7 +642,7 @@ main{width:min(650px,100%);margin:auto}
     let address = document.getElementById('orderAddress').value.trim();
 
     if(!name || !phone || !address) {
-      return toast('Please enter Name, Mobile No. & Delivery Address!');
+      return toast('Please enter Name, Mobile No. and Address!');
     }
 
     push(ref(db, 'orders'), {
@@ -620,7 +659,7 @@ main{width:min(650px,100%);margin:auto}
     });
 
     closeBuyModal();
-    toast('🎉 Order Placed Successfully! Admin will process soon.');
+    toast('🎉 Order Placed Successfully!');
   };
 
   window.proceedToShareProduct = () => {
@@ -630,30 +669,14 @@ main{width:min(650px,100%);margin:auto}
     shareProductObj(prod);
   };
 
-  // Admin Orders Panel Logic
-  window.openAdminOrdersModal = () => {
-    if(!isAdmin()) return toast('Only Admin can access Order Panel');
-    renderAdminOrders();
-    document.getElementById('adminOrdersModal').classList.remove('hidden');
-  };
-
-  window.closeAdminOrdersModal = () => {
-    document.getElementById('adminOrdersModal').classList.add('hidden');
-  };
-
+  // Admin Orders Panel Render
   function renderAdminOrders() {
-    let ordersBtn = document.getElementById('adminOrdersBtn');
-    if(ordersBtn) {
-      if(isAdmin()) ordersBtn.classList.remove('hidden');
-      else ordersBtn.classList.add('hidden');
-    }
-
     let box = document.getElementById('adminOrdersList');
     if(!box) return;
 
     let orderKeys = Object.keys(dbOrders).sort((a,b) => dbOrders[b].time - dbOrders[a].time);
     if(orderKeys.length === 0) {
-      box.innerHTML = '<div style="padding:30px;text-align:center;color:#777">No orders received yet.</div>';
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:#777">No orders received yet.</div>';
       return;
     }
 
@@ -677,23 +700,21 @@ main{width:min(650px,100%);margin:auto}
           </div>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="secondary" style="padding:6px;font-size:11px" onclick="updateOrderStatus('${k}', 'Shipped')">🚚 Mark Shipped</button>
-          <button class="primary" style="padding:6px;font-size:11px;background:#2ecc71" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Mark Delivered</button>
-          <button class="secondary" style="padding:6px;font-size:11px;background:#0095f6;border:0" onclick="chatWithBuyer('${ord.buyerId}')">💬 Contact Buyer</button>
-          <button class="secondary" style="padding:6px;font-size:11px;background:#ff3040;border:0" onclick="deleteOrder('${k}')">🗑️</button>
+          <button class="secondary" style="padding:6px;font-size:11px" onclick="updateOrderStatus('${k}', 'Shipped')">🚚 Shipped</button>
+          <button class="primary" style="padding:6px;font-size:11px;background:#2ecc71" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Delivered</button>
+          <button class="secondary" style="padding:6px;font-size:11px;background:#0095f6;border:0" onclick="chatWithBuyer('${ord.buyerId}')">💬 Chat</button>
+          <button class="secondary" style="padding:6px;font-size:11px;background:#ff3040;border:0" onclick="deleteOrder('${k}')">🗑️ Delete</button>
         </div>
       </div>`;
     }).join('');
   }
 
   window.updateOrderStatus = (ordId, newStatus) => {
-    if(!isAdmin()) return;
     update(ref(db, `orders/${ordId}`), { status: newStatus });
-    toast(`Order status updated to ${newStatus}`);
+    toast(`Order marked as ${newStatus}`);
   };
 
   window.deleteOrder = (ordId) => {
-    if(!isAdmin()) return;
     if(confirm('Delete this order entry?')) {
       remove(ref(db, `orders/${ordId}`));
       toast('Order deleted');
@@ -701,26 +722,11 @@ main{width:min(650px,100%);margin:auto}
   };
 
   window.chatWithBuyer = (buyerId) => {
-    closeAdminOrdersModal();
+    closeAdminMainModal();
     openChat(buyerId);
   };
 
   // Admin Add Product Logic
-  window.openAddProductModal = () => {
-    if(!isAdmin()) return toast('Only Admin can add products!');
-    document.getElementById('prodTitle').value = '';
-    document.getElementById('prodPrice').value = '';
-    document.getElementById('prodDesc').value = '';
-    document.getElementById('prodFile').value = '';
-    document.getElementById('prodPreview').innerHTML = 'No image selected';
-    prodImageData = '';
-    document.getElementById('productModal').classList.remove('hidden');
-  };
-
-  window.closeAddProductModal = () => {
-    document.getElementById('productModal').classList.add('hidden');
-  };
-
   window.previewProductImg = (e) => {
     let f = e.target.files[0];
     if(!f) return;
@@ -733,7 +739,6 @@ main{width:min(650px,100%);margin:auto}
   };
 
   window.publishProduct = () => {
-    if(!isAdmin()) return toast('Admin privileges required');
     let title = document.getElementById('prodTitle').value.trim();
     let price = document.getElementById('prodPrice').value.trim();
     let desc = document.getElementById('prodDesc').value.trim();
@@ -747,19 +752,21 @@ main{width:min(650px,100%);margin:auto}
       image: prodImageData,
       time: Date.now()
     });
-    closeAddProductModal();
+
+    document.getElementById('prodTitle').value = '';
+    document.getElementById('prodPrice').value = '';
+    document.getElementById('prodDesc').value = '';
+    document.getElementById('prodPreview').innerHTML = 'No image selected';
+    prodImageData = '';
+
     toast('Product added to Official Store!');
   };
 
+  // Render Shop Grid (Without Delete Button)
   function renderShop() {
     let box = document.getElementById('shopGrid');
-    let adminBtn = document.getElementById('adminAddBtn');
-    if(adminBtn) {
-      if(isAdmin()) adminBtn.classList.remove('hidden');
-      else adminBtn.classList.add('hidden');
-    }
-
     if(!box) return;
+
     let products = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
     box.innerHTML = products.map(p => {
       return `<div class="product-card">
@@ -768,22 +775,11 @@ main{width:min(650px,100%);margin:auto}
           <div class="product-title">${esc(p.title)}</div>
           <div class="product-price">₹${esc(p.price)}</div>
           <div class="product-desc">${esc(p.desc)}</div>
-          <div style="display:flex;gap:6px;margin-top:6px;">
-            <button class="primary" style="padding:8px;font-size:13px;margin:0;background:linear-gradient(45deg,#2ecc71,#27ae60)" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
-            ${isAdmin() ? `<button class="secondary" style="padding:8px;font-size:13px;margin:0;background:#ff3040;border:0" onclick="deleteProduct('${p.id}')">🗑️</button>` : ''}
-          </div>
+          <button class="primary" style="padding:9px;font-size:13px;margin-top:4px;background:linear-gradient(45deg,#2ecc71,#27ae60)" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
         </div>
       </div>`;
     }).join('') || '<div style="grid-column:1/-1;padding:40px;text-align:center;color:#777">No official items listed in store yet.</div>';
   }
-
-  window.deleteProduct = (prodId) => {
-    if(!isAdmin()) return toast('Only Admin can delete items!');
-    if(confirm('Remove this product from store?')) {
-      remove(ref(db, `products/${prodId}`));
-      toast('Item removed from store');
-    }
-  };
 
   function shareProductObj(prodObj) {
     productToShare = prodObj;
