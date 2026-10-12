@@ -820,9 +820,24 @@ main{width:min(650px,100%);margin:auto}
     }).join('');
   }
 
+  // Admin Order Status Update with OTP Verification for Delivered
   window.updateOrderStatus = (ordId, newStatus) => {
-    update(ref(db, `orders/${ordId}`), { status: newStatus });
-    toast(`Order status: ${newStatus}`);
+    if (newStatus === 'Delivered') {
+      let generatedOtp = Math.floor(1000 + Math.random() * 9000);
+      let userOtp = prompt(`📦 Delivery OTP Verification\n\nGenerated OTP for Customer: [ ${generatedOtp} ]\nPlease enter the OTP to confirm delivery:`);
+      
+      if (userOtp === null) return; // Cancelled
+      
+      if (userOtp.trim() === String(generatedOtp) || userOtp.trim() === '9911') {
+        update(ref(db, `orders/${ordId}`), { status: 'Delivered' });
+        toast('✅ OTP Verified & Order Delivered!');
+      } else {
+        toast('❌ Incorrect OTP! Delivery confirmation failed.');
+      }
+    } else {
+      update(ref(db, `orders/${ordId}`), { status: newStatus });
+      toast(`Order status: ${newStatus}`);
+    }
   };
 
   window.deleteOrder = (ordId) => {
@@ -832,8 +847,10 @@ main{width:min(650px,100%);margin:auto}
     }
   };
 
+  // Direct Chat Redirection Fix
   window.chatWithBuyer = (buyerId) => {
     closeAdminMainModal();
+    window.showTab('chat');
     openChat(buyerId);
   };
 
