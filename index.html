@@ -1,666 +1,2141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Universe Pro VIP</title>
-  
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Google Fonts - Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <style>
-    :root {
-      --bg-dark: #000000;
-      --bg-card: #121212;
-      --bg-elevated: #1e1e1e;
-      --border-color: #262626;
-      --accent-color: #0095f6;
-      --accent-gold: #ffd700;
-      --accent-red: #ff3040;
-      --text-main: #ffffff;
-      --text-muted: #a8a8a8;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Universe Pro - VIP Social & Commerce Platform</title>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
+<!-- Font Awesome VIP Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      overflow-x: hidden;
-      user-select: none;
-    }
+<style>
+:root {
+  --bg-primary: #050505;
+  --bg-card: #121212;
+  --bg-input: #1e1e1e;
+  --border-color: #262626;
+  --accent-color: #0095f6;
+  --like-color: #ff3040;
+  --gold-vip: linear-gradient(45deg, #f1c40f, #e67e22);
+  --insta-gradient: linear-gradient(45deg, #f09433, #dc2743, #bc1888, #5851db);
+  --text-main: #ffffff;
+  --text-muted: #a8a8a8;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #050505;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #333;
-      border-radius: 4px;
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
 
-    /* App Container */
-    .app-container {
-      max-width: 500px;
-      margin: 0 auto;
-      min-height: 100vh;
-      background-color: var(--bg-dark);
-      position: relative;
-      padding-bottom: 60px;
-      box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  user-select: none;
+}
 
-    /* Input Styling */
-    .input {
-      width: 100%;
-      background-color: #1a1a1a;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 12px 14px;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .input:focus {
-      border-color: var(--accent-color);
-    }
+button, input, textarea {
+  font: inherit;
+  outline: none;
+}
 
-    /* Buttons */
-    .primary-btn {
-      width: 100%;
-      background: linear-gradient(45deg, #0095f6, #0066cc);
-      color: #fff;
-      font-weight: 700;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.1s, opacity 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .primary-btn:active {
-      transform: scale(0.98);
-    }
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
 
-    /* Floating Heart Effect */
-    @keyframes popupHeart {
-      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-      50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
-    }
-    .floating-heart {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 85px;
-      color: #ff3040;
-      pointer-events: none;
-      z-index: 100;
-      animation: popupHeart 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-      filter: drop-shadow(0 0 10px rgba(255,48,64,0.8));
-    }
+button:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
 
-    /* Avatars */
-    .avatar-img {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background-size: cover;
-      background-position: center;
-      background-color: #262626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .avatar-sm {
-      width: 34px;
-      height: 34px;
-      font-size: 13px;
-    }
+.hidden {
+  display: none !important;
+}
 
-    /* Story Ring */
-    .story-ring {
-      padding: 2px;
-      background: linear-gradient(45deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888);
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .story-ring.add-story {
-      background: #333;
-    }
+/* Authentication Screen */
+#auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
 
-    /* Header Bar */
-    .header-bar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-    }
+.auth-card {
+  width: min(400px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+  text-align: center;
+}
 
-    /* Bottom Nav Bar */
-    .bottom-nav-bar {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 500px;
-      height: 60px;
-      background: rgba(10, 10, 10, 0.95);
-      backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 400;
-    }
-    .nav-tab-btn {
-      color: var(--text-muted);
-      font-size: 20px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      width: 20%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s, transform 0.1s;
-    }
-    .nav-tab-btn.active {
-      color: var(--text-main);
-      transform: scale(1.1);
-    }
+.logo {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: var(--insta-gradient);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 4px;
+}
 
-    /* Tab Panes */
-    .tab-pane {
-      display: none;
-    }
-    .tab-pane.active {
-      display: block;
-    }
+.vip-welcome {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1c40f;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
 
-    /* Feed Post Card */
-    .post-card {
-      border-bottom: 1px solid var(--border-color);
-      background: var(--bg-dark);
-      padding-bottom: 12px;
-    }
-    .post-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-    }
-    .post-media-box {
-      width: 100%;
-      aspect-ratio: 1;
-      background: #080808;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .post-media-box img, .post-media-box video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .post-actions-bar {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 14px 6px;
-    }
-    .left-actions {
-      display: flex;
-      gap: 16px;
-    }
-    .action-icon-btn {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 22px;
-      cursor: pointer;
-    }
-    .action-icon-btn.liked {
-      color: var(--accent-red);
-    }
+.input-group {
+  position: relative;
+  margin-bottom: 12px;
+}
 
-    /* Live Stream Tags */
-    .badge-live-now {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: var(--accent-red);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
-    }
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  color: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 14px;
+}
 
-    /* Chat Messages */
-    .chat-window {
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 120px);
-    }
-    .messages-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .chat-bubble {
-      max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 18px;
-      font-size: 14px;
-      word-break: break-word;
-    }
-    .chat-bubble.sent {
-      align-self: flex-end;
-      background: #0095f6;
-      color: #fff;
-      border-bottom-right-radius: 4px;
-    }
-    .chat-bubble.received {
-      align-self: flex-start;
-      background: #262626;
-      color: #fff;
-      border-bottom-left-radius: 4px;
-    }
-    .chat-bottom-input {
-      display: flex;
-      padding: 10px;
-      background: #080808;
-      border-top: 1px solid var(--border-color);
-      gap: 8px;
-    }
-  </style>
+.input:focus {
+  border-color: var(--accent-color);
+}
+
+.primary-btn {
+  width: 100%;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0, 149, 246, 0.3);
+}
+
+.switch-auth {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.switch-auth span {
+  color: var(--accent-color);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* App Layout */
+#app {
+  display: none;
+  min-height: 100vh;
+  padding-top: 60px;
+  padding-bottom: calc(65px + var(--safe-bottom));
+}
+
+.header {
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+
+.brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(45deg, #ffffff, #aaaaaa);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-live-badge {
+  background: #ff3040;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icon-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #181818;
+  border: 1px solid var(--border-color);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+main {
+  width: min(650px, 100%);
+  margin: 0 auto;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Live Top Bar */
+.live-bar {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 12px 16px;
+  background: #080808;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+}
+
+.live-card-sm {
+  min-width: 110px;
+  height: 150px;
+  border-radius: 14px;
+  background: #181818;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #333;
+  cursor: pointer;
+}
+
+.live-card-sm img, .live-card-sm video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-live-now {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ff3040;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.live-user-tag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stories Bar */
+.stories-container {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+  background: #000;
+}
+
+.story-item {
+  text-align: center;
+  min-width: 72px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.story-ring {
+  width: 68px;
+  height: 68px;
+  padding: 2.5px;
+  border-radius: 50%;
+  background: var(--insta-gradient);
+  margin: 0 auto 5px;
+}
+
+.story-ring.add-story {
+  background: #222;
+  border: 2px dashed var(--accent-color);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #222;
+  border: 2px solid #000;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.avatar-sm {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #222;
+  border: 1px solid #333;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* VIP Posts Feed */
+.post-card {
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  background: var(--bg-primary);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.post-media-box {
+  width: 100%;
+  max-height: 600px;
+  background: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-media-box img, .post-media-box video {
+  width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+}
+
+.post-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 22px;
+}
+
+.left-actions {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.action-icon-btn {
+  color: #fff;
+  font-size: 24px;
+  background: none;
+  border: none;
+}
+
+.action-icon-btn.liked {
+  color: var(--like-color);
+}
+
+.post-meta-details {
+  padding: 0 16px 14px;
+  font-size: 14px;
+}
+
+.likes-counter {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.caption-box b {
+  margin-right: 6px;
+}
+
+.view-comments-btn {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+/* Chat Screen */
+.chat-window {
+  height: calc(100vh - 116px - var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 11px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-bubble.sent {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.received {
+  align-self: flex-start;
+  background: #222;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bottom-input {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px calc(10px + var(--safe-bottom)) 14px;
+  gap: 10px;
+  background: #000;
+  border-top: 1px solid var(--border-color);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+.chat-bottom-input input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid #333;
+  border-radius: 25px;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+}
+
+.chat-bottom-input button {
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 25px;
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Bottom Nav Bar */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(56px + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 200;
+}
+
+.nav-tab-btn {
+  color: var(--text-muted);
+  font-size: 22px;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-tab-btn.active {
+  color: #fff;
+}
+</style>
 </head>
 <body>
 
-<div class="app-container">
-
-  <!-- Authentication Interface -->
-  <div id="auth" class="fixed inset-0 z-[500] bg-black flex flex-col justify-center px-6 max-w-[500px] mx-auto">
-    <div class="text-center mb-6">
-      <h1 class="text-3xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-        UNIVERSE PRO
-      </h1>
-      <p class="text-xs text-amber-400 font-semibold tracking-widest mt-1">👑 OFFICIAL VIP PLATFORM</p>
-      
-      <!-- Special Aditya Singh Welcome Banner -->
-      <div id="welcomeBanner" class="mt-4 p-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-blue-500/20 border border-amber-500/40 text-amber-300 font-bold text-sm shadow-lg backdrop-blur-md">
-        ✨ Welcome, Aditya Singh 🚀
-      </div>
-    </div>
-
-    <form id="authForm" class="flex flex-col gap-3">
-      <div id="fullNameGroup" class="hidden">
-        <input id="fullName" class="input" placeholder="Full Name" value="Aditya Singh">
-      </div>
-      <input id="username" class="input" placeholder="Username" value="aditya_vip">
-      <input id="email" class="input" type="email" placeholder="Email Address" value="aditya@universe.com">
-      <input id="password" class="input" type="password" placeholder="Password" value="123456">
-      
-      <button type="submit" id="authBtn" class="primary-btn mt-2">Log In</button>
-    </form>
-
-    <div class="text-center mt-6 text-sm text-neutral-400">
-      <span id="switchText">Don't have an account?</span>
-      <button id="switchBtn" class="text-blue-500 font-bold ml-1 hover:underline">Sign up</button>
-    </div>
-  </div>
-
-  <!-- Main Application Body -->
-  <div id="app" class="hidden">
+<!-- Login & Register Screen -->
+<section id="auth">
+  <div class="auth-card">
+    <div class="logo">Universe Pro</div>
+    <div class="vip-welcome">👑 Welcome, Aditya Singh 🚀</div>
     
-    <!-- Top Header -->
-    <header class="header-bar">
-      <div class="flex items-center gap-2">
-        <span class="font-extrabold text-lg tracking-wider text-white">UNIVERSE PRO</span>
-        <span class="bg-amber-500/20 text-amber-400 text-[10px] font-extrabold px-2 py-0.5 rounded border border-amber-500/30">VIP</span>
+    <form id="authForm">
+      <div id="fullNameGroup" class="input-group hidden">
+        <input id="fullName" class="input" placeholder="Full name">
       </div>
-      
-      <div class="flex items-center gap-4">
-        <button onclick="startBroadcastingLive()" class="text-red-500 text-lg hover:scale-110 transition-transform" title="Go Live">
-          <i class="fa-solid fa-video"></i>
-        </button>
-        <button onclick="openAdminAuthModal()" class="text-amber-400 text-lg hover:scale-110 transition-transform" title="Admin Control">
-          <i class="fa-solid fa-crown"></i>
-        </button>
-        <button onclick="openChatList()" class="text-white text-lg relative hover:scale-110 transition-transform">
-          <i class="fa-regular fa-paper-plane"></i>
-        </button>
+      <div class="input-group">
+        <input id="email" class="input" type="email" placeholder="Email address" required>
       </div>
-    </header>
+      <div class="input-group">
+        <input id="username" class="input" placeholder="Username" required>
+      </div>
+      <div class="input-group">
+        <input id="password" class="input" type="password" placeholder="Password" required>
+      </div>
+      <button type="submit" class="primary-btn" id="authBtn">Log In</button>
+    </form>
+    
+    <div class="switch-auth">
+      <span id="switchText">Don't have an account?</span> 
+      <span id="switchBtn">Sign up</span>
+    </div>
+  </div>
+</section>
 
-    <main>
-      <!-- Feed Tab -->
-      <section id="home" class="tab-pane active">
-        <!-- Live Streams Horizontal Scroll Bar -->
-        <div id="liveStreamsBar" class="flex gap-3 p-3 overflow-x-auto border-b border-neutral-800 bg-neutral-950/50 hidden"></div>
+<!-- Main VIP Application Shell -->
+<div id="app">
+  <header class="header">
+    <div class="brand-title">Universe Pro</div>
+    <div class="header-actions">
+      <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
+      <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
+      <button class="icon-circle-btn" onclick="openChatList()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </header>
 
-        <!-- Stories Horizontal Bar -->
-        <div id="stories" class="flex gap-4 p-3 overflow-x-auto border-b border-neutral-900 bg-black"></div>
+  <main>
+    <!-- Home Feed Tab -->
+    <section id="home" class="tab-pane active">
+      <div class="live-bar" id="liveStreamsBar"></div>
+      <div class="stories-container" id="stories"></div>
+      <div id="feed"></div>
+    </section>
 
-        <!-- Main Posts Feed -->
-        <div id="feed" class="flex flex-col"></div>
-      </section>
+    <!-- Search Tab -->
+    <section id="search" class="tab-pane">
+      <div style="padding:13px;border-bottom:1px solid var(--border-color)">
+        <input id="searchInput" class="input" placeholder="Search people..." oninput="searchUsers(this.value)">
+      </div>
+      <div id="searchResults"></div>
+    </section>
 
-      <!-- Search Tab -->
-      <section id="search" class="tab-pane">
-        <div class="p-3 border-b border-neutral-800">
-          <input id="searchInput" class="input" placeholder="Search people on Universe..." oninput="searchUsers(this.value)">
-        </div>
-        <div id="searchResults"></div>
-      </section>
+    <!-- Shop & Store Tab -->
+    <section id="shop" class="tab-pane">
+      <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color);font-size:16px;">🛍️ Official VIP Store</div>
+      <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px;"></div>
+    </section>
 
-      <!-- Official Store Tab -->
-      <section id="shop" class="tab-pane">
-        <div class="font-bold p-4 border-b border-neutral-800 text-base flex justify-between items-center">
-          <span>🛍️ Official VIP Store</span>
-          <span class="text-xs text-neutral-400 font-normal">Fast Delivery Guarantee</span>
-        </div>
-        <div class="grid grid-cols-2 gap-3 p-3" id="shopGrid"></div>
-      </section>
+    <!-- Reels Tab -->
+    <section id="reels" class="tab-pane">
+      <div class="reels" id="reelsList" style="height:calc(100vh - 116px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
+    </section>
 
-      <!-- Reels Tab -->
-      <section id="reels" class="tab-pane">
-        <div id="reelsList" class="h-[calc(100vh-120px)] overflow-y-auto snap-y snap-mandatory bg-black"></div>
-      </section>
+    <!-- Upload Tab -->
+    <section id="upload" class="tab-pane">
+      <div style="padding:16px;">
+        <h3 id="uploadTitle" style="margin-bottom:10px;">Create Post</h3>
+        <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;">
+        <div id="preview" style="height:350px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
+        <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
+        <button class="primary-btn" onclick="publish()">Publish Post</button>
+      </div>
+    </section>
 
-      <!-- Upload Tab -->
-      <section id="upload" class="tab-pane">
-        <div class="p-4">
-          <h3 id="uploadTitle" class="text-lg font-bold mb-3">Create Post</h3>
-          <input id="fileInput" type="file" accept="image/*,video/*" class="my-3 text-white text-sm">
-          <div id="preview" class="h-72 bg-neutral-900 border border-dashed border-neutral-700 rounded-xl flex items-center justify-center overflow-hidden text-neutral-500">
-            Select photo or video
+    <!-- Chat Tab -->
+    <section id="chat" class="tab-pane">
+      <div id="chatListView">
+        <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color)">Messages</div>
+        <div id="chatList" style="padding:8px;"></div>
+      </div>
+      <div id="chatRoom" class="chat-room hidden chat-window">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-color);background:#080808;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button onclick="backChats()" style="color:#fff;font-size:18px;"><i class="fa-solid fa-arrow-left"></i></button>
+            <span id="chatTitle" style="font-weight:700;"></span>
           </div>
-          <input id="caption" class="input mt-3" placeholder="Write a caption...">
-          <button class="primary-btn mt-4" onclick="publish()">Publish Post</button>
+          <button onclick="startVideoCall()" style="color:#fff;font-size:20px;" title="Video Call"><i class="fa-solid fa-video"></i></button>
         </div>
-      </section>
-
-      <!-- Chat Tab -->
-      <section id="chat" class="tab-pane">
-        <div id="chatListView">
-          <div class="font-bold p-4 border-b border-neutral-800">Direct Messages</div>
-          <div id="chatList" class="p-2"></div>
-        </div>
-        <div id="chatRoom" class="chat-room hidden chat-window">
-          <div class="flex items-center justify-between p-3 border-b border-neutral-800 bg-neutral-950">
-            <div class="flex items-center gap-3">
-              <button onclick="backChats()" class="text-white text-lg"><i class="fa-solid fa-arrow-left"></i></button>
-              <span id="chatTitle" class="font-bold text-sm"></span>
-            </div>
-            <button onclick="startVideoCall()" class="text-white text-lg" title="Video Call"><i class="fa-solid fa-video"></i></button>
-          </div>
-          <div class="messages-area" id="messages"></div>
-          <div class="chat-bottom-input">
-            <input id="messageInput" class="input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
-            <button class="primary-btn !w-auto px-5" onclick="sendMessage()">Send</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Profile Tab -->
-      <section id="profile" class="tab-pane">
-        <div class="flex gap-5 items-center p-5 border-b border-neutral-800">
-          <div id="myAvatar" class="avatar-img !w-20 !h-20 text-2xl"></div>
-          <div class="flex gap-4 text-center flex-1 justify-around text-xs">
-            <div><strong id="postCount" class="block text-base text-white">0</strong>posts</div>
-            <div><strong id="followerCount" class="block text-base text-white">0</strong>followers</div>
-            <div><strong id="followingCount" class="block text-base text-white">0</strong>following</div>
-          </div>
-        </div>
-        <div class="p-4">
-          <b id="myName" class="text-base">Aditya Singh</b>
-          <p class="text-neutral-400 text-xs mt-1">Welcome to Universe Pro VIP 🚀</p>
-        </div>
-        <div class="flex gap-2 px-4 pb-4">
-          <button class="primary-btn !bg-neutral-800 !m-0 text-xs" onclick="changeProfilePic()">Change Photo</button>
-          <button class="primary-btn !bg-red-600 !m-0 text-xs" onclick="logout()">Log Out</button>
-        </div>
-        <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
-        <div class="flex border-t border-b border-neutral-800">
-          <button id="btnMyPosts" class="flex-1 py-3 bg-transparent text-white font-semibold text-xs border-b-2 border-white" onclick="switchProfileTab('posts')">📷 POSTS</button>
-          <button id="btnSavedPosts" class="flex-1 py-3 bg-transparent text-neutral-500 font-semibold text-xs border-b-2 border-transparent" onclick="switchProfileTab('saved')">🔖 SAVED</button>
-        </div>
-        <div id="myGrid" class="grid grid-cols-3 gap-0.5"></div>
-      </section>
-
-      <!-- External Person Profile Tab -->
-      <section id="personProfile" class="tab-pane">
-        <div class="flex gap-5 p-5 items-center">
-          <div id="personAvatar" class="avatar-img !w-20 !h-20 text-2xl"></div>
-          <div>
-            <h2 id="personName" class="text-lg font-bold"></h2>
-            <div class="text-neutral-400 text-xs mt-0.5" id="personUsername"></div>
-            <div class="flex gap-3 mt-2 text-xs">
-              <span><b id="personFollowerCount">0</b> followers</span>
-              <span><b id="personFollowingCount">0</b> following</span>
-            </div>
-          </div>
-        </div>
-        <div class="flex gap-2 px-4 pb-4">
-          <button id="personFollowBtn" class="primary-btn !m-0 text-xs" onclick="toggleFollowPerson()">Follow</button>
-          <button class="primary-btn !bg-neutral-800 !m-0 text-xs" onclick="startProfileChat()">💬 Chat</button>
-        </div>
-        <div class="font-bold p-3 border-t border-neutral-800 text-xs">User Posts</div>
-        <div id="personGrid" class="grid grid-cols-3 gap-0.5"></div>
-      </section>
-    </main>
-
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav-bar">
-      <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')"><i class="fa-solid fa-house"></i></button>
-      <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
-      <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
-      <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
-      <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
-      <button id="nav-profile" class="nav-tab-btn" onclick="showTab('profile')"><i class="fa-solid fa-user"></i></button>
-    </nav>
-  </div>
-
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed left-1/2 bottom-20 -translate-x-1/2 bg-white text-black px-5 py-2.5 rounded-full hidden z-[1000] text-xs font-bold shadow-2xl"></div>
-
-  <!-- Live Stream Modal -->
-  <div id="liveModal" class="hidden fixed inset-0 bg-black/95 z-[600] flex items-center justify-center p-2">
-    <div class="relative w-full max-w-[480px] h-[82vh] bg-black rounded-2xl overflow-hidden border border-neutral-800 flex flex-col">
-      <div class="relative w-full h-full bg-neutral-950 flex items-center justify-center overflow-hidden">
-        <video id="liveRawVideo" autoplay playsinline muted class="hidden"></video>
-        <canvas id="liveCanvas" class="w-full h-full object-cover"></canvas>
-        <video id="liveRemoteVideo" autoplay playsinline class="hidden w-full h-full object-cover"></video>
-        <div class="badge-live-now">🔴 LIVE</div>
-        <div id="liveHostName" class="absolute top-3 left-16 text-xs font-bold drop-shadow-md">Host</div>
-        
-        <div id="liveFilterBar" class="absolute bottom-16 left-0 right-0 flex gap-2 p-2 overflow-x-auto z-20 bg-black/60 backdrop-blur-md">
-          <button class="filter-btn px-3 py-1.5 rounded-full border border-white/20 bg-white/10 text-white text-[11px] font-bold whitespace-nowrap" onclick="applyBeautyFilter('none', this)">Normal</button>
-          <button class="filter-btn px-3 py-1.5 rounded-full border border-white/20 bg-white/10 text-white text-[11px] font-bold whitespace-nowrap" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
-          <button class="filter-btn px-3 py-1.5 rounded-full border border-white/20 bg-white/10 text-white text-[11px] font-bold whitespace-nowrap" onclick="applyBeautyFilter('glow', this)">🌟 Smooth Glow</button>
-          <button class="filter-btn px-3 py-1.5 rounded-full border border-white/20 bg-white/10 text-white text-[11px] font-bold whitespace-nowrap" onclick="applyBeautyFilter('bright', this)">☀️ Ultra Bright</button>
-        </div>
-
-        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20">
-          <button class="px-6 py-2 rounded-full bg-red-600 text-white font-bold text-xs" onclick="stopLiveStream()">Stop Live</button>
+        <div class="messages-area" id="messages"></div>
+        <div class="chat-bottom-input">
+          <input id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+          <button onclick="sendMessage()">Send</button>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Admin Password Verification Modal -->
-  <div id="adminAuthModal" class="hidden fixed inset-0 bg-black/85 z-[600] flex items-center justify-center p-4" onclick="closeAdminAuthModal()">
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-[380px] p-6 text-center" onclick="event.stopPropagation()">
-      <h3 class="font-bold text-base mb-2">🔐 Admin Control Panel</h3>
-      <p class="text-xs text-neutral-400 mb-4">Enter Password (9911) to access Dashboard:</p>
-      <input id="adminPassInput" class="input text-center text-xl tracking-[6px] mb-3" type="password" placeholder="Password">
-      <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
-    </div>
-  </div>
-
-  <!-- Admin Main Dashboard Modal -->
-  <div id="adminMainModal" class="hidden fixed inset-0 bg-black/90 z-[600] flex items-center justify-center p-4" onclick="closeAdminMainModal()">
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-[580px] max-h-[85vh] flex flex-col overflow-hidden" onclick="event.stopPropagation()">
-      <div class="p-4 border-b border-neutral-800 flex justify-between font-bold text-sm">
-        <span>👑 VIP Admin Dashboard</span>
-        <button onclick="closeAdminMainModal()" class="text-white">✕</button>
-      </div>
-      <div class="flex border-b border-neutral-800">
-        <button id="adminTabOrdersBtn" class="flex-1 p-3 bg-transparent text-blue-500 font-bold border-b-2 border-blue-500 text-xs" onclick="switchAdminSubTab('orders')">📦 View Orders</button>
-        <button id="adminTabProductsBtn" class="flex-1 p-3 bg-transparent text-neutral-500 font-bold border-b-2 border-transparent text-xs" onclick="switchAdminSubTab('products')">🛍️ Manage Products</button>
-      </div>
-      <div class="p-4 overflow-y-auto flex-1 text-xs">
-        <div id="adminSubPanelOrders">
-          <div id="adminOrdersList"></div>
-        </div>
-        <div id="adminSubPanelProducts" class="hidden">
-          <div class="bg-neutral-800/60 p-3 rounded-xl mb-4 flex flex-col gap-2">
-            <b>➕ Add Product:</b>
-            <input id="prodTitle" class="input" placeholder="Product Title">
-            <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
-            <textarea id="prodDesc" class="input h-16 resize-none" placeholder="Description..."></textarea>
-            <input id="prodFile" type="file" accept="image/*" class="text-white text-xs my-1" onchange="previewProductImg(event)">
-            <div id="prodPreview" class="h-20 bg-black border border-dashed border-neutral-700 rounded-lg flex items-center justify-center text-neutral-500 overflow-hidden">No image</div>
-            <button class="primary-btn" onclick="publishProduct()">Publish Product</button>
-          </div>
-          <div id="adminProductsEditList"></div>
+    <!-- Profile Tab -->
+    <section id="profile" class="tab-pane">
+      <div style="display:flex;gap:20px;align-items:center;padding:22px 16px;border-bottom:1px solid var(--border-color)">
+        <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;"></div>
+        <div style="display:flex;gap:20px;text-align:center;flex:1;justify-content:space-around;">
+          <div><strong id="postCount" style="display:block;font-size:18px;">0</strong>posts</div>
+          <div><strong id="followerCount" style="display:block;font-size:18px;">0</strong>followers</div>
+          <div><strong id="followingCount" style="display:block;font-size:18px;">0</strong>following</div>
         </div>
       </div>
-    </div>
-  </div>
+      <div style="padding:14px 16px;">
+        <b id="myName"></b>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Welcome to Universe Pro VIP 🚀</p>
+      </div>
+      <div style="display:flex;gap:8px;padding:0 16px 14px;">
+        <button class="primary-btn" style="background:#262626;margin:0;" onclick="changeProfilePic()">Change Photo</button>
+        <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="logout()">Log Out</button>
+      </div>
+      <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
+      <div style="display:flex;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;" onclick="switchProfileTab('posts')">📷 POSTS</button>
+        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;" onclick="switchProfileTab('saved')">🔖 SAVED</button>
+      </div>
+      <div id="myGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;"></div>
+    </section>
+  </main>
 
-  <!-- Product Buy & Checkout Modal -->
-  <div id="buyProductModal" class="hidden fixed inset-0 bg-black/90 z-[600] flex items-center justify-center p-4" onclick="closeBuyModal()">
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-[450px] max-h-[85vh] overflow-y-auto p-4 text-xs" onclick="event.stopPropagation()">
-      <div class="flex justify-between items-center mb-3">
-        <span id="buyProdTitle" class="font-bold text-sm">Product Details</span>
-        <button onclick="closeBuyModal()" class="text-white text-base">✕</button>
-      </div>
-      <div id="buyProdImg" class="w-full h-48 bg-black bg-contain bg-no-repeat bg-center rounded-lg border border-neutral-800 mb-3"></div>
-      <div id="buyProdPrice" class="text-emerald-400 text-xl font-extrabold mb-2">₹0</div>
-      <p id="buyProdDesc" class="text-neutral-400 mb-4 whitespace-pre-wrap"></p>
-      
-      <div class="border-t border-neutral-800 pt-3 flex flex-col gap-2">
-        <b class="text-blue-400">📦 Delivery Details:</b>
-        <input id="orderName" class="input" placeholder="Your Full Name">
-        <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-        <button class="primary-btn !bg-neutral-800 !py-2" onclick="detectUserLocation()">📍 Get GPS Location</button>
-        <input id="orderLocLink" class="input text-[11px] text-neutral-500" placeholder="GPS Link" readonly>
-        <textarea id="orderAddress" class="input h-14 resize-none" placeholder="Delivery Address..."></textarea>
-      </div>
-      
-      <div class="flex gap-2 mt-4">
-        <button class="primary-btn !bg-gradient-to-r !from-emerald-500 !to-green-600" onclick="placeOrderNow()">🛒 Place Order</button>
-        <button class="primary-btn !bg-neutral-800" onclick="proceedToShareProduct()">📤 Share</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Fullscreen Media Viewer Modal -->
-  <div id="mediaModal" class="hidden fixed inset-0 bg-black/95 z-[999] flex items-center justify-center p-2" onclick="closeMediaModal()">
-    <button class="absolute top-4 right-4 text-white text-2xl" onclick="closeMediaModal()">✕</button>
-    <div id="mediaModalBody" class="flex items-center justify-center w-full h-full" onclick="event.stopPropagation()"></div>
-  </div>
-
-  <!-- Send Product to Chat Modal -->
-  <div id="sendProductModal" class="hidden fixed inset-0 bg-black/85 z-[600] flex items-center justify-center p-4" onclick="closeSendModal()">
-    <div class="bg-neutral-900 border border-neutral-800 rounded-xl w-full max-w-[380px] max-h-[80vh] overflow-y-auto p-4" onclick="event.stopPropagation()">
-      <div class="flex justify-between mb-3 font-bold text-sm">
-        <span>Send Product to Friend</span>
-        <button onclick="closeSendModal()" class="text-white">✕</button>
-      </div>
-      <div id="friendListForSend"></div>
-    </div>
-  </div>
-
-  <!-- Video Call Modal -->
-  <div id="videoModal" class="hidden fixed inset-0 bg-black/95 z-[700] flex items-center justify-center">
-    <div class="relative w-full max-w-[480px] h-[75vh] bg-black rounded-2xl overflow-hidden border border-neutral-800">
-      <video id="remoteVideo" autoplay playsinline class="w-full h-full object-cover bg-neutral-900"></video>
-      <video id="localVideo" autoplay playsinline muted class="absolute top-4 right-4 w-28 h-36 rounded-xl border-2 border-white/30 object-cover bg-neutral-800 z-10"></video>
-      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 z-20 bg-black/60 px-5 py-2.5 rounded-full backdrop-blur-md">
-        <button id="btnToggleCam" class="w-12 h-12 rounded-full bg-neutral-800 text-white" onclick="toggleCamera()"><i class="fa-solid fa-video"></i></button>
-        <button id="btnToggleMic" class="w-12 h-12 rounded-full bg-neutral-800 text-white" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i></button>
-        <button class="w-12 h-12 rounded-full bg-red-600 text-white" onclick="endCall()"><i class="fa-solid fa-phone-slash"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Story Viewer Modal -->
-  <div id="storyModal" class="hidden fixed inset-0 bg-black/90 z-[600] flex items-center justify-center p-4" onclick="closeStory()">
-    <div class="bg-neutral-900 rounded-xl w-full max-w-[400px] overflow-hidden" onclick="event.stopPropagation()">
-      <div class="p-3 border-b border-neutral-800 flex justify-between font-bold text-sm">
-        <span id="storyUser"></span>
-        <button onclick="closeStory()" class="text-white">✕</button>
-      </div>
-      <div id="storyBody" class="p-2 flex items-center justify-center"></div>
-    </div>
-  </div>
-  <input id="storyFileInput" type="file" accept="image/*" class="hidden" onchange="handleStoryUpload(event)">
-
-  <!-- Comments Modal -->
-  <div id="commentModal" class="hidden fixed inset-0 bg-black/85 z-[600] flex items-center justify-center p-4" onclick="closeComments()">
-    <div class="bg-neutral-900 border border-neutral-800 rounded-xl w-full max-w-[450px] max-h-[80vh] flex flex-col overflow-hidden" onclick="event.stopPropagation()">
-      <div class="p-3 border-b border-neutral-800 flex justify-between font-bold text-sm">
-        <span>Comments</span>
-        <button onclick="closeComments()" class="text-white">✕</button>
-      </div>
-      <div id="commentsList" class="p-4 overflow-y-auto flex-1"></div>
-      <div class="flex p-3 border-t border-neutral-800 bg-black gap-2">
-        <input id="commentInput" class="input" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()">
-        <button class="primary-btn !w-20 !m-0" onclick="submitComment()">Post</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav-bar">
+    <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')"><i class="fa-solid fa-house"></i></button>
+    <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
+    <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
+    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
+    <button id="nav-profile" class="nav-tab-btn" onclick="showTab('profile')"><i class="fa-solid fa-user"></i></button>
+  </nav>
 </div>
 
+<!-- Notification Toast -->
+<div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;box-shadow:0 5px 20px rgba(0,0,0,0.5);"></div><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Universe Pro - VIP Social & Commerce Platform</title>
+
+<!-- Font Awesome VIP Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+  --bg-primary: #050505;
+  --bg-card: #121212;
+  --bg-input: #1e1e1e;
+  --border-color: #262626;
+  --accent-color: #0095f6;
+  --like-color: #ff3040;
+  --gold-vip: linear-gradient(45deg, #f1c40f, #e67e22);
+  --insta-gradient: linear-gradient(45deg, #f09433, #dc2743, #bc1888, #5851db);
+  --text-main: #ffffff;
+  --text-muted: #a8a8a8;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+button, input, textarea {
+  font: inherit;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Authentication Screen */
+#auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+.auth-card {
+  width: min(400px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+  text-align: center;
+}
+
+.logo {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: var(--insta-gradient);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 4px;
+}
+
+.vip-welcome {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1c40f;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  color: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.input:focus {
+  border-color: var(--accent-color);
+}
+
+.primary-btn {
+  width: 100%;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0, 149, 246, 0.3);
+}
+
+.switch-auth {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.switch-auth span {
+  color: var(--accent-color);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* App Layout */
+#app {
+  display: none;
+  min-height: 100vh;
+  padding-top: 60px;
+  padding-bottom: calc(65px + var(--safe-bottom));
+}
+
+.header {
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+
+.brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(45deg, #ffffff, #aaaaaa);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-live-badge {
+  background: #ff3040;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icon-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #181818;
+  border: 1px solid var(--border-color);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+main {
+  width: min(650px, 100%);
+  margin: 0 auto;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Live Top Bar */
+.live-bar {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 12px 16px;
+  background: #080808;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+}
+
+.live-card-sm {
+  min-width: 110px;
+  height: 150px;
+  border-radius: 14px;
+  background: #181818;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #333;
+  cursor: pointer;
+}
+
+.live-card-sm img, .live-card-sm video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-live-now {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ff3040;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.live-user-tag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stories Bar */
+.stories-container {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+  background: #000;
+}
+
+.story-item {
+  text-align: center;
+  min-width: 72px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.story-ring {
+  width: 68px;
+  height: 68px;
+  padding: 2.5px;
+  border-radius: 50%;
+  background: var(--insta-gradient);
+  margin: 0 auto 5px;
+}
+
+.story-ring.add-story {
+  background: #222;
+  border: 2px dashed var(--accent-color);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #222;
+  border: 2px solid #000;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.avatar-sm {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #222;
+  border: 1px solid #333;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* VIP Posts Feed */
+.post-card {
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  background: var(--bg-primary);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.post-media-box {
+  width: 100%;
+  max-height: 600px;
+  background: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-media-box img, .post-media-box video {
+  width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+}
+
+.post-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 22px;
+}
+
+.left-actions {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.action-icon-btn {
+  color: #fff;
+  font-size: 24px;
+  background: none;
+  border: none;
+}
+
+.action-icon-btn.liked {
+  color: var(--like-color);
+}
+
+.post-meta-details {
+  padding: 0 16px 14px;
+  font-size: 14px;
+}
+
+.likes-counter {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.caption-box b {
+  margin-right: 6px;
+}
+
+.view-comments-btn {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+/* Chat Screen */
+.chat-window {
+  height: calc(100vh - 116px - var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 11px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-bubble.sent {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.received {
+  align-self: flex-start;
+  background: #222;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bottom-input {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px calc(10px + var(--safe-bottom)) 14px;
+  gap: 10px;
+  background: #000;
+  border-top: 1px solid var(--border-color);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+.chat-bottom-input input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid #333;
+  border-radius: 25px;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+}
+
+.chat-bottom-input button {
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 25px;
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Bottom Nav Bar */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(56px + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 200;
+}
+
+.nav-tab-btn {
+  color: var(--text-muted);
+  font-size: 22px;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-tab-btn.active {
+  color: #fff;
+}
+</style>
+</head>
+<body>
+
+<!-- Login & Register Screen -->
+<section id="auth">
+  <div class="auth-card">
+    <div class="logo">Universe Pro</div>
+    <div class="vip-welcome">👑 Welcome, Aditya Singh 🚀</div>
+    
+    <form id="authForm">
+      <div id="fullNameGroup" class="input-group hidden">
+        <input id="fullName" class="input" placeholder="Full name">
+      </div>
+      <div class="input-group">
+        <input id="email" class="input" type="email" placeholder="Email address" required>
+      </div>
+      <div class="input-group">
+        <input id="username" class="input" placeholder="Username" required>
+      </div>
+      <div class="input-group">
+        <input id="password" class="input" type="password" placeholder="Password" required>
+      </div>
+      <button type="submit" class="primary-btn" id="authBtn">Log In</button>
+    </form>
+    
+    <div class="switch-auth">
+      <span id="switchText">Don't have an account?</span> 
+      <span id="switchBtn">Sign up</span>
+    </div>
+  </div>
+</section>
+
+<!-- Main VIP Application Shell -->
+<div id="app">
+  <header class="header">
+    <div class="brand-title">Universe Pro</div>
+    <div class="header-actions">
+      <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
+      <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
+      <button class="icon-circle-btn" onclick="openChatList()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Home Feed Tab -->
+    <section id="home" class="tab-pane active">
+      <div class="live-bar" id="liveStreamsBar"></div>
+      <div class="stories-container" id="stories"></div>
+      <div id="feed"></div>
+    </section>
+
+    <!-- Search Tab -->
+    <section id="search" class="tab-pane">
+      <div style="padding:13px;border-bottom:1px solid var(--border-color)">
+        <input id="searchInput" class="input" placeholder="Search people..." oninput="searchUsers(this.value)">
+      </div>
+      <div id="searchResults"></div>
+    </section>
+
+    <!-- Shop & Store Tab -->
+    <section id="shop" class="tab-pane">
+      <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color);font-size:16px;">🛍️ Official VIP Store</div>
+      <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px;"></div>
+    </section>
+
+    <!-- Reels Tab -->
+    <section id="reels" class="tab-pane">
+      <div class="reels" id="reelsList" style="height:calc(100vh - 116px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
+    </section>
+
+    <!-- Upload Tab -->
+    <section id="upload" class="tab-pane">
+      <div style="padding:16px;">
+        <h3 id="uploadTitle" style="margin-bottom:10px;">Create Post</h3>
+        <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;">
+        <div id="preview" style="height:350px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
+        <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
+        <button class="primary-btn" onclick="publish()">Publish Post</button>
+      </div>
+    </section>
+
+    <!-- Chat Tab -->
+    <section id="chat" class="tab-pane">
+      <div id="chatListView">
+        <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color)">Messages</div>
+        <div id="chatList" style="padding:8px;"></div>
+      </div>
+      <div id="chatRoom" class="chat-room hidden chat-window">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-color);background:#080808;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button onclick="backChats()" style="color:#fff;font-size:18px;"><i class="fa-solid fa-arrow-left"></i></button>
+            <span id="chatTitle" style="font-weight:700;"></span>
+          </div>
+          <button onclick="startVideoCall()" style="color:#fff;font-size:20px;" title="Video Call"><i class="fa-solid fa-video"></i></button>
+        </div>
+        <div class="messages-area" id="messages"></div>
+        <div class="chat-bottom-input">
+          <input id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile Tab -->
+    <section id="profile" class="tab-pane">
+      <div style="display:flex;gap:20px;align-items:center;padding:22px 16px;border-bottom:1px solid var(--border-color)">
+        <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;"></div>
+        <div style="display:flex;gap:20px;text-align:center;flex:1;justify-content:space-around;">
+          <div><strong id="postCount" style="display:block;font-size:18px;">0</strong>posts</div>
+          <div><strong id="followerCount" style="display:block;font-size:18px;">0</strong>followers</div>
+          <div><strong id="followingCount" style="display:block;font-size:18px;">0</strong>following</div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;">
+        <b id="myName"></b>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Welcome to Universe Pro VIP 🚀</p>
+      </div>
+      <div style="display:flex;gap:8px;padding:0 16px 14px;">
+        <button class="primary-btn" style="background:#262626;margin:0;" onclick="changeProfilePic()">Change Photo</button>
+        <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="logout()">Log Out</button>
+      </div>
+      <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
+      <div style="display:flex;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;" onclick="switchProfileTab('posts')">📷 POSTS</button>
+        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;" onclick="switchProfileTab('saved')">🔖 SAVED</button>
+      </div>
+      <div id="myGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;"></div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav-bar">
+    <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')"><i class="fa-solid fa-house"></i></button>
+    <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
+    <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
+    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
+    <button id="nav-profile" class="nav-tab-btn" onclick="showTab('profile')"><i class="fa-solid fa-user"></i></button>
+  </nav>
+</div>
+
+<!-- Notification Toast -->
+<div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;box-shadow:0 5px 20px rgba(0,0,0,0.5);"></div><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Universe Pro - VIP Social & Commerce Platform</title>
+
+<!-- Font Awesome VIP Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+  --bg-primary: #050505;
+  --bg-card: #121212;
+  --bg-input: #1e1e1e;
+  --border-color: #262626;
+  --accent-color: #0095f6;
+  --like-color: #ff3040;
+  --gold-vip: linear-gradient(45deg, #f1c40f, #e67e22);
+  --insta-gradient: linear-gradient(45deg, #f09433, #dc2743, #bc1888, #5851db);
+  --text-main: #ffffff;
+  --text-muted: #a8a8a8;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+button, input, textarea {
+  font: inherit;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Authentication Screen */
+#auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+.auth-card {
+  width: min(400px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+  text-align: center;
+}
+
+.logo {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: var(--insta-gradient);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 4px;
+}
+
+.vip-welcome {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1c40f;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  color: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.input:focus {
+  border-color: var(--accent-color);
+}
+
+.primary-btn {
+  width: 100%;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0, 149, 246, 0.3);
+}
+
+.switch-auth {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.switch-auth span {
+  color: var(--accent-color);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* App Layout */
+#app {
+  display: none;
+  min-height: 100vh;
+  padding-top: 60px;
+  padding-bottom: calc(65px + var(--safe-bottom));
+}
+
+.header {
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+
+.brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(45deg, #ffffff, #aaaaaa);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-live-badge {
+  background: #ff3040;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icon-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #181818;
+  border: 1px solid var(--border-color);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+main {
+  width: min(650px, 100%);
+  margin: 0 auto;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Live Top Bar */
+.live-bar {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 12px 16px;
+  background: #080808;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+}
+
+.live-card-sm {
+  min-width: 110px;
+  height: 150px;
+  border-radius: 14px;
+  background: #181818;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #333;
+  cursor: pointer;
+}
+
+.live-card-sm img, .live-card-sm video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-live-now {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ff3040;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.live-user-tag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stories Bar */
+.stories-container {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+  background: #000;
+}
+
+.story-item {
+  text-align: center;
+  min-width: 72px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.story-ring {
+  width: 68px;
+  height: 68px;
+  padding: 2.5px;
+  border-radius: 50%;
+  background: var(--insta-gradient);
+  margin: 0 auto 5px;
+}
+
+.story-ring.add-story {
+  background: #222;
+  border: 2px dashed var(--accent-color);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #222;
+  border: 2px solid #000;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.avatar-sm {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #222;
+  border: 1px solid #333;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* VIP Posts Feed */
+.post-card {
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  background: var(--bg-primary);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.post-media-box {
+  width: 100%;
+  max-height: 600px;
+  background: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-media-box img, .post-media-box video {
+  width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+}
+
+.post-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 22px;
+}
+
+.left-actions {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.action-icon-btn {
+  color: #fff;
+  font-size: 24px;
+  background: none;
+  border: none;
+}
+
+.action-icon-btn.liked {
+  color: var(--like-color);
+}
+
+.post-meta-details {
+  padding: 0 16px 14px;
+  font-size: 14px;
+}
+
+.likes-counter {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.caption-box b {
+  margin-right: 6px;
+}
+
+.view-comments-btn {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+/* Chat Screen */
+.chat-window {
+  height: calc(100vh - 116px - var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 11px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-bubble.sent {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.received {
+  align-self: flex-start;
+  background: #222;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bottom-input {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px calc(10px + var(--safe-bottom)) 14px;
+  gap: 10px;
+  background: #000;
+  border-top: 1px solid var(--border-color);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+.chat-bottom-input input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid #333;
+  border-radius: 25px;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+}
+
+.chat-bottom-input button {
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 25px;
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Bottom Nav Bar */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(56px + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 200;
+}
+
+.nav-tab-btn {
+  color: var(--text-muted);
+  font-size: 22px;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-tab-btn.active {
+  color: #fff;
+}
+</style>
+</head>
+<body>
+
+<!-- Login & Register Screen -->
+<section id="auth">
+  <div class="auth-card">
+    <div class="logo">Universe Pro</div>
+    <div class="vip-welcome">👑 Welcome, Aditya Singh 🚀</div>
+    
+    <form id="authForm">
+      <div id="fullNameGroup" class="input-group hidden">
+        <input id="fullName" class="input" placeholder="Full name">
+      </div>
+      <div class="input-group">
+        <input id="email" class="input" type="email" placeholder="Email address" required>
+      </div>
+      <div class="input-group">
+        <input id="username" class="input" placeholder="Username" required>
+      </div>
+      <div class="input-group">
+        <input id="password" class="input" type="password" placeholder="Password" required>
+      </div>
+      <button type="submit" class="primary-btn" id="authBtn">Log In</button>
+    </form>
+    
+    <div class="switch-auth">
+      <span id="switchText">Don't have an account?</span> 
+      <span id="switchBtn">Sign up</span>
+    </div>
+  </div>
+</section>
+
+<!-- Main VIP Application Shell -->
+<div id="app">
+  <header class="header">
+    <div class="brand-title">Universe Pro</div>
+    <div class="header-actions">
+      <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
+      <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
+      <button class="icon-circle-btn" onclick="openChatList()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Home Feed Tab -->
+    <section id="home" class="tab-pane active">
+      <div class="live-bar" id="liveStreamsBar"></div>
+      <div class="stories-container" id="stories"></div>
+      <div id="feed"></div>
+    </section>
+
+    <!-- Search Tab -->
+    <section id="search" class="tab-pane">
+      <div style="padding:13px;border-bottom:1px solid var(--border-color)">
+        <input id="searchInput" class="input" placeholder="Search people..." oninput="searchUsers(this.value)">
+      </div>
+      <div id="searchResults"></div>
+    </section>
+
+    <!-- Shop & Store Tab -->
+    <section id="shop" class="tab-pane">
+      <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color);font-size:16px;">🛍️ Official VIP Store</div>
+      <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px;"></div>
+    </section>
+
+    <!-- Reels Tab -->
+    <section id="reels" class="tab-pane">
+      <div class="reels" id="reelsList" style="height:calc(100vh - 116px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
+    </section>
+
+    <!-- Upload Tab -->
+    <section id="upload" class="tab-pane">
+      <div style="padding:16px;">
+        <h3 id="uploadTitle" style="margin-bottom:10px;">Create Post</h3>
+        <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;">
+        <div id="preview" style="height:350px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
+        <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
+        <button class="primary-btn" onclick="publish()">Publish Post</button>
+      </div>
+    </section>
+
+    <!-- Chat Tab -->
+    <section id="chat" class="tab-pane">
+      <div id="chatListView">
+        <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color)">Messages</div>
+        <div id="chatList" style="padding:8px;"></div>
+      </div>
+      <div id="chatRoom" class="chat-room hidden chat-window">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-color);background:#080808;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button onclick="backChats()" style="color:#fff;font-size:18px;"><i class="fa-solid fa-arrow-left"></i></button>
+            <span id="chatTitle" style="font-weight:700;"></span>
+          </div>
+          <button onclick="startVideoCall()" style="color:#fff;font-size:20px;" title="Video Call"><i class="fa-solid fa-video"></i></button>
+        </div>
+        <div class="messages-area" id="messages"></div>
+        <div class="chat-bottom-input">
+          <input id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile Tab -->
+    <section id="profile" class="tab-pane">
+      <div style="display:flex;gap:20px;align-items:center;padding:22px 16px;border-bottom:1px solid var(--border-color)">
+        <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;"></div>
+        <div style="display:flex;gap:20px;text-align:center;flex:1;justify-content:space-around;">
+          <div><strong id="postCount" style="display:block;font-size:18px;">0</strong>posts</div>
+          <div><strong id="followerCount" style="display:block;font-size:18px;">0</strong>followers</div>
+          <div><strong id="followingCount" style="display:block;font-size:18px;">0</strong>following</div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;">
+        <b id="myName"></b>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Welcome to Universe Pro VIP 🚀</p>
+      </div>
+      <div style="display:flex;gap:8px;padding:0 16px 14px;">
+        <button class="primary-btn" style="background:#262626;margin:0;" onclick="changeProfilePic()">Change Photo</button>
+        <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="logout()">Log Out</button>
+      </div>
+      <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
+      <div style="display:flex;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;" onclick="switchProfileTab('posts')">📷 POSTS</button>
+        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;" onclick="switchProfileTab('saved')">🔖 SAVED</button>
+      </div>
+      <div id="myGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;"></div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav-bar">
+    <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')"><i class="fa-solid fa-house"></i></button>
+    <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
+    <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
+    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
+    <button id="nav-profile" class="nav-tab-btn" onclick="showTab('profile')"><i class="fa-solid fa-user"></i></button>
+  </nav>
+</div>
+
+<!-- Notification Toast -->
+<div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;box-shadow:0 5px 20px rgba(0,0,0,0.5);"></div>
+<!-- Live Stream Modal -->
+<div id="liveModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:flex;align-items:center;justify-content:center;padding:10px;">
+  <div style="position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column;">
+    <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+      <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
+      <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
+      <video id="liveRemoteVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE</div>
+      <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
+      
+      <div id="liveFilterBar" style="position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('none', this)">Normal</button>
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('glow', this)">🌟 Smooth Glow</button>
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('bright', this)">☀️ Ultra Bright</button>
+      </div>
+
+      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;">
+        <button style="padding:10px 24px;border-radius:25px;background:#ff3040;color:#fff;font-weight:bold;" onclick="stopLiveStream()">Stop Live</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Password Modal -->
+<div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
+    <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter Password (9911) to access Dashboard:</p>
+    <input id="adminPassInput" class="input" type="password" placeholder="Password" style="text-align:center;font-size:20px;letter-spacing:6px;margin-bottom:12px;">
+    <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
+  </div>
+</div>
+
+<!-- Admin Main Dashboard Modal -->
+<div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
+    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
+      <span>👑 VIP Admin Dashboard</span>
+      <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
+    </div>
+    <div style="display:flex;border-bottom:1px solid #333;">
+      <button id="adminTabOrdersBtn" style="flex:1;padding:12px;background:none;color:#0095f6;font-weight:bold;border-bottom:2px solid #0095f6;border:none;" onclick="switchAdminSubTab('orders')">📦 View Orders</button>
+      <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('products')">🛍️ Manage Products</button>
+    </div>
+    <div style="padding:15px;overflow-y:auto;flex:1;">
+      <div id="adminSubPanelOrders">
+        <div id="adminOrdersList"></div>
+      </div>
+      <div id="adminSubPanelProducts" class="hidden">
+        <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
+          <b style="color:#fff;">➕ Add Product:</b>
+          <input id="prodTitle" class="input" placeholder="Product Title" style="margin-top:6px;">
+          <input id="prodPrice" class="input" type="number" placeholder="Price (₹)" style="margin-top:6px;">
+          <textarea id="prodDesc" class="input" placeholder="Description..." style="height:55px;margin-top:6px;resize:none;"></textarea>
+          <input id="prodFile" type="file" accept="image/*" style="margin:8px 0;color:#fff;" onchange="previewProductImg(event)">
+          <div id="prodPreview" style="height:90px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:#777;overflow:hidden;">No image</div>
+          <button class="primary-btn" onclick="publishProduct()">Publish Product</button>
+        </div>
+        <div id="adminProductsEditList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Buy & Checkout Modal -->
+<div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span id="buyProdTitle" style="font-weight:bold;font-size:16px;color:#fff;">Product Details</span>
+      <button onclick="closeBuyModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
+    </div>
+    <div id="buyProdImg" style="width:100%;height:190px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:12px;"></div>
+    <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
+    <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
+    <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
+      <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
+      <input id="orderName" class="input" placeholder="Your Full Name">
+      <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
+      <button class="primary-btn" style="background:#262626;margin:0;padding:9px;" onclick="detectUserLocation()">📍 Get GPS Location</button>
+      <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
+      <textarea id="orderAddress" class="input" placeholder="Delivery Address..." style="height:55px;resize:none;"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="primary-btn" style="background:linear-gradient(45deg,#2ecc71,#27ae60);margin:0;" onclick="placeOrderNow()">🛒 Place Order</button>
+      <button class="primary-btn" style="background:#262626;margin:0;" onclick="proceedToShareProduct()">📤 Share</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen Media Modal -->
+<div id="mediaModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px;" onclick="closeMediaModal()">
+  <button style="position:absolute;top:20px;right:20px;color:#fff;font-size:28px;background:none;border:none;" onclick="closeMediaModal()">✕</button>
+  <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
+</div>
+
+<!-- Send Product to Chat Modal -->
+<div id="sendProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeSendModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:14px;width:min(400px,100%);max-height:80vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-weight:bold;color:#fff;">
+      <span>Send Product to Friend</span>
+      <button onclick="closeSendModal()" style="color:#fff;background:none;border:none;">✕</button>
+    </div>
+    <div id="friendListForSend"></div>
+  </div>
+</div>
+
+<!-- Video Call Modal -->
+<div id="videoModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:700;display:flex;align-items:center;justify-content:center;">
+  <div style="position:relative;width:min(480px,100%);height:75vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;">
+    <video id="remoteVideo" autoplay playsinline style="width:100%;height:100%;object-fit:cover;background:#111;"></video>
+    <video id="localVideo" autoplay playsinline muted style="position:absolute;top:16px;right:16px;width:110px;height:150px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);object-fit:cover;background:#222;z-index:10;"></video>
+    <div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:16px;z-index:20;background:rgba(0,0,0,0.6);padding:10px 20px;border-radius:30px;backdrop-filter:blur(8px);">
+      <button id="btnToggleCam" style="width:48px;height:48px;border-radius:50%;background:#2a2a2a;color:#fff;font-size:18px;border:none;" onclick="toggleCamera()"><i class="fa-solid fa-video"></i></button>
+      <button id="btnToggleMic" style="width:48px;height:48px;border-radius:50%;background:#2a2a2a;color:#fff;font-size:18px;border:none;" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i></button>
+      <button style="width:48px;height:48px;border-radius:50%;background:#ff3040;color:#fff;font-size:18px;border:none;" onclick="endCall()"><i class="fa-solid fa-phone-slash"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- Story Modal -->
+<div id="storyModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeStory()">
+  <div style="background:#181818;border-radius:14px;width:min(400px,100%);overflow:hidden;" onclick="event.stopPropagation()">
+    <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
+      <span id="storyUser"></span>
+      <button onclick="closeStory()" style="color:#fff;background:none;border:none;">✕</button>
+    </div>
+    <div id="storyBody" style="padding:10px;display:flex;align-items:center;justify-content:center;"></div>
+  </div>
+</div>
+<input id="storyFileInput" type="file" accept="image/*" class="hidden" onchange="handleStoryUpload(event)">
+
+<!-- Comments Modal -->
+<div id="commentModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeComments()">
+  <div style="background:#181818;border:1px solid #333;border-radius:14px;width:min(450px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
+    <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
+      <span>Comments</span>
+      <button onclick="closeComments()" style="color:#fff;background:none;border:none;">✕</button>
+    </div>
+    <div id="commentsList" style="padding:14px;overflow-y:auto;flex:1;"></div>
+    <div style="display:flex;padding:10px;border-top:1px solid #333;background:#000;gap:8px;">
+      <input id="commentInput" class="input" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()">
+      <button class="primary-btn" style="width:80px;margin:0;" onclick="submitComment()">Post</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase Modular Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -682,42 +2157,13 @@
 
   let currentUid = null;
   let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {}, dbLives = {};
-  let signup = false, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
+  let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null, selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
 
   let liveStream = null, liveCanvasAnim = null, currentFilter = 'none', isBroadcaster = false, activeLiveKey = null;
   let localStream = null, peerConnection = null, isCamOn = true, isMicOn = true;
   const rtcServers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
-
-  // VIP Sound Generator Engine
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  function playVipSound(type) {
-    try {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      if (type === 'like') {
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.15);
-      } else if (type === 'order') {
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.35);
-      }
-    } catch(e) {}
-  }
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -730,7 +2176,7 @@
   function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
 
   function renderAvatar(u, isSmall = false) {
-    let name = u.username || u.name || 'User';
+    let name = u.username || u.name || 'user';
     let initial = name.charAt(0).toUpperCase();
     let cls = isSmall ? 'avatar-sm' : 'avatar-img';
     if (u && u.pic) {
@@ -773,7 +2219,6 @@
     renderLiveBar();
   }
 
-  // Live Streams Bar
   function renderLiveBar() {
     let bar = document.getElementById('liveStreamsBar');
     if(!bar) return;
@@ -783,10 +2228,10 @@
     bar.innerHTML = liveKeys.map(k => {
       let l = dbLives[k];
       let u = dbUsers[l.hostId] || {};
-      return `<div class="relative w-16 h-20 rounded-xl overflow-hidden border border-red-500/50 flex-shrink-0 cursor-pointer" onclick="watchLiveStream('${k}')">
-        ${u.pic ? `<img src="${u.pic}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-neutral-800 flex items-center justify-center font-bold text-xs">${(u.username||'Live').charAt(0).toUpperCase()}</div>`}
+      return `<div class="live-card-sm" onclick="watchLiveStream('${k}')">
+        ${u.pic ? `<img src="${u.pic}">` : `<div style="padding:20px;text-align:center;font-weight:bold">${(u.username||'Live').charAt(0).toUpperCase()}</div>`}
         <div class="badge-live-now">🔴 LIVE</div>
-        <div class="absolute bottom-1 left-1 right-1 text-[9px] font-bold truncate text-white drop-shadow">${esc(u.username || 'User')}</div>
+        <div class="live-user-tag">${esc(u.username || 'User')}</div>
       </div>`;
     }).join('');
   }
@@ -925,18 +2370,18 @@
     if(!box) return;
     let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
     box.innerHTML = prods.map(p => `
-      <div class="bg-neutral-900 p-2.5 rounded-lg mb-2 flex gap-2.5 items-center">
-        <div class="w-11 h-11 bg-cover bg-center rounded-md" style="background-image:url('${p.image}')"></div>
-        <div class="flex-1">
-          <b>${esc(p.title)}</b>
-          <div class="flex gap-1.5 mt-1">
-            <input id="ep_${p.id}" class="input !w-20 !p-1 !text-xs" value="${esc(p.price)}">
-            <button class="primary-btn !py-1 !px-2 !text-[11px] !m-0" onclick="updateProductPrice('${p.id}')">Save</button>
+      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
+        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
+        <div style="flex:1;">
+          <b style="color:#fff;">${esc(p.title)}</b>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
+            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
           </div>
         </div>
-        <button class="primary-btn !bg-red-600 !p-1.5 !text-[11px] !m-0" onclick="deleteProduct('${p.id}')">Delete</button>
+        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
       </div>
-    `).join('') || '<div class="text-neutral-500 text-xs">No items.</div>';
+    `).join('') || '<div style="color:#777;font-size:13px;">No items.</div>';
   }
 
   window.updateProductPrice = (id) => {
@@ -947,7 +2392,7 @@
 
   window.openMediaModal = (data, type) => {
     let body = document.getElementById('mediaModalBody');
-    body.innerHTML = type === 'video' ? `<video src="${data}" controls autoplay class="max-w-full max-h-full"></video>` : `<img src="${data}" class="max-w-full max-h-full object-contain">`;
+    body.innerHTML = type === 'video' ? `<video src="${data}" controls autoplay style="max-width:100%;max-height:100%;"></video>` : `<img src="${data}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
     document.getElementById('mediaModal').classList.remove('hidden');
   };
   window.closeMediaModal = () => document.getElementById('mediaModal').classList.add('hidden');
@@ -968,31 +2413,84 @@
   };
   window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
+  // GPS Location Fetching with Explicit Error Handling Alerts
   window.detectUserLocation = () => {
-    if(navigator.geolocation) {
-      toast('Fetching GPS...');
-      navigator.geolocation.getCurrentPosition(pos => {
-        document.getElementById('orderLocLink').value = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-        toast('GPS attached!');
-      }, () => toast('GPS failed'));
+    if (!navigator.geolocation) {
+      alert("⚠️ Error: Aapke browser/phone mein Geolocation support nahi hai. Kripya niche manual address type karein.");
+      return toast("GPS not supported");
     }
+
+    toast("📡 Fetching GPS Location...");
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+        let mapLink = `https://maps.google.com/?q=${lat},${lon}`;
+        document.getElementById('orderLocLink').value = mapLink;
+        alert("✅ GPS Location successfully attached!");
+        toast("GPS Location attached!");
+      },
+      (err) => {
+        let errorMsg = "";
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            errorMsg = "⚠️ Location Permission Denied! Phone/Browser settings mein jaakar location permission Allow karein, ya niche address type karein.";
+            break;
+          case err.POSITION_UNAVAILABLE:
+            errorMsg = "⚠️ GPS Signal Unavailable! Kripya apne phone ka GPS/Location ON karein.";
+            break;
+          case err.TIMEOUT:
+            errorMsg = "⚠️ GPS Request Timed Out! Signal weak hai. Please dobara try karein ya address type karein.";
+            break;
+          default:
+            errorMsg = "⚠️ GPS Error: Location nahi mil saki. Niche address manually likhein.";
+        }
+        alert(errorMsg);
+        toast("GPS Fetching Failed");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   };
 
+  // Order Placement Logic (Accepts GPS Link OR Manual Address)
   window.placeOrderNow = () => {
-    if(!selectedBuyProduct) return;
+    if (!selectedBuyProduct) return;
     let name = document.getElementById('orderName').value.trim();
     let phone = document.getElementById('orderPhone').value.trim();
-    let loc = document.getElementById('orderLocLink').value.trim();
-    let addr = document.getElementById('orderAddress').value.trim();
-    if(!name || !phone || (!addr && !loc)) return toast('Fill name, phone & address/location');
+    let locLink = document.getElementById('orderLocLink').value.trim();
+    let address = document.getElementById('orderAddress').value.trim();
+
+    if (!name || !phone) {
+      return toast("Kripya apna Name aur Mobile Number zaroor bharein!");
+    }
+
+    if (!address && !locLink) {
+      alert("⚠️ Kripya GPS Location fetch karein YA Delivery Address likhein!");
+      return toast("Address ya GPS location zaroori hai");
+    }
+
     push(ref(db, 'orders'), {
-      buyerId: currentUid, buyerName: name, buyerPhone: phone, buyerLocation: loc||'N/A', buyerAddress: addr||'N/A',
-      productId: selectedBuyProduct.id||'', productTitle: selectedBuyProduct.title, productPrice: selectedBuyProduct.price,
-      productImage: selectedBuyProduct.image, status: 'Pending', time: Date.now()
+      buyerId: currentUid,
+      buyerName: name,
+      buyerPhone: phone,
+      buyerLocation: locLink || 'N/A',
+      buyerAddress: address || 'N/A',
+      productId: selectedBuyProduct.id || '',
+      productTitle: selectedBuyProduct.title,
+      productPrice: selectedBuyProduct.price,
+      productImage: selectedBuyProduct.image,
+      status: 'Pending',
+      time: Date.now()
     });
-    playVipSound('order');
+
     closeBuyModal();
-    toast('🎉 Order Placed Successfully!');
+    alert("🎉 Order Placed Successfully!");
+    toast("🎉 Order Placed Successfully!");
   };
 
   window.proceedToShareProduct = () => {
@@ -1007,16 +2505,17 @@
     let keys = Object.keys(dbOrders).sort((a,b) => dbOrders[b].time - dbOrders[a].time);
     box.innerHTML = keys.map(k => {
       let o = dbOrders[k];
-      return `<div class="bg-neutral-900 p-3 rounded-lg mb-2 text-xs">
-        <b>${esc(o.productTitle)} (₹${esc(o.productPrice)})</b>
-        <div class="text-neutral-400 mt-1">Buyer: ${esc(o.buyerName)} (${esc(o.buyerPhone)})</div>
-        <div class="text-neutral-400">Address: ${esc(o.buyerAddress)}</div>
-        <div class="flex gap-2 mt-2">
-          <button class="primary-btn !bg-emerald-600 !py-1 !text-[11px] !m-0" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Deliver</button>
-          <button class="primary-btn !bg-red-600 !py-1 !text-[11px] !m-0" onclick="deleteOrder('${k}')">Delete</button>
+      return `<div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:10px;font-size:13px;">
+        <b style="color:#fff;">${esc(o.productTitle)} (₹${esc(o.productPrice)})</b>
+        <div style="color:#aaa;margin-top:4px;">Buyer: ${esc(o.buyerName)} (${esc(o.buyerPhone)})</div>
+        <div style="color:#aaa;">Address: ${esc(o.buyerAddress)}</div>
+        ${o.buyerLocation !== 'N/A' ? `<div style="margin-top:4px;"><a href="${o.buyerLocation}" target="_blank" style="color:#0095f6;font-size:12px;">📍 Open GPS Map Location</a></div>` : ''}
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="primary-btn" style="background:#2ecc71;padding:6px;font-size:11px;margin:0;" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Deliver</button>
+          <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteOrder('${k}')">Delete</button>
         </div>
       </div>`;
-    }).join('') || '<div class="text-neutral-500 text-xs">No orders.</div>';
+    }).join('') || '<div style="color:#777;font-size:13px;">No orders.</div>';
   }
 
   window.updateOrderStatus = (id, st) => {
@@ -1035,7 +2534,7 @@
     let f = e.target.files[0];
     if(!f) return;
     let r = new FileReader();
-    r.onload = () => { prodImageData = r.result; document.getElementById('prodPreview').innerHTML = `<img src="${prodImageData}" class="max-h-full object-contain">`; };
+    r.onload = () => { prodImageData = r.result; document.getElementById('prodPreview').innerHTML = `<img src="${prodImageData}" style="max-height:100%;object-fit:contain;">`; };
     r.readAsDataURL(f);
   };
 
@@ -1058,15 +2557,15 @@
     if(!box) return;
     let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
     box.innerHTML = prods.map(p => `
-      <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden flex flex-col">
-        <div class="w-full aspect-square bg-cover bg-center cursor-pointer" style="background-image:url('${p.image}')" onclick="openBuyModal('${p.id}')"></div>
-        <div class="p-2.5 flex flex-col gap-1 flex-1">
-          <div class="font-bold text-xs truncate">${esc(p.title)}</div>
-          <div class="text-emerald-400 font-extrabold text-sm">₹${esc(p.price)}</div>
-          <button class="primary-btn !bg-emerald-600 !py-1.5 !text-xs mt-1" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
+        <div style="width:100%;aspect-ratio:1;background-image:url('${p.image}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
+        <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
+          <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
+          <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
+          <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
         </div>
       </div>
-    `).join('') || '<div class="col-span-2 text-center text-neutral-500 py-8">No items in store.</div>';
+    `).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items in store.</div>';
   }
 
   function shareProductObj(p) {
@@ -1076,11 +2575,11 @@
     let following = myObj.following || [];
     let friends = Object.keys(dbUsers).filter(id => id !== currentUid && (following.includes(id) || hasChatHistory(id))).map(id => dbUsers[id]);
     document.getElementById('friendListForSend').innerHTML = friends.map(u => `
-      <div class="flex gap-2.5 p-2.5 items-center cursor-pointer border-b border-neutral-800" onclick="sendProductToChat('${u.id}')">
+      <div style="display:flex;gap:10px;padding:10px;align-items:center;cursor:pointer;border-bottom:1px solid #222;" onclick="sendProductToChat('${u.id}')">
         ${renderAvatar(u, true)}
-        <div><b>${esc(u.username)}</b></div>
+        <div><b style="color:#fff;">${esc(u.username)}</b></div>
       </div>
-    `).join('') || '<div class="text-neutral-500 text-center py-5">No friends found.</div>';
+    `).join('') || '<div style="color:#777;text-align:center;padding:20px;">No friends found.</div>';
     document.getElementById('sendProductModal').classList.remove('hidden');
   }
   window.closeSendModal = () => document.getElementById('sendProductModal').classList.add('hidden');
@@ -1092,7 +2591,6 @@
     toast('Sent to chat!');
   };
 
-  // Feed with Double-Tap Heart Animation
   function renderFeed() {
     let f = document.getElementById('feed');
     let posts = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).sort((a,b) => b.time - a.time);
@@ -1102,44 +2600,30 @@
       let isSaved = (post.saved || []).includes(currentUid);
       return `<article class="post-card">
         <div class="post-header">
-          <div class="flex items-center gap-2 cursor-pointer" onclick="openUser('${post.userId}')">
+          <div class="user-info-row" onclick="openUser('${post.userId}')">
             ${renderAvatar(u, true)}
-            <b class="text-xs">${esc(u.username || 'User')}</b>
+            <b style="color:#fff;">${esc(u.username || 'user')}</b>
           </div>
         </div>
-        <div class="post-media-box" onclick="handleDoubleTapLike(event, '${post.id}')">
-          ${post.type === 'video' ? `<video src="${post.data}" loop muted autoplay></video>` : `<img src="${post.data}">`}
+        <div class="post-media-box" onclick="openMediaModal('${post.data}', '${post.type}')">
+          ${post.type === 'video' ? `<video src="${post.data}"></video>` : `<img src="${post.data}">`}
         </div>
         <div class="post-actions-bar">
           <div class="left-actions">
             <button class="action-icon-btn ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
             <button class="action-icon-btn" onclick="openComments('${post.id}')"><i class="fa-regular fa-comment"></i></button>
-            ${post.userId === currentUid ? `<button class="action-icon-btn text-sm" onclick="deletePost('${post.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}
+            ${post.userId === currentUid ? `<button class="action-icon-btn" onclick="deletePost('${post.id}')" style="font-size:18px;"><i class="fa-solid fa-trash"></i></button>` : ''}
           </div>
           <button class="action-icon-btn" onclick="savePost('${post.id}')">${isSaved?'🔖':'📑'}</button>
         </div>
-        <div class="px-3 text-xs flex flex-col gap-1">
-          <div class="font-bold">${(post.likes||[]).length} likes</div>
-          <div><b>${esc(u.username||'User')}</b> ${esc(post.caption||'')}</div>
-          <div class="text-neutral-500 cursor-pointer mt-0.5" onclick="openComments('${post.id}')">View comments</div>
+        <div class="post-meta-details">
+          <div class="likes-counter" style="color:#fff;">${(post.likes||[]).length} likes</div>
+          <div class="caption-box" style="color:#fff;"><b style="color:#fff;">${esc(u.username||'user')}</b> ${esc(post.caption||'')}</div>
+          <div class="view-comments-btn" onclick="openComments('${post.id}')">View comments</div>
         </div>
       </article>`;
-    }).join('') || '<div class="text-center text-neutral-500 py-10">No posts available</div>';
+    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available</div>';
   }
-
-  window.handleDoubleTapLike = (e, postId) => {
-    let now = Date.now();
-    let lastTap = e.currentTarget.dataset.lastTap || 0;
-    if (now - lastTap < 300) {
-      likePost(postId);
-      let heart = document.createElement('div');
-      heart.className = 'floating-heart';
-      heart.innerHTML = '❤️';
-      e.currentTarget.appendChild(heart);
-      setTimeout(() => heart.remove(), 650);
-    }
-    e.currentTarget.dataset.lastTap = now;
-  };
 
   window.likePost = (id) => {
     let p = dbPosts[id];
@@ -1147,10 +2631,8 @@
     let l = p.likes || [];
     let idx = l.indexOf(currentUid);
     if(idx >= 0) l.splice(idx, 1); else l.push(currentUid);
-    playVipSound('like');
     set(ref(db, `posts/${id}/likes`), l);
   };
-
   window.savePost = (id) => {
     let p = dbPosts[id];
     if(!p) return;
@@ -1159,10 +2641,9 @@
     if(idx >= 0) s.splice(idx, 1); else s.push(currentUid);
     set(ref(db, `posts/${id}/saved`), s);
   };
-
   window.deletePost = (id) => { if(confirm('Delete post?')) { remove(ref(db, `posts/${id}`)); toast('Deleted'); } };
 
-  window.openUpload = () => { window.showTab('upload'); previewUrl = ''; };
+  window.openUpload = () => { window.showTab('upload'); selectedFile = null; };
   document.getElementById('fileInput').onchange = e => {
     let f = e.target.files[0];
     if(!f) return;
@@ -1170,7 +2651,7 @@
     r.onload = () => {
       previewUrl = r.result;
       previewType = f.type.startsWith('video') ? 'video' : 'image';
-      document.getElementById('preview').innerHTML = previewType === 'video' ? `<video src="${previewUrl}" controls class="max-h-full"></video>` : `<img src="${previewUrl}" class="max-h-full object-cover">`;
+      document.getElementById('preview').innerHTML = previewType === 'video' ? `<video src="${previewUrl}" controls></video>` : `<img src="${previewUrl}">`;
     };
     r.readAsDataURL(f);
   };
@@ -1188,16 +2669,16 @@
   function renderStories() {
     let box = document.getElementById('stories');
     if(!box) return;
-    let h = `<div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0" onclick="document.getElementById('storyFileInput').click()">
-      <div class="story-ring add-story"><div class="avatar-img text-xl">+</div></div>
-      <div class="text-[10px] text-neutral-400">Your story</div>
+    let h = `<div class="story-item" onclick="document.getElementById('storyFileInput').click()">
+      <div class="story-ring add-story"><div class="avatar-img" style="font-size:22px;">+</div></div>
+      <div style="color:#fff;">Your story</div>
     </div>`;
     Object.keys(dbStories).forEach(k => {
       let s = dbStories[k];
       let u = dbUsers[s.userId] || {};
-      h += `<div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0" onclick="viewStory('${k}')">
+      h += `<div class="story-item" onclick="viewStory('${k}')">
         <div class="story-ring">${renderAvatar(u, false)}</div>
-        <div class="text-[10px] text-neutral-300 truncate w-14 text-center">${esc(u.username||'User')}</div>
+        <div style="color:#fff;">${esc(u.username||'user')}</div>
       </div>`;
     });
     box.innerHTML = h;
@@ -1210,13 +2691,12 @@
     r.onload = () => { push(ref(db, 'stories'), { userId: currentUid, data: r.result, time: Date.now() }); toast('Story uploaded'); };
     r.readAsDataURL(f);
   };
-
   window.viewStory = (id) => {
     let s = dbStories[id];
     if(!s) return;
     let u = dbUsers[s.userId] || {};
     document.getElementById('storyUser').textContent = u.username || 'Story';
-    document.getElementById('storyBody').innerHTML = `<img src="${s.data}" class="w-full max-h-[60vh] object-contain">`;
+    document.getElementById('storyBody').innerHTML = `<img src="${s.data}" style="width:100%;max-height:60vh;object-fit:contain;">`;
     document.getElementById('storyModal').classList.remove('hidden');
   };
   window.closeStory = () => document.getElementById('storyModal').classList.add('hidden');
@@ -1227,14 +2707,14 @@
     let reels = Object.keys(dbPosts).filter(k => dbPosts[k].type === 'video').map(k => ({id: k, ...dbPosts[k]}));
     box.innerHTML = reels.map(r => {
       let u = dbUsers[r.userId] || {};
-      return `<div class="h-[calc(100vh-120px)] snap-start relative flex items-center justify-center bg-black">
-        <video src="${r.data}" loop autoplay muted class="w-full h-full object-contain" onclick="this.paused?this.play():this.pause()"></video>
-        <div class="absolute left-4 bottom-6 drop-shadow-md">
-          <b class="text-sm">@${esc(u.username||'User')}</b>
-          <p class="mt-1 text-xs text-neutral-200">${esc(r.caption||'')}</p>
+      return `<div style="height:calc(100vh - 116px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
+        <video src="${r.data}" loop autoplay muted style="width:100%;height:100%;object-fit:contain;" onclick="this.paused?this.play():this.pause()"></video>
+        <div style="position:absolute;left:16px;bottom:24px;text-shadow:0 2px 5px #000;color:#fff;">
+          <b style="color:#fff;">@${esc(u.username||'user')}</b>
+          <p style="margin-top:4px;font-size:13px;color:#fff;">${esc(r.caption||'')}</p>
         </div>
       </div>`;
-    }).join('') || '<div class="text-center text-neutral-500 py-10">No reels available</div>';
+    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No reels available</div>';
   }
 
   window.openComments = (id) => { activeCommentPostId = id; renderCommentsList(); document.getElementById('commentModal').classList.remove('hidden'); };
@@ -1246,8 +2726,8 @@
     document.getElementById('commentsList').innerHTML = Object.keys(c).map(k => {
       let cm = c[k];
       let u = dbUsers[cm.userId] || {};
-      return `<div class="flex gap-2.5 mb-3 text-xs">${renderAvatar(u, true)}<div><b>${esc(u.username)}:</b> ${esc(cm.text)}</div></div>`;
-    }).join('') || '<p class="text-neutral-500 text-center">No comments yet.</p>';
+      return `<div style="display:flex;gap:10px;margin-bottom:12px;font-size:13px;color:#fff;">${renderAvatar(u, true)}<div><b style="color:#fff;">${esc(u.username)}:</b> ${esc(cm.text)}</div></div>`;
+    }).join('') || '<p style="color:#777;text-align:center;">No comments yet.</p>';
   }
   window.submitComment = () => {
     let inp = document.getElementById('commentInput');
@@ -1264,11 +2744,11 @@
     if(!q) { box.innerHTML = ''; return; }
     let matches = Object.keys(dbUsers).filter(id => id !== currentUid && (dbUsers[id].username||'').includes(q)).map(id => dbUsers[id]);
     box.innerHTML = matches.map(u => `
-      <div class="flex items-center gap-3 p-3.5 border-b border-neutral-900 cursor-pointer" onclick="openUser('${u.id}')">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #1a1a1a;cursor:pointer;" onclick="openUser('${u.id}')">
         ${renderAvatar(u, true)}
-        <div><b class="text-xs">${esc(u.username)}</b></div>
+        <div><b style="color:#fff;">${esc(u.username)}</b></div>
       </div>
-    `).join('') || '<div class="p-4 text-neutral-500 text-xs">No users found</div>';
+    `).join('') || '<div style="padding:15px;color:#777;">No users found</div>';
   };
 
   window.showTab = (id) => {
@@ -1294,7 +2774,7 @@
     ab.innerHTML = '';
     if(u.pic) { ab.style.backgroundImage = `url('${u.pic}')`; ab.textContent = ''; }
     else { ab.style.backgroundImage = 'none'; ab.textContent = (u.username||'U').charAt(0).toUpperCase(); }
-    document.getElementById('myName').textContent = u.name || 'Aditya Singh';
+    document.getElementById('myName').textContent = u.name || '';
     let posts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
     document.getElementById('postCount').textContent = posts.length;
     document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(currentUid)).length;
@@ -1302,8 +2782,8 @@
     let list = profileTab === 'posts' ? posts : Object.keys(dbPosts).filter(k => (dbPosts[k].saved||[]).includes(currentUid));
     document.getElementById('myGrid').innerHTML = list.map(k => {
       let p = dbPosts[k];
-      return `<div class="aspect-square bg-neutral-900 overflow-hidden cursor-pointer" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" class="w-full h-full object-cover">`}</div>`;
-    }).join('') || '<div class="col-span-3 text-center text-neutral-500 py-8 text-xs">No posts</div>';
+      return `<div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}</div>`;
+    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No posts</div>';
   }
 
   window.changeProfilePic = () => document.getElementById('profileInput').click();
@@ -1335,8 +2815,8 @@
     let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === id);
     document.getElementById('personGrid').innerHTML = userPosts.map(k => {
       let p = dbPosts[k];
-      return `<div class="aspect-square bg-neutral-900 overflow-hidden cursor-pointer" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" class="w-full h-full object-cover">`}</div>`;
-    }).join('') || '<div class="col-span-3 text-center text-neutral-500 py-8 text-xs">No posts</div>';
+      return `<div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}</div>`;
+    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No posts</div>';
     window.showTab('personProfile');
   };
 
@@ -1374,11 +2854,11 @@
     let users = Object.keys(dbUsers).filter(id => id !== currentUid && (following.includes(id) || hasChatHistory(id))).map(id => ({ ...dbUsers[id], lastTime: getLatestMessageTime(id) }));
     users.sort((a,b) => b.lastTime - a.lastTime);
     list.innerHTML = users.map(u => `
-      <div class="flex gap-3 p-3 border-b border-neutral-900 items-center cursor-pointer" onclick="openChat('${u.id}')">
+      <div style="display:flex;gap:12px;padding:12px;border-bottom:1px solid #1c1c1c;align-items:center;cursor:pointer;" onclick="openChat('${u.id}')">
         ${renderAvatar(u, true)}
-        <div><b class="text-xs">${esc(u.username)}</b></div>
+        <div><b style="color:#fff;">${esc(u.username)}</b></div>
       </div>
-    `).join('') || '<div class="p-5 text-neutral-500 text-center text-xs">No chats available. Follow users to chat!</div>';
+    `).join('') || '<div style="padding:20px;color:#777;text-align:center;">No chats available. Follow users to chat!</div>';
   }
 
   window.startProfileChat = () => { if(profileUser) openChat(profileUser); };
@@ -1407,7 +2887,7 @@
       let m = msgs[k];
       let isMe = m.sender === currentUid;
       return `<div class="chat-bubble ${isMe?'sent':'received'}">${esc(m.text)}</div>`;
-    }).join('') || '<div class="text-neutral-500 text-center mt-5 text-xs">No messages yet.</div>';
+    }).join('') || '<div style="color:#777;text-align:center;margin-top:20px;">No messages yet.</div>';
     box.scrollTop = box.scrollHeight;
   }
 
