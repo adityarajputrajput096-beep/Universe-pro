@@ -33,11 +33,19 @@ button:active{transform:scale(0.96)}
 #app{display:none;min-height:100vh;padding-top:56px;padding-bottom:65px}
 .header{height:56px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
 .header .brand{font-size:24px;font-weight:800;background:linear-gradient(45deg,#fff,#ccc);-webkit-background-clip:text;color:transparent}
-.header-icons{display:flex;gap:10px;font-size:20px;align-items:center}
-.icon-btn{background:none;border:0;color:#fff;font-size:15px;padding:6px 10px;background:#222;border-radius:6px}
+.header-icons{display:flex;gap:8px;font-size:20px;align-items:center}
+.icon-btn{background:none;border:0;color:#fff;font-size:14px;padding:6px 10px;background:#222;border-radius:6px;display:flex;align-items:center;gap:4px}
 
 main{width:min(650px,100%);margin:auto}
 .tab{display:none}.tab.active{display:block}
+
+/* Live Section Bar */
+.live-bar{display:flex;gap:12px;overflow-x:auto;padding:12px 14px;background:#080808;border-bottom:1px solid var(--card-border)}
+.live-card-sm{min-width:110px;height:140px;border-radius:12px;background:#181818;position:relative;overflow:hidden;border:1px solid #333;cursor:pointer}
+.live-card-sm img,.live-card-sm video{width:100%;height:100%;object-fit:cover}
+.live-badge{position:absolute;top:8px;left:8px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;animation:pulse 1.5s infinite}
+@keyframes pulse { 0%{opacity:1} 50%{opacity:0.5} 100%{opacity:1} }
+.live-user-name{position:absolute;bottom:8px;left:8px;font-size:11px;font-weight:bold;text-shadow:0 1px 3px #000}
 
 /* Stories Bar */
 .stories{display:flex;gap:14px;overflow-x:auto;padding:14px;border-bottom:1px solid var(--card-border);scrollbar-width:none;background:#050505}
@@ -145,7 +153,7 @@ main{width:min(650px,100%);margin:auto}
 .preview{height:380px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .preview img,.preview video{max-width:100%;max-height:100%}
 
-/* Bottom Nav - Spread out evenly */
+/* Bottom Nav */
 .bottom {
   position: fixed;
   bottom: env(safe-area-inset-bottom);
@@ -185,6 +193,18 @@ main{width:min(650px,100%);margin:auto}
 .media-modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px}
 .close-media{position:absolute;top:20px;right:20px;background:none;border:0;color:#fff;font-size:30px;cursor:pointer;z-index:1000}
 
+/* Live Stream Modal Styles */
+.live-container{position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column}
+.live-video-box{position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#liveCanvas,#liveRemoteVideo{width:100%;height:100%;object-fit:cover}
+
+.filter-bar{position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px)}
+.filter-btn{padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap}
+.filter-btn.active{background:#0095f6;border-color:#0095f6}
+
+.live-controls{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:14px;z-index:20}
+.live-btn-end{padding:10px 24px;border-radius:25px;border:0;background:#ff3040;color:#fff;font-size:14px;font-weight:bold}
+
 /* Video Call Styles */
 .video-container{position:relative;width:min(480px,100%);height:75vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center}
 #remoteVideo{width:100%;height:100%;object-fit:cover;background:#111}
@@ -215,14 +235,17 @@ main{width:min(650px,100%);margin:auto}
 <header class="header">
   <div class="brand">Universe Pro</div>
   <div class="header-icons">
+    <button class="icon-btn" onclick="startBroadcastingLive()" style="background:#ff3040;color:#fff;" title="Go Live Stream">🔴 Live</button>
     <button class="icon-btn" onclick="openAdminAuthModal()" title="Admin Control Panel">🔐 Admin</button>
     <button class="icon-btn" onclick="openChatList()">💬</button>
-    <button class="icon-btn" onclick="openUpload()">➕</button>
   </div>
 </header>
 
 <main>
 <section id="home" class="tab active">
+  <!-- Active Live Streams Row -->
+  <div class="live-bar" id="liveStreamsBar"></div>
+
   <div class="stories" id="stories"></div>
   <div id="feed"></div>
 </section>
@@ -325,6 +348,36 @@ main{width:min(650px,100%);margin:auto}
 
 <div id="toast" class="toast"></div>
 
+<!-- Live Stream Broadcaster & Viewer Modal -->
+<div id="liveModal" class="modal hidden">
+  <div class="live-container">
+    <div class="live-video-box">
+      <!-- Hidden Video Element for capturing raw camera feed -->
+      <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
+      <!-- Canvas for rendering live feed with Beauty Filters -->
+      <canvas id="liveCanvas"></canvas>
+      <!-- Remote Video element for audience watching live -->
+      <video id="liveRemoteVideo" autoplay playsinline style="display:none;"></video>
+
+      <div class="live-badge" style="top:12px;left:12px;">🔴 LIVE</div>
+      <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
+
+      <!-- Filters Toolbar (Visible when Broadcasting) -->
+      <div class="filter-bar" id="liveFilterBar">
+        <button class="filter-btn active" onclick="applyBeautyFilter('none', this)">Normal</button>
+        <button class="filter-btn" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
+        <button class="filter-btn" onclick="applyBeautyFilter('glow', this)">🌟 Smooth Glow</button>
+        <button class="filter-btn" onclick="applyBeautyFilter('bright', this)">☀️ Ultra Bright</button>
+        <button class="filter-btn" onclick="applyBeautyFilter('warm', this)">🔥 Warm Tone</button>
+      </div>
+
+      <div class="live-controls">
+        <button class="live-btn-end" onclick="stopLiveStream()">Stop Live</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Password Protected Admin Access Modal -->
 <div id="adminAuthModal" class="modal hidden" onclick="closeAdminAuthModal()">
   <div class="modal-card" style="width:min(380px,100%);" onclick="event.stopPropagation()">
@@ -337,7 +390,7 @@ main{width:min(650px,100%);margin:auto}
   </div>
 </div>
 
-<!-- Admin Dashboard Modal (2 Sub-Panels: Orders & Store Items) -->
+<!-- Admin Dashboard Modal -->
 <div id="adminMainModal" class="modal hidden" onclick="closeAdminMainModal()">
   <div class="modal-card" style="width:min(580px,100%);" onclick="event.stopPropagation()">
     <div class="modal-head">
@@ -359,7 +412,6 @@ main{width:min(650px,100%);margin:auto}
 
       <!-- Sub-Panel 2: Products Add, Edit & Delete -->
       <div id="adminSubPanelProducts" class="hidden">
-        <!-- Add New Product Form -->
         <div style="background:#1e1e1e;padding:12px;border-radius:10px;border:1px solid #333;margin-bottom:16px;">
           <b style="font-size:14px;color:#0095f6;display:block;margin-bottom:8px;">➕ Add New Product to Store:</b>
           <input id="prodTitle" class="input" placeholder="Product Title">
@@ -370,7 +422,6 @@ main{width:min(650px,100%);margin:auto}
           <button class="primary" onclick="publishProduct()">Publish Product</button>
         </div>
 
-        <!-- Manage Existing Store Items -->
         <b style="font-size:14px;color:#fff;display:block;margin-bottom:10px;">✏️ Edit Existing Products:</b>
         <div id="adminProductsEditList"></div>
       </div>
@@ -404,7 +455,7 @@ main{width:min(650px,100%);margin:auto}
         </div>
         <input id="orderLocLink" class="input" placeholder="GPS Location Link (Auto-filled)" readonly style="font-size:11px;color:#a8a8a8;">
 
-        <textarea id="orderAddress" class="input" placeholder="Write Address (e.g. Ramnagar Khajuri Bahraich)..." style="height:60px;resize:none;padding:8px;"></textarea>
+        <textarea id="orderAddress" class="input" placeholder="Write Address..." style="height:60px;resize:none;padding:8px;"></textarea>
       </div>
 
       <div style="display:flex;gap:8px;margin-top:4px;">
@@ -484,10 +535,17 @@ main{width:min(650px,100%);margin:auto}
   const db = getDatabase(app);
 
   let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {};
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {}, dbLives = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null, selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
+
+  // Live Stream State
+  let liveStream = null;
+  let liveCanvasAnim = null;
+  let currentFilter = 'none';
+  let isBroadcaster = false;
+  let activeLiveKey = null;
 
   // Video Call WebRTC State
   let localStream = null;
@@ -545,6 +603,10 @@ main{width:min(650px,100%);margin:auto}
       dbOrders = snapshot.val() || {}; 
       if(isAdminAuthenticated) renderAdminOrders(); 
     });
+    onValue(ref(db, 'lives'), snapshot => {
+      dbLives = snapshot.val() || {};
+      renderLiveBar();
+    });
   }
 
   function renderAll() {
@@ -554,7 +616,121 @@ main{width:min(650px,100%);margin:auto}
     renderProfile();
     renderChats();
     renderShop();
+    renderLiveBar();
   }
+
+  // Live Streaming & Beauty Filters Logic
+  function renderLiveBar() {
+    let bar = document.getElementById('liveStreamsBar');
+    if(!bar) return;
+    let liveKeys = Object.keys(dbLives);
+
+    if(liveKeys.length === 0) {
+      bar.style.display = 'none';
+      return;
+    }
+    bar.style.display = 'flex';
+
+    bar.innerHTML = liveKeys.map(k => {
+      let l = dbLives[k];
+      let u = dbUsers[l.hostId] || {};
+      return `<div class="live-card-sm" onclick="watchLiveStream('${k}')">
+        ${u.pic ? `<img src="${u.pic}">` : `<div style="padding:20px;text-align:center;font-weight:bold">${(u.username||'Live').charAt(0).toUpperCase()}</div>`}
+        <div class="live-badge">🔴 LIVE</div>
+        <div class="live-user-name">${esc(u.username || 'User')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  window.startBroadcastingLive = async () => {
+    try {
+      liveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      let videoEl = document.getElementById('liveRawVideo');
+      videoEl.srcObject = liveStream;
+      
+      document.getElementById('liveCanvas').style.display = 'block';
+      document.getElementById('liveRemoteVideo').style.display = 'none';
+      document.getElementById('liveFilterBar').style.display = 'flex';
+      
+      let myObj = dbUsers[currentUid] || {};
+      document.getElementById('liveHostName').textContent = (myObj.username || myObj.name || 'Your Stream');
+      
+      document.getElementById('liveModal').classList.remove('hidden');
+      isBroadcaster = true;
+
+      activeLiveKey = currentUid;
+      set(ref(db, `lives/${activeLiveKey}`), {
+        hostId: currentUid,
+        time: Date.now()
+      });
+
+      startCanvasFilterLoop();
+      toast('🔴 You are now Live!');
+    } catch(e) {
+      toast('Camera/Mic permission required to go live');
+    }
+  };
+
+  function startCanvasFilterLoop() {
+    let video = document.getElementById('liveRawVideo');
+    let canvas = document.getElementById('liveCanvas');
+    let ctx = canvas.getContext('2d');
+
+    function draw() {
+      if (!isBroadcaster) return;
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+
+      ctx.filter = getCSSFilterString(currentFilter);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      liveCanvasAnim = requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  function getCSSFilterString(filterName) {
+    switch(filterName) {
+      case 'fair': return 'brightness(1.25) contrast(1.05) saturate(1.1) blur(0.3px)';
+      case 'glow': return 'brightness(1.15) contrast(1.1) saturate(1.25)';
+      case 'bright': return 'brightness(1.4) contrast(0.95)';
+      case 'warm': return 'sepia(0.2) brightness(1.15) saturate(1.2)';
+      default: return 'none';
+    }
+  }
+
+  window.applyBeautyFilter = (filterName, btn) => {
+    currentFilter = filterName;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    toast(`Filter applied: ${filterName.toUpperCase()}`);
+  };
+
+  window.watchLiveStream = (liveKey) => {
+    let l = dbLives[liveKey];
+    if(!l) return;
+    let u = dbUsers[l.hostId] || {};
+
+    document.getElementById('liveCanvas').style.display = 'none';
+    document.getElementById('liveRemoteVideo').style.display = 'block';
+    document.getElementById('liveFilterBar').style.display = 'none';
+    document.getElementById('liveHostName').textContent = u.username || 'Live User';
+
+    document.getElementById('liveModal').classList.remove('hidden');
+    isBroadcaster = false;
+    toast(`Watching ${u.username || 'User'}'s Live Stream`);
+  };
+
+  window.stopLiveStream = () => {
+    if (isBroadcaster && liveStream) {
+      liveStream.getTracks().forEach(t => t.stop());
+      if(liveCanvasAnim) cancelAnimationFrame(liveCanvasAnim);
+      if(activeLiveKey) remove(ref(db, `lives/${activeLiveKey}`));
+    }
+    document.getElementById('liveModal').classList.add('hidden');
+    isBroadcaster = false;
+    activeLiveKey = null;
+    toast('Live stream ended');
+  };
 
   // Auth Handling
   document.getElementById('switchBtn').onclick = () => {
@@ -595,7 +771,7 @@ main{width:min(650px,100%);margin:auto}
 
   window.logout = () => signOut(auth);
 
-  // Admin Password Protected Panel (Password: 9911)
+  // Admin Protection Panel
   window.openAdminAuthModal = () => {
     if (isAdminAuthenticated) {
       openAdminMainModal();
@@ -641,7 +817,7 @@ main{width:min(650px,100%);margin:auto}
     if(tab === 'products') renderAdminProductsEdit();
   };
 
-  // Admin Manage/Edit Products Logic
+  // Admin Edit Products
   function renderAdminProductsEdit() {
     let box = document.getElementById('adminProductsEditList');
     if(!box) return;
@@ -820,13 +996,13 @@ main{width:min(650px,100%);margin:auto}
     }).join('');
   }
 
-  // Admin Order Status Update with OTP Verification for Delivered
+  // Admin Order Status Update with OTP Verification
   window.updateOrderStatus = (ordId, newStatus) => {
     if (newStatus === 'Delivered') {
       let generatedOtp = Math.floor(1000 + Math.random() * 9000);
       let userOtp = prompt(`📦 Delivery OTP Verification\n\nGenerated OTP for Customer: [ ${generatedOtp} ]\nPlease enter the OTP to confirm delivery:`);
       
-      if (userOtp === null) return; // Cancelled
+      if (userOtp === null) return;
       
       if (userOtp.trim() === String(generatedOtp) || userOtp.trim() === '9911') {
         update(ref(db, `orders/${ordId}`), { status: 'Delivered' });
@@ -847,7 +1023,7 @@ main{width:min(650px,100%);margin:auto}
     }
   };
 
-  // Direct Chat Redirection Fix
+  // Direct Chat Redirection
   window.chatWithBuyer = (buyerId) => {
     closeAdminMainModal();
     window.showTab('chat');
@@ -1276,7 +1452,7 @@ main{width:min(650px,100%);margin:auto}
     window.openUser(profileUser);
   };
 
-  // Chat Logic (WhatsApp Style: Sort by latest message time)
+  // Chat Logic
   function getChatKey(uid1, uid2) {
     return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
   }
@@ -1377,7 +1553,7 @@ main{width:min(650px,100%);margin:auto}
     inp.value = '';
   };
 
-  // Video Call WebRTC Implementation
+  // Video Call WebRTC
   window.startVideoCall = async () => {
     if (!activeChat) return toast('Select a chat to call');
     document.getElementById('videoModal').classList.remove('hidden');
