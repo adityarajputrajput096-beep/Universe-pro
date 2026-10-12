@@ -33,7 +33,7 @@ button:active{transform:scale(0.96)}
 #app{display:none;min-height:100vh;padding-top:56px;padding-bottom:65px}
 .header{height:56px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
 .header .brand{font-size:24px;font-weight:800;background:linear-gradient(45deg,#fff,#ccc);-webkit-background-clip:text;color:transparent}
-.header-icons{display:flex;gap:18px;font-size:22px}
+.header-icons{display:flex;gap:14px;font-size:22px;align-items:center}
 .icon-btn{background:none;border:0;color:#fff;font-size:22px}
 
 main{width:min(650px,100%);margin:auto}
@@ -72,6 +72,17 @@ main{width:min(650px,100%);margin:auto}
 .product-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .product-price{color:#2ecc71;font-weight:800;font-size:16px}
 .product-desc{font-size:12px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Order Item Card (Admin Panel) */
+.order-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:14px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
+.order-header{display:flex;justify-content:space-between;border-bottom:1px solid #222;padding-bottom:8px;font-size:13px}
+.order-body{display:flex;gap:12px;align-items:center}
+.order-thumb{width:60px;height:60px;border-radius:8px;background-size:cover;background-position:center;background-color:#222;border:1px solid #333}
+.order-details{flex:1;font-size:13px;line-height:1.4}
+.order-status{display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:bold;margin-top:4px}
+.status-pending{background:#f39c12;color:#000}
+.status-shipped{background:#3498db;color:#fff}
+.status-delivered{background:#2ecc71;color:#fff}
 
 /* Search Tab */
 .search-box{padding:13px;border-bottom:1px solid var(--card-border)}
@@ -194,6 +205,7 @@ main{width:min(650px,100%);margin:auto}
 <header class="header">
   <div class="brand">Universe Pro</div>
   <div class="header-icons">
+    <button id="adminOrdersBtn" class="icon-btn hidden" onclick="openAdminOrdersModal()" title="Admin Orders Panel">📦</button>
     <button class="icon-btn" onclick="openChatList()">💬</button>
     <button class="icon-btn" onclick="openUpload()">➕</button>
   </div>
@@ -310,7 +322,7 @@ main{width:min(650px,100%);margin:auto}
   <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
 </div>
 
-<!-- Product Details / Buy Modal -->
+<!-- Product Buy / Details Modal -->
 <div id="buyProductModal" class="modal hidden" onclick="closeBuyModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-head"><span id="buyProdTitle">Product Details</span><button class="action" onclick="closeBuyModal()">✕</button></div>
@@ -318,14 +330,34 @@ main{width:min(650px,100%);margin:auto}
       <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;cursor:pointer;" onclick="openMediaFromBuy()"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span id="buyProdPrice" style="color:#2ecc71;font-size:22px;font-weight:800;">₹0</span>
-        <span style="background:#222;border:1px solid #444;color:#f39c12;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;">★ Premium Quality</span>
+        <span style="background:#222;border:1px solid #444;color:#f39c12;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;">★ Official Product</span>
       </div>
       <div style="background:#1e1e1e;padding:12px;border-radius:8px;border:1px solid #333;">
-        <div style="font-size:13px;color:#aaa;margin-bottom:4px;"><b>Quality & Specifications:</b> High Quality, Official Stock, Best Price</div>
-        <p id="buyProdDesc" style="font-size:14px;color:#fff;white-space:pre-wrap;margin-top:6px;"></p>
+        <div style="font-size:13px;color:#aaa;margin-bottom:4px;"><b>Description & Quality:</b></div>
+        <p id="buyProdDesc" style="font-size:14px;color:#fff;white-space:pre-wrap;"></p>
       </div>
-      <button class="primary" style="background:linear-gradient(45deg,#2ecc71,#27ae60);padding:12px;font-size:15px;margin-top:8px;" onclick="proceedToShareProduct()">📤 Send to Friend / Chat</button>
+
+      <!-- Checkout Address Form -->
+      <div style="border-top:1px solid #333;padding-top:10px;">
+        <b style="font-size:14px;display:block;margin-bottom:6px;color:#0095f6;">📦 Delivery Address Details:</b>
+        <input id="orderName" class="input" placeholder="Your Full Name">
+        <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
+        <textarea id="orderAddress" class="input" placeholder="Complete Delivery Address (House No, Area, City)..." style="height:60px;resize:none;padding:8px;"></textarea>
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="primary" style="background:linear-gradient(45deg,#2ecc71,#27ae60);padding:12px;font-size:15px;" onclick="placeOrderNow()">🛒 Place Order Now</button>
+        <button class="secondary" style="padding:12px;" onclick="proceedToShareProduct()">📤 Share to Chat</button>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Admin Orders Dashboard Modal (Flipkart Admin Style) -->
+<div id="adminOrdersModal" class="modal hidden" onclick="closeAdminOrdersModal()">
+  <div class="modal-card" style="width:min(550px,100%);" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>📦 Admin Order Management</span><button class="action" onclick="closeAdminOrdersModal()">✕</button></div>
+    <div class="modal-body" id="adminOrdersList"></div>
   </div>
 </div>
 
@@ -407,7 +439,7 @@ main{width:min(650px,100%);margin:auto}
   const db = getDatabase(app);
 
   let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {};
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null, selectedBuyProduct = null;
 
@@ -423,7 +455,7 @@ main{width:min(650px,100%);margin:auto}
     x.textContent = msg;
     x.style.display = 'block';
     clearTimeout(window.tt);
-    window.tt = setTimeout(()=>x.style.display='none', 1800);
+    window.tt = setTimeout(()=>x.style.display='none', 2000);
   }
 
   function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
@@ -465,6 +497,7 @@ main{width:min(650px,100%);margin:auto}
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
     onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; if(activeChat) renderMessages(); });
     onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); });
+    onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; renderAdminOrders(); });
   }
 
   function renderAll() {
@@ -474,6 +507,7 @@ main{width:min(650px,100%);margin:auto}
     renderProfile();
     renderChats();
     renderShop();
+    renderAdminOrders();
   }
 
   // Auth Handling
@@ -532,14 +566,21 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('mediaModalBody').innerHTML = '';
   };
 
-  // Shop & Buy Details Logic
+  // Shop & Buy Checkout Logic
   window.openBuyModal = (prodId) => {
     selectedBuyProduct = dbProducts[prodId];
     if(!selectedBuyProduct) return;
+    let myObj = dbUsers[currentUid] || {};
     document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title || 'Product Details';
     document.getElementById('buyProdPrice').textContent = `₹${selectedBuyProduct.price}`;
     document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No extra description provided.';
     document.getElementById('buyProdImg').style.backgroundImage = `url('${selectedBuyProduct.image}')`;
+    
+    // Auto fill user details if available
+    document.getElementById('orderName').value = myObj.name || '';
+    document.getElementById('orderPhone').value = '';
+    document.getElementById('orderAddress').value = '';
+
     document.getElementById('buyProductModal').classList.remove('hidden');
   };
 
@@ -554,11 +595,114 @@ main{width:min(650px,100%);margin:auto}
     }
   };
 
+  // Place Order (Sends Order Request to Admin Panel)
+  window.placeOrderNow = () => {
+    if(!selectedBuyProduct) return;
+    let name = document.getElementById('orderName').value.trim();
+    let phone = document.getElementById('orderPhone').value.trim();
+    let address = document.getElementById('orderAddress').value.trim();
+
+    if(!name || !phone || !address) {
+      return toast('Please enter Name, Mobile No. & Delivery Address!');
+    }
+
+    push(ref(db, 'orders'), {
+      buyerId: currentUid,
+      buyerName: name,
+      buyerPhone: phone,
+      buyerAddress: address,
+      productId: selectedBuyProduct.id || '',
+      productTitle: selectedBuyProduct.title,
+      productPrice: selectedBuyProduct.price,
+      productImage: selectedBuyProduct.image,
+      status: 'Pending',
+      time: Date.now()
+    });
+
+    closeBuyModal();
+    toast('🎉 Order Placed Successfully! Admin will process soon.');
+  };
+
   window.proceedToShareProduct = () => {
     if(!selectedBuyProduct) return;
     let prod = selectedBuyProduct;
     closeBuyModal();
     shareProductObj(prod);
+  };
+
+  // Admin Orders Panel Logic
+  window.openAdminOrdersModal = () => {
+    if(!isAdmin()) return toast('Only Admin can access Order Panel');
+    renderAdminOrders();
+    document.getElementById('adminOrdersModal').classList.remove('hidden');
+  };
+
+  window.closeAdminOrdersModal = () => {
+    document.getElementById('adminOrdersModal').classList.add('hidden');
+  };
+
+  function renderAdminOrders() {
+    let ordersBtn = document.getElementById('adminOrdersBtn');
+    if(ordersBtn) {
+      if(isAdmin()) ordersBtn.classList.remove('hidden');
+      else ordersBtn.classList.add('hidden');
+    }
+
+    let box = document.getElementById('adminOrdersList');
+    if(!box) return;
+
+    let orderKeys = Object.keys(dbOrders).sort((a,b) => dbOrders[b].time - dbOrders[a].time);
+    if(orderKeys.length === 0) {
+      box.innerHTML = '<div style="padding:30px;text-align:center;color:#777">No orders received yet.</div>';
+      return;
+    }
+
+    box.innerHTML = orderKeys.map(k => {
+      let ord = dbOrders[k];
+      let dateStr = new Date(ord.time).toLocaleString('en-IN', {dateStyle:'short', timeStyle:'short'});
+      let statusCls = ord.status === 'Delivered' ? 'status-delivered' : (ord.status === 'Shipped' ? 'status-shipped' : 'status-pending');
+
+      return `<div class="order-card">
+        <div class="order-header">
+          <span>📅 ${dateStr}</span>
+          <span class="order-status ${statusCls}">${ord.status || 'Pending'}</span>
+        </div>
+        <div class="order-body">
+          <div class="order-thumb" style="background-image:url('${ord.productImage}')"></div>
+          <div class="order-details">
+            <b style="font-size:14px;color:#fff">${esc(ord.productTitle)}</b>
+            <div style="color:#2ecc71;font-weight:bold">Price: ₹${esc(ord.productPrice)}</div>
+            <div style="color:#aaa;margin-top:4px"><b>Buyer:</b> ${esc(ord.buyerName)} (${esc(ord.buyerPhone)})</div>
+            <div style="color:#aaa"><b>Address:</b> ${esc(ord.buyerAddress)}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <button class="secondary" style="padding:6px;font-size:11px" onclick="updateOrderStatus('${k}', 'Shipped')">🚚 Mark Shipped</button>
+          <button class="primary" style="padding:6px;font-size:11px;background:#2ecc71" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Mark Delivered</button>
+          <button class="secondary" style="padding:6px;font-size:11px;background:#0095f6;border:0" onclick="chatWithBuyer('${ord.buyerId}')">💬 Contact Buyer</button>
+          <button class="secondary" style="padding:6px;font-size:11px;background:#ff3040;border:0" onclick="deleteOrder('${k}')">🗑️</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  window.updateOrderStatus = (ordId, newStatus) => {
+    if(!isAdmin()) return;
+    update(ref(db, `orders/${ordId}`), { status: newStatus });
+    toast(`Order status updated to ${newStatus}`);
+  };
+
+  window.deleteOrder = (ordId) => {
+    if(!isAdmin()) return;
+    if(confirm('Delete this order entry?')) {
+      remove(ref(db, `orders/${ordId}`));
+      toast('Order deleted');
+    }
+  };
+
+  window.chatWithBuyer = (buyerId) => {
+    closeAdminOrdersModal();
+    openChat(buyerId);
   };
 
   // Admin Add Product Logic
@@ -663,7 +807,7 @@ main{width:min(650px,100%);margin:auto}
   window.sendProductToChat = (targetUid) => {
     if(!productToShare) return;
     let chatKey = getChatKey(currentUid, targetUid);
-    let msgText = `🛍️ **Product Purchase Request:**\n*${productToShare.title}*\n💰 Price: ₹${productToShare.price}\n📝 Quality & Details: ${productToShare.desc}`;
+    let msgText = `🛍️ **Product Inquiry:**\n*${productToShare.title}*\n💰 Price: ₹${productToShare.price}\n📝 Details: ${productToShare.desc}`;
     push(ref(db, `chats/${chatKey}/messages`), {
       sender: currentUid,
       text: msgText,
