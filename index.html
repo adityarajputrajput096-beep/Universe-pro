@@ -22,6 +22,45 @@ button{cursor:pointer;transition:transform 0.1s ease, opacity 0.2s ease}
 button:active{transform:scale(0.96)}
 .hidden{display:none!important}
 
+/* Splash / Loading Screen */
+#splashScreen {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+.splash-logo {
+  font-size: 38px;
+  font-weight: 800;
+  background: linear-gradient(45deg, #f09433, #dc2743, #bc1888, #5851db);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+}
+.splash-sub {
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 #auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#000}
 .auth-card{width:min(380px,100%);background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:36px 28px;box-shadow:0 15px 50px rgba(0,0,0,0.8)}
 .logo{font-size:38px;font-weight:800;text-align:center;margin-bottom:28px;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888,#5851db);-webkit-background-clip:text;color:transparent}
@@ -145,7 +184,7 @@ main{width:min(650px,100%);margin:auto}
 .preview{height:380px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .preview img,.preview video{max-width:100%;max-height:100%}
 
-/* Bottom Nav */
+/* Bottom Nav - Spread out evenly */
 .bottom {
   position: fixed;
   bottom: env(safe-area-inset-bottom);
@@ -165,6 +204,8 @@ main{width:min(650px,100%);margin:auto}
   border: 0;
   color: var(--muted);
   font-size: 22px;
+  flex: 1;
+  height: 100%;
 }
 .bottom button.active-nav {
   color: #fff;
@@ -194,6 +235,13 @@ main{width:min(650px,100%);margin:auto}
 </style>
 </head>
 <body>
+
+<!-- Welcome Universe Loading / Splash Screen -->
+<div id="splashScreen">
+  <div class="splash-logo">Welcome Universe</div>
+  <div class="splash-sub">Please Wait...</div>
+  <div class="spinner"></div>
+</div>
 
 <section id="auth">
   <div class="auth-card">
@@ -494,6 +542,13 @@ main{width:min(650px,100%);margin:auto}
   let isMicOn = true;
   const rtcServers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
+  function hideSplashScreen() {
+    let splash = document.getElementById('splashScreen');
+    if (splash) {
+      splash.style.display = 'none';
+    }
+  }
+
   function toast(msg){
     let x = document.getElementById('toast');
     x.textContent = msg;
@@ -526,12 +581,13 @@ main{width:min(650px,100%);margin:auto}
       currentUid = null;
       document.getElementById('auth').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
+      hideSplashScreen();
     }
   });
 
   function listenToDatabase() {
-    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); });
-    onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
+    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); hideSplashScreen(); });
+    onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); hideSplashScreen(); });
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
     onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; renderChats(); if(activeChat) renderMessages(); });
     onValue(ref(db, 'products'), snapshot => { 
@@ -1268,7 +1324,6 @@ main{width:min(650px,100%);margin:auto}
     if (!chatObj || !chatObj.messages) return 0;
     let msgKeys = Object.keys(chatObj.messages);
     if (msgKeys.length === 0) return 0;
-    // Find latest timestamp among messages
     let latest = 0;
     msgKeys.forEach(k => {
       let m = chatObj.messages[k];
@@ -1293,7 +1348,6 @@ main{width:min(650px,100%);margin:auto}
     let myObj = dbUsers[currentUid] || {};
     let myFollowing = myObj.following || [];
 
-    // Filter users: only show if I follow them OR we have a chat history
     let allowedUsers = Object.keys(dbUsers)
       .filter(id => id !== currentUid && (myFollowing.includes(id) || hasChatHistory(id)))
       .map(id => {
@@ -1304,7 +1358,1528 @@ main{width:min(650px,100%);margin:auto}
         };
       });
 
-    // Sort by latest message time descending (WhatsApp style: newest on top)
+    allowedUsers.sort((a, b) => b.lastTime - a.lastTime);
+
+    list.innerHTML = allowedUsers.map(u => `
+      <div class="chat-row" onclick="openChat('${u.id}')">
+        ${renderAvatar(u, true)}
+        <div><b>${esc(u.username || 'user')}</b><div style="color:#777;font-size:12px">${esc(u.name || '')}</div></div>
+      </div>
+    `).join('') || '<div style="padding:20px;color:#777;text-align:center">No chats available. Follow users to chat!</div>';
+  }
+
+  window.startProfileChat = () => {
+    if (profileUser) window.openChat(profileUser);
+  };
+
+  window.openChat = (targetUid) => {
+    activeChat = getChatKey(currentUid, targetUid);
+    let targetUser = dbUsers[targetUid] || {};
+    document.getElementById('chatTitle').textContent = targetUser.username || 'Chat';
+    document.getElementById('chatListView').classList.add('hidden');
+    document.getElementById('chatRoom').classList.remove('hidden');
+    renderMessages();
+    listenToCall(activeChat);
+  };
+
+  window.backChats = () => {
+    document.getElementById('chatRoom').classList.add('hidden');
+    document.getElementById('chatListView').classList.remove('hidden');
+    activeChat = null;
+    renderChats();
+  };
+
+  function renderMessages() {
+    if (!activeChat) return;
+    let chatData = dbChats[activeChat] || {};
+    let msgs = chatData.messages || {};
+    let box = document.getElementById('messages');
+    box.innerHTML = Object.keys(msgs).map(k => {
+      let m = msgs[k];
+      let isMe = m.sender === currentUid;
+      return `<div class="bubble ${isMe ? 'sent' : 'received'}">${esc(m.text)}</div>`;
+    }).join('') || '<div style="color:#777;text-align:center;margin-top:20px;">No messages yet. Say hi!</div>';
+    box.scrollTop = box.scrollHeight;
+  }
+
+  window.sendMessage = () => {
+    let inp = document.getElementById('messageInput');
+    let txt = inp.value.trim();
+    if (!txt || !activeChat) return;
+    push(ref(db, `chats/${activeChat}/messages`), {
+      sender: currentUid,
+      text: txt,
+      time: Date.now()
+    });
+    inp.value = '';
+  };
+
+  // Video Call WebRTC Implementation
+  window.startVideoCall = async () => {
+    if (!activeChat) return toast('Select a chat to call');
+    document.getElementById('videoModal').classList.remove('hidden');
+    await initWebRTC();
+
+    const callRef = ref(db, `calls/${activeChat}`);
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    set(callRef, {
+      offer: { type: offer.type, sdp: offer.sdp },
+      caller: currentUid
+    });
+
+    onValue(callRef, async snapshot => {
+      const data = snapshot.val();
+      if (!data) return;
+      if (data.answer && !peerConnection.currentRemoteDescription) {
+        const rtcAnswer = new RTCSessionDescription(data.answer);
+        await peerConnection.setRemoteDescription(rtcAnswer);
+      }
+      if (data.iceCandidates) {
+        Object.keys(data.iceCandidates).forEach(async key => {
+          const cand = data.iceCandidates[key];
+          if (cand.sender !== currentUid) {
+            try { await peerConnection.addIceCandidate(new RTCIceCandidate(cand.candidate)); } catch(e){}
+          }
+        });
+      }
+    });
+  };
+
+  async function listenToCall(chatKey) {
+    const callRef = ref(db, `calls/${chatKey}`);
+    onValue(callRef, async snapshot => {
+      const data = snapshot.val();
+      if (data && data.caller !== currentUid && data.offer && !peerConnection) {
+        if (confirm("Incoming video call! Accept?")) {
+          document.getElementById('videoModal').classList.remove('hidden');
+          await initWebRTC();
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+          const answer = await peerConnection.createAnswer();
+          await peerConnection.setLocalDescription(answer);
+          update(callRef, { answer: { type: answer.type, sdp: answer.sdp } });
+        }
+      }
+    });
+  }
+
+  async function initWebRTC() {
+    peerConnection = new RTCPeerConnection(rtcServers);
+    try {
+      localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      document.getElementById('localVideo').srcObject = localStream;
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+    } catch (e) {
+      toast('Could not access camera/microphone');
+    }
+
+    peerConnection.ontrack = event => {
+      document.getElementById('remoteVideo').srcObject = event.streams[0];
+    };
+
+    peerConnection.onicecandidate = event => {
+      if (event.candidate && activeChat) {
+        push(ref(db, `calls/${activeChat}/iceCandidates`), {
+          candidate: event.candidate.toJSON(),
+          sender: currentUid
+        });
+      }
+    };
+  }
+
+  window.toggleCamera = () => {
+    if (localStream) {
+      isCamOn = !isCamOn;
+      localStream.getVideoTracks().forEach(t => t.enabled = isCamOn);
+      document.getElementById('btnToggleCam').classList.toggle('off', !isCamOn);
+    }
+  };
+
+  window.toggleMic = () => {
+    if (localStream) {
+      isMicOn = !isMicOn;
+      localStream.getAudioTracks().forEach(t => t.enabled = isMicOn);
+      document.getElementById('btnToggleMic').classList.toggle('off', !isMicOn);
+    }
+  };
+
+  window.endCall = () => {
+    if (localStream) {
+      localStream.getTracks().forEach(track => track.stop());
+    }
+    if (peerConnection) {
+      peerConnection.close();
+      peerConnection = null;
+    }
+    if (activeChat) {
+      remove(ref(db, `calls/${activeChat}`));
+    }
+    document.getElementById('videoModal').classList.add('hidden');
+    toast('Call ended');
+  };
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Universe Pro - Shop & Live App</title>
+
+<style>
+:root{
+  --bg:#000000;
+  --card:#121212;
+  --card-border:#262626;
+  --accent:#0095f6;
+  --like:#ff3040;
+  --text:#ffffff;
+  --muted:#a8a8a8;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button,input,textarea{font:inherit}
+button{cursor:pointer;transition:transform 0.1s ease, opacity 0.2s ease}
+button:active{transform:scale(0.96)}
+.hidden{display:none!important}
+
+/* Splash / Loading Screen */
+#splashScreen {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+.splash-logo {
+  font-size: 38px;
+  font-weight: 800;
+  background: linear-gradient(45deg, #f09433, #dc2743, #bc1888, #5851db);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+}
+.splash-sub {
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#000}
+.auth-card{width:min(380px,100%);background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:36px 28px;box-shadow:0 15px 50px rgba(0,0,0,0.8)}
+.logo{font-size:38px;font-weight:800;text-align:center;margin-bottom:28px;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888,#5851db);-webkit-background-clip:text;color:transparent}
+.input{width:100%;padding:12px;margin:6px 0;background:#1e1e1e;color:#fff;border:1px solid #333;border-radius:8px;outline:none;transition:border-color 0.2s}
+.input:focus{border-color:var(--accent)}
+.primary{width:100%;border:0;background:var(--accent);color:white;padding:11px;border-radius:8px;font-weight:700;margin-top:8px}
+.switch{text-align:center;color:var(--muted);margin-top:18px;font-size:14px}.switch span{color:var(--accent);font-weight:700;cursor:pointer}
+
+#app{display:none;min-height:100vh;padding-top:56px;padding-bottom:65px}
+.header{height:56px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.header .brand{font-size:24px;font-weight:800;background:linear-gradient(45deg,#fff,#ccc);-webkit-background-clip:text;color:transparent}
+.header-icons{display:flex;gap:10px;font-size:20px;align-items:center}
+.icon-btn{background:none;border:0;color:#fff;font-size:15px;padding:6px 10px;background:#222;border-radius:6px}
+
+main{width:min(650px,100%);margin:auto}
+.tab{display:none}.tab.active{display:block}
+
+/* Stories Bar */
+.stories{display:flex;gap:14px;overflow-x:auto;padding:14px;border-bottom:1px solid var(--card-border);scrollbar-width:none;background:#050505}
+.stories::-webkit-scrollbar{display:none}
+.story{text-align:center;min-width:68px;font-size:11px;cursor:pointer}
+.ring{width:64px;height:64px;padding:2px;border-radius:50%;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);margin:auto}
+.ring.add-story-ring{background:#222;border:2px dashed var(--accent)}
+.avatar{width:100%;height:100%;border-radius:50%;background:#252525;border:2px solid #000;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;color:#fff}
+.small-avatar{width:36px;height:36px;border-radius:50%;background:#333;background-size:cover;background-position:center;border:1px solid #444;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;color:#fff}
+
+/* Post Cards */
+.post{border-bottom:1px solid var(--card-border);margin-bottom:15px;background:var(--bg)}
+.post-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
+.person{display:flex;gap:10px;align-items:center;cursor:pointer}
+.post-media{width:100%;max-height:650px;background:#050505;display:flex;justify-content:center;align-items:center;cursor:pointer;position:relative;overflow:hidden;border-radius:4px}
+.post-media img,.post-media video{width:100%;max-height:650px;object-fit:contain}
+
+.actions{display:flex;justify-content:space-between;padding:10px 14px;font-size:23px}
+.actions-left{display:flex;gap:17px;align-items:center}
+.action,.delete-btn{border:0;background:none;color:#fff;font-size:22px;cursor:pointer}
+.liked{color:var(--like)}
+.details{padding:0 14px 14px;font-size:14px}
+.likes{font-weight:700;margin-bottom:6px}
+.caption b{margin-right:6px}
+.comment-link{color:var(--muted);font-size:13px;margin-top:6px;cursor:pointer}
+
+/* Shop / Store Tab */
+.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px}
+.product-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.product-img{width:100%;aspect-ratio:1;background:#080808;background-size:cover;background-position:center;cursor:pointer}
+.product-info{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.product-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-price{color:#2ecc71;font-weight:800;font-size:16px}
+.product-desc{font-size:12px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Admin Dashboard Sub-Nav Tabs */
+.admin-tab-nav{display:flex;border-bottom:1px solid #333;margin-bottom:12px;}
+.admin-tab-btn{flex:1;padding:10px;background:none;border:0;color:#888;font-weight:700;font-size:13px;border-bottom:2px solid transparent;}
+.admin-tab-btn.active{color:#0095f6;border-color:#0095f6;}
+
+/* Order Item Card (Admin Panel) */
+.order-card{background:#181818;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+.order-header{display:flex;justify-content:space-between;border-bottom:1px solid #2a2a2a;padding-bottom:6px;font-size:12px;color:#aaa}
+.order-body{display:flex;gap:10px;align-items:center}
+.order-thumb{width:55px;height:55px;border-radius:6px;background-size:cover;background-position:center;background-color:#222;border:1px solid #333}
+.order-details{flex:1;font-size:13px;line-height:1.4}
+.order-status{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold;margin-top:2px}
+.status-pending{background:#f39c12;color:#000}
+.status-shipped{background:#3498db;color:#fff}
+.status-delivered{background:#2ecc71;color:#fff}
+
+/* Edit Product Admin Card */
+.admin-prod-card{background:#181818;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:10px;align-items:center}
+
+/* Search Tab */
+.search-box{padding:13px;border-bottom:1px solid var(--card-border)}
+.search-box input{width:100%;padding:12px;border:0;border-radius:10px;background:#1e1e1e;color:#fff;outline:none}
+.search-result{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #1a1a1a;cursor:pointer}
+.search-result:hover{background:#121212}
+
+/* Profile Tab */
+.profile-top{display:flex;gap:24px;align-items:center;padding:25px 18px;border-bottom:1px solid var(--card-border)}
+.profile-avatar{width:88px;height:88px;border-radius:50%;background:#222;background-size:cover;background-position:center;border:2px solid #444;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#fff}
+.stats{display:flex;gap:22px;text-align:center}
+.stat strong{display:block;font-size:18px}
+.bio{padding:15px 18px}
+.profile-nav{display:flex;border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
+.profile-nav-btn{flex:1;padding:12px;background:none;border:0;color:var(--muted);font-weight:700;font-size:13px}
+.profile-nav-btn.active{color:#fff;border-bottom:2px solid #fff}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.grid-item{aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;position:relative}
+.grid-item img,.grid-item video{width:100%;height:100%;object-fit:cover}
+
+.profile-actions{display:flex;gap:8px;padding:0 18px 15px}
+.secondary{flex:1;background:#262626;color:#fff;border:1px solid #444;padding:9px;border-radius:8px;font-weight:700}
+
+.user-profile{padding-bottom:30px}
+.user-head{display:flex;gap:20px;padding:24px 18px;align-items:center}
+.user-actions{display:flex;gap:8px;padding:0 18px 20px}
+.user-actions button{flex:1}
+.section-title{font-weight:700;padding:15px 18px;border-top:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between}
+
+/* Reels */
+.reels{height:calc(100vh - 121px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000}
+.reel{height:calc(100vh - 121px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#050505}
+.reel video{width:100%;height:100%;object-fit:contain}
+.reel-info{position:absolute;left:16px;bottom:24px;text-shadow:0 2px 5px #000}
+.reel-actions{position:absolute;right:14px;bottom:25px;display:flex;flex-direction:column;gap:18px;font-size:25px}
+
+/* Chat */
+.chat-list{padding:8px}
+.chat-row{display:flex;gap:12px;padding:14px;border-bottom:1px solid #1c1c1c;align-items:center;cursor:pointer}
+.chat-room{height:calc(100vh - 121px);display:flex;flex-direction:column}
+.messages{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:9px}
+.bubble{max-width:75%;padding:10px 14px;border-radius:18px;background:#262626;font-size:14px;line-height:1.4}
+.sent{align-self:flex-end;background:var(--accent);color:#fff}
+.received{align-self:flex-start;background:#262626}
+.chat-input{display:flex;padding:10px;gap:8px;border-top:1px solid var(--card-border);background:#000}
+.chat-input input{flex:1;background:#1e1e1e;border:0;border-radius:20px;color:#fff;padding:11px 16px;outline:none}
+.chat-input button{border:0;background:var(--accent);color:#fff;border-radius:20px;padding:0 18px;font-weight:700}
+
+/* Upload */
+.upload{padding:16px}
+.preview{height:380px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.preview img,.preview video{max-width:100%;max-height:100%}
+
+/* Bottom Nav - Spread out evenly */
+.bottom {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom);
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: rgba(0,0,0,0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+}
+.bottom button {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-size: 22px;
+  flex: 1;
+  height: 100%;
+}
+.bottom button.active-nav {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* Modals */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:15px}
+.modal-card{background:#181818;border:1px solid #333;border-radius:14px;width:min(450px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{padding:15px;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.modal-body{padding:15px;overflow-y:auto;flex:1}
+.comment-item{display:flex;gap:10px;margin-bottom:12px;font-size:13px}
+.toast{position:fixed;left:50%;bottom:75px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:600}
+
+/* Fullscreen Media Viewer Modal */
+.media-modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px}
+.close-media{position:absolute;top:20px;right:20px;background:none;border:0;color:#fff;font-size:30px;cursor:pointer;z-index:1000}
+
+/* Video Call Styles */
+.video-container{position:relative;width:min(480px,100%);height:75vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center}
+#remoteVideo{width:100%;height:100%;object-fit:cover;background:#111}
+#localVideo{position:absolute;top:16px;right:16px;width:110px;height:150px;border-radius:12px;border:2px solid #ffffff33;object-fit:cover;background:#222;z-index:10}
+.video-controls{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:16px;z-index:20;background:rgba(0,0,0,0.6);padding:10px 20px;border-radius:30px;backdrop-filter:blur(8px)}
+.call-btn{width:50px;height:50px;border-radius:50%;border:0;background:#2a2a2a;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center}
+.call-btn.off{background:#ff9800;color:#000}
+.call-btn.hangup{background:#ff3040;color:#fff}
+</style>
+</head>
+<body>
+
+<!-- Welcome Universe Loading / Splash Screen -->
+<div id="splashScreen">
+  <div class="splash-logo">Welcome Universe</div>
+  <div class="splash-sub">Please Wait...</div>
+  <div class="spinner"></div>
+</div>
+
+<section id="auth">
+  <div class="auth-card">
+    <div class="logo">Universe Pro</div>
+    <form id="authForm">
+      <input id="fullName" class="input hidden" placeholder="Full name">
+      <input id="email" class="input" type="email" placeholder="Email address" required>
+      <input id="username" class="input" placeholder="Username" required>
+      <input id="password" class="input" type="password" placeholder="Password" required>
+      <button class="primary" id="authBtn">Log In</button>
+    </form>
+    <div class="switch"><span id="switchText">Don't have an account?</span> <span id="switchBtn">Sign up</span></div>
+  </div>
+</section>
+
+<div id="app">
+<header class="header">
+  <div class="brand">Universe Pro</div>
+  <div class="header-icons">
+    <button class="icon-btn" onclick="openAdminAuthModal()" title="Admin Control Panel">🔐 Admin</button>
+    <button class="icon-btn" onclick="openChatList()">💬</button>
+    <button class="icon-btn" onclick="openUpload()">➕</button>
+  </div>
+</header>
+
+<main>
+<section id="home" class="tab active">
+  <div class="stories" id="stories"></div>
+  <div id="feed"></div>
+</section>
+
+<section id="search" class="tab">
+  <div class="search-box"><input id="searchInput" placeholder="Search people..." oninput="searchUsers(this.value)"></div>
+  <div id="searchResults"></div>
+</section>
+
+<!-- Shop & Store Tab -->
+<section id="shop" class="tab">
+  <div class="section-title">
+    <span>🛍️ Official Store</span>
+  </div>
+  <div class="shop-grid" id="shopGrid"></div>
+</section>
+
+<section id="reels" class="tab">
+  <div class="reels" id="reelsList"></div>
+</section>
+
+<section id="upload" class="tab">
+  <div class="upload">
+    <h3 id="uploadTitle">Create Post</h3>
+    <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0">
+    <div class="preview" id="preview">Select a photo or video</div>
+    <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:10px;">
+    <button class="primary" onclick="publish()">Publish Post</button>
+  </div>
+</section>
+
+<section id="chat" class="tab">
+  <div id="chatListView"><div class="section-title"><span>Messages</span></div><div class="chat-list" id="chatList"></div></div>
+  <div id="chatRoom" class="chat-room hidden">
+    <div class="section-title">
+      <div><button class="action" onclick="backChats()">←</button> <span id="chatTitle"></span></div>
+      <button class="action" onclick="startVideoCall()" style="font-size:22px;" title="Start Video Call">📹</button>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="chat-input"><input id="messageInput" placeholder="Message..." onkeydown="if(event.key==='Enter')sendMessage()"><button onclick="sendMessage()">Send</button></div>
+  </div>
+</section>
+
+<section id="profile" class="tab">
+  <div class="profile">
+    <div class="profile-top">
+      <div id="myAvatar" class="profile-avatar"></div>
+      <div class="stats">
+        <div class="stat"><strong id="postCount">0</strong>posts</div>
+        <div class="stat"><strong id="followerCount">0</strong>followers</div>
+        <div class="stat"><strong id="followingCount">0</strong>following</div>
+      </div>
+    </div>
+    <div class="bio"><b id="myName"></b><p style="color:#aaa;margin-top:5px">Welcome to Universe Pro 🚀</p></div>
+    <div class="profile-actions">
+      <button class="secondary" onclick="changeProfilePic()">Change photo</button>
+      <button class="secondary" onclick="logout()">Log out</button>
+    </div>
+    <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
+    <div class="profile-nav">
+      <button class="profile-nav-btn active" id="btnMyPosts" onclick="switchProfileTab('posts')">📷 POSTS</button>
+      <button class="profile-nav-btn" id="btnSavedPosts" onclick="switchProfileTab('saved')">🔖 SAVED</button>
+    </div>
+    <div class="grid" id="myGrid"></div>
+  </div>
+</section>
+
+<section id="personProfile" class="tab">
+  <div class="user-profile">
+    <div class="user-head">
+      <div id="personAvatar" class="profile-avatar"></div>
+      <div>
+        <h2 id="personName"></h2>
+        <div style="color:#aaa;margin-top:5px" id="personUsername"></div>
+        <div style="display:flex;gap:15px;margin-top:10px;font-size:13px">
+          <span><b id="personFollowerCount">0</b> followers</span>
+          <span><b id="personFollowingCount">0</b> following</span>
+        </div>
+      </div>
+    </div>
+    <div class="user-actions">
+      <button id="personFollowBtn" class="primary" onclick="toggleFollowPerson()">Follow</button>
+      <button class="secondary" onclick="startProfileChat()">💬 Chat</button>
+    </div>
+    <div class="section-title" id="personPhotoTitle">Photos</div>
+    <div class="grid" id="personGrid"></div>
+  </div>
+</section>
+</main>
+
+<nav class="bottom">
+  <button id="nav-home" class="active-nav" onclick="showTab('home')">🏠</button>
+  <button id="nav-search" onclick="showTab('search')">🔍</button>
+  <button id="nav-shop" onclick="showTab('shop')">🛍️</button>
+  <button id="nav-upload" onclick="openUpload()">➕</button>
+  <button id="nav-reels" onclick="showTab('reels')">🎬</button>
+  <button id="nav-profile" onclick="showTab('profile')">👤</button>
+</nav>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- Password Protected Admin Access Modal -->
+<div id="adminAuthModal" class="modal hidden" onclick="closeAdminAuthModal()">
+  <div class="modal-card" style="width:min(380px,100%);" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>🔐 Admin Protection</span><button class="action" onclick="closeAdminAuthModal()">✕</button></div>
+    <div class="modal-body" style="text-align:center;">
+      <p style="font-size:13px;color:#aaa;margin-bottom:12px;">Enter Admin Password (9911) to open Control Panel:</p>
+      <input id="adminPassInput" type="password" class="input" placeholder="Enter Password" style="text-align:center;font-size:20px;letter-spacing:6px;">
+      <button class="primary" onclick="verifyAdminPassword()">Login to Admin Panel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Dashboard Modal (2 Sub-Panels: Orders & Store Items) -->
+<div id="adminMainModal" class="modal hidden" onclick="closeAdminMainModal()">
+  <div class="modal-card" style="width:min(580px,100%);" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <span>👑 Admin Dashboard</span>
+      <button class="action" onclick="closeAdminMainModal()">✕</button>
+    </div>
+    
+    <div class="admin-tab-nav">
+      <button id="adminTabOrdersBtn" class="admin-tab-btn active" onclick="switchAdminSubTab('orders')">📦 View Orders</button>
+      <button id="adminTabProductsBtn" class="admin-tab-btn" onclick="switchAdminSubTab('products')">🛍️ Edit & Add Products</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Sub-Panel 1: Orders -->
+      <div id="adminSubPanelOrders">
+        <b style="font-size:14px;color:#2ecc71;display:block;margin-bottom:10px;">📦 Customer Orders Received:</b>
+        <div id="adminOrdersList"></div>
+      </div>
+
+      <!-- Sub-Panel 2: Products Add, Edit & Delete -->
+      <div id="adminSubPanelProducts" class="hidden">
+        <!-- Add New Product Form -->
+        <div style="background:#1e1e1e;padding:12px;border-radius:10px;border:1px solid #333;margin-bottom:16px;">
+          <b style="font-size:14px;color:#0095f6;display:block;margin-bottom:8px;">➕ Add New Product to Store:</b>
+          <input id="prodTitle" class="input" placeholder="Product Title">
+          <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
+          <textarea id="prodDesc" class="input" placeholder="Product Description..." style="height:55px;resize:none;padding:8px;"></textarea>
+          <input id="prodFile" type="file" accept="image/*" style="margin:8px 0" onchange="previewProductImg(event)">
+          <div id="prodPreview" style="height:100px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden">No image selected</div>
+          <button class="primary" onclick="publishProduct()">Publish Product</button>
+        </div>
+
+        <!-- Manage Existing Store Items -->
+        <b style="font-size:14px;color:#fff;display:block;margin-bottom:10px;">✏️ Edit Existing Products:</b>
+        <div id="adminProductsEditList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Buy & Checkout Modal -->
+<div id="buyProductModal" class="modal hidden" onclick="closeBuyModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-head"><span id="buyProdTitle">Product Details</span><button class="action" onclick="closeBuyModal()">✕</button></div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
+      <div id="buyProdImg" style="width:100%;height:200px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;cursor:pointer;" onclick="openMediaFromBuy()"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="buyProdPrice" style="color:#2ecc71;font-size:22px;font-weight:800;">₹0</span>
+        <span style="background:#222;border:1px solid #444;color:#f39c12;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;">★ Official Store</span>
+      </div>
+      <div style="background:#1e1e1e;padding:10px;border-radius:8px;border:1px solid #333;">
+        <div style="font-size:12px;color:#aaa;margin-bottom:2px;"><b>Description:</b></div>
+        <p id="buyProdDesc" style="font-size:13px;color:#fff;white-space:pre-wrap;"></p>
+      </div>
+
+      <!-- Checkout Form -->
+      <div style="border-top:1px solid #333;padding-top:10px;display:flex;flex-direction:column;gap:6px;">
+        <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
+        <input id="orderName" class="input" placeholder="Your Full Name">
+        <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
+        
+        <div style="display:flex;gap:6px;align-items:center;margin-top:2px;">
+          <button class="secondary" style="flex:1;padding:8px;font-size:12px;background:#262626;" onclick="detectUserLocation()">📍 Get GPS Location</button>
+        </div>
+        <input id="orderLocLink" class="input" placeholder="GPS Location Link (Auto-filled)" readonly style="font-size:11px;color:#a8a8a8;">
+
+        <textarea id="orderAddress" class="input" placeholder="Write Address (e.g. Ramnagar Khajuri Bahraich)..." style="height:60px;resize:none;padding:8px;"></textarea>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="primary" style="background:linear-gradient(45deg,#2ecc71,#27ae60);padding:12px;font-size:15px;" onclick="placeOrderNow()">🛒 Confirm & Place Order</button>
+        <button class="secondary" style="padding:12px;" onclick="proceedToShareProduct()">📤 Share</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen Media Modal -->
+<div id="mediaModal" class="media-modal hidden" onclick="closeMediaModal()">
+  <button class="close-media" onclick="closeMediaModal()">✕</button>
+  <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
+</div>
+
+<!-- Send Product to Chat Modal -->
+<div id="sendProductModal" class="modal hidden" onclick="closeSendModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>Send Item to Friend</span><button class="action" onclick="closeSendModal()">✕</button></div>
+    <div class="modal-body" id="friendListForSend"></div>
+  </div>
+</div>
+
+<!-- Video Call Modal -->
+<div id="videoModal" class="modal hidden">
+  <div class="video-container">
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay playsinline muted></video>
+    <div class="video-controls">
+      <button id="btnToggleCam" class="call-btn" onclick="toggleCamera()" title="Camera On/Off">📹</button>
+      <button id="btnToggleMic" class="call-btn" onclick="toggleMic()" title="Mic Mute/Unmute">🎙</button>
+      <button class="call-btn hangup" onclick="endCall()" title="End Call">📞</button>
+    </div>
+  </div>
+</div>
+
+<!-- Story Modal -->
+<div id="storyModal" class="modal hidden" onclick="closeStory()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-head"><span id="storyUser"></span><button class="action" onclick="closeStory()">✕</button></div>
+    <div class="modal-body" id="storyBody"></div>
+  </div>
+</div>
+<input id="storyFileInput" type="file" accept="image/*" class="hidden" onchange="handleStoryUpload(event)">
+
+<!-- Comments Modal -->
+<div id="commentModal" class="modal hidden" onclick="closeComments()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-head"><span>Comments</span><button class="action" onclick="closeComments()">✕</button></div>
+    <div class="modal-body" id="commentsList"></div>
+    <div class="chat-input" style="border-top:1px solid #333;">
+      <input id="commentInput" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()">
+      <button onclick="submitComment()">Post</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase Modular Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
+    authDomain: "universe-pro-f36a8.firebaseapp.com",
+    databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
+    projectId: "universe-pro-f36a8",
+    storageBucket: "universe-pro-f36a8.firebasestorage.app",
+    messagingSenderId: "1051673611050",
+    appId: "1:1051673611050:web:24d6db4c72628131d42c53"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  let currentUid = null;
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {};
+  let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
+  let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null, selectedBuyProduct = null;
+  let isAdminAuthenticated = false, activeAdminTab = 'orders';
+
+  // Video Call WebRTC State
+  let localStream = null;
+  let peerConnection = null;
+  let isCamOn = true;
+  let isMicOn = true;
+  const rtcServers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+  function hideSplashScreen() {
+    let splash = document.getElementById('splashScreen');
+    if (splash) {
+      splash.style.display = 'none';
+    }
+  }
+
+  function toast(msg){
+    let x = document.getElementById('toast');
+    x.textContent = msg;
+    x.style.display = 'block';
+    clearTimeout(window.tt);
+    window.tt = setTimeout(()=>x.style.display='none', 2200);
+  }
+
+  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
+  
+  function renderAvatar(u, isSmall = false) {
+    let name = u.username || u.name || 'user';
+    let initial = name.charAt(0).toUpperCase();
+    let cls = isSmall ? 'small-avatar' : 'avatar';
+    if (u && u.pic) {
+      return `<div class="${cls}" style="background-image:url('${u.pic}')"></div>`;
+    } else {
+      return `<div class="${cls}">${initial}</div>`;
+    }
+  }
+
+  // Realtime Listeners
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      currentUid = user.uid;
+      document.getElementById('auth').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      listenToDatabase();
+    } else {
+      currentUid = null;
+      document.getElementById('auth').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+      hideSplashScreen();
+    }
+  });
+
+  function listenToDatabase() {
+    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); hideSplashScreen(); });
+    onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); hideSplashScreen(); });
+    onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
+    onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; renderChats(); if(activeChat) renderMessages(); });
+    onValue(ref(db, 'products'), snapshot => { 
+      dbProducts = snapshot.val() || {}; 
+      renderShop(); 
+      if(isAdminAuthenticated) renderAdminProductsEdit(); 
+    });
+    onValue(ref(db, 'orders'), snapshot => { 
+      dbOrders = snapshot.val() || {}; 
+      if(isAdminAuthenticated) renderAdminOrders(); 
+    });
+  }
+
+  function renderAll() {
+    renderStories();
+    renderFeed();
+    renderReels();
+    renderProfile();
+    renderChats();
+    renderShop();
+  }
+
+  // Auth Handling
+  document.getElementById('switchBtn').onclick = () => {
+    signup = !signup;
+    document.getElementById('fullName').classList.toggle('hidden', !signup);
+    document.getElementById('authBtn').textContent = signup ? 'Sign Up' : 'Log In';
+    document.getElementById('switchText').textContent = signup ? 'Already have an account?' : "Don't have an account?";
+    document.getElementById('switchBtn').textContent = signup ? 'Log in' : 'Sign up';
+  };
+
+  document.getElementById('authForm').onsubmit = async (e) => {
+    e.preventDefault();
+    let email = document.getElementById('email').value.trim();
+    let pass = document.getElementById('password').value;
+    let username = document.getElementById('username').value.trim().toLowerCase();
+    let name = document.getElementById('fullName').value.trim();
+
+    try {
+      if (signup) {
+        let res = await createUserWithEmailAndPassword(auth, email, pass);
+        await set(ref(db, 'users/' + res.user.uid), {
+          id: res.user.uid,
+          name: name,
+          username: username,
+          email: email,
+          pic: '',
+          following: []
+        });
+        toast('Account Created!');
+      } else {
+        await signInWithEmailAndPassword(auth, email, pass);
+        toast('Logged In!');
+      }
+    } catch (err) {
+      toast(err.message.replace('Firebase: ', ''));
+    }
+  };
+
+  window.logout = () => signOut(auth);
+
+  // Admin Password Protected Panel (Password: 9911)
+  window.openAdminAuthModal = () => {
+    if (isAdminAuthenticated) {
+      openAdminMainModal();
+    } else {
+      document.getElementById('adminPassInput').value = '';
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+    }
+  };
+
+  window.closeAdminAuthModal = () => {
+    document.getElementById('adminAuthModal').classList.add('hidden');
+  };
+
+  window.verifyAdminPassword = () => {
+    let pass = document.getElementById('adminPassInput').value.trim();
+    if (pass === '9911') {
+      isAdminAuthenticated = true;
+      closeAdminAuthModal();
+      openAdminMainModal();
+      toast('Admin Access Granted!');
+    } else {
+      toast('Incorrect Password! (Use 9911)');
+    }
+  };
+
+  window.openAdminMainModal = () => {
+    switchAdminSubTab('orders');
+    document.getElementById('adminMainModal').classList.remove('hidden');
+  };
+
+  window.closeAdminMainModal = () => {
+    document.getElementById('adminMainModal').classList.add('hidden');
+  };
+
+  window.switchAdminSubTab = (tab) => {
+    activeAdminTab = tab;
+    document.getElementById('adminTabOrdersBtn').classList.toggle('active', tab === 'orders');
+    document.getElementById('adminTabProductsBtn').classList.toggle('active', tab === 'products');
+    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
+    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
+
+    if(tab === 'orders') renderAdminOrders();
+    if(tab === 'products') renderAdminProductsEdit();
+  };
+
+  // Admin Manage/Edit Products Logic
+  function renderAdminProductsEdit() {
+    let box = document.getElementById('adminProductsEditList');
+    if(!box) return;
+
+    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
+    if(prods.length === 0) {
+      box.innerHTML = '<div style="color:#777;font-size:13px;">No items in shop to edit.</div>';
+      return;
+    }
+
+    box.innerHTML = prods.map(p => `
+      <div class="admin-prod-card">
+        <div style="width:50px;height:50px;border-radius:6px;background-image:url('${p.image}');background-size:cover;background-position:center;border:1px solid #333;"></div>
+        <div style="flex:1;">
+          <b style="font-size:13px;color:#fff">${esc(p.title)}</b>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <input id="editPrice_${p.id}" type="number" class="input" value="${esc(p.price)}" style="width:80px;padding:4px;font-size:12px;">
+            <button class="secondary" style="padding:4px 8px;font-size:11px;" onclick="updateProductPrice('${p.id}')">Save Price</button>
+          </div>
+        </div>
+        <button class="secondary" style="background:#ff3040;border:0;padding:6px 10px;font-size:11px;" onclick="deleteProduct('${p.id}')">🗑️ Delete</button>
+      </div>
+    `).join('');
+  }
+
+  window.updateProductPrice = (prodId) => {
+    let newP = document.getElementById(`editPrice_${prodId}`).value.trim();
+    if(!newP) return toast('Price cannot be empty');
+    update(ref(db, `products/${prodId}`), { price: newP });
+    toast('Product price updated!');
+  };
+
+  window.deleteProduct = (prodId) => {
+    if(confirm('Delete this product from shop?')) {
+      remove(ref(db, `products/${prodId}`));
+      toast('Product deleted!');
+    }
+  };
+
+  // Full Screen Media Modal
+  window.openMediaModal = (data, type) => {
+    let body = document.getElementById('mediaModalBody');
+    if (type === 'video') {
+      body.innerHTML = `<video src="${data}" controls autoplay style="max-width:100%;max-height:100%;object-fit:contain"></video>`;
+    } else {
+      body.innerHTML = `<img src="${data}" style="max-width:100%;max-height:100%;object-fit:contain">`;
+    }
+    document.getElementById('mediaModal').classList.remove('hidden');
+  };
+
+  window.closeMediaModal = () => {
+    document.getElementById('mediaModal').classList.add('hidden');
+    document.getElementById('mediaModalBody').innerHTML = '';
+  };
+
+  // Shop & Buy Details Modal
+  window.openBuyModal = (prodId) => {
+    selectedBuyProduct = dbProducts[prodId];
+    if(!selectedBuyProduct) return;
+    let myObj = dbUsers[currentUid] || {};
+    document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title || 'Product Details';
+    document.getElementById('buyProdPrice').textContent = `₹${selectedBuyProduct.price}`;
+    document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No extra description provided.';
+    document.getElementById('buyProdImg').style.backgroundImage = `url('${selectedBuyProduct.image}')`;
+    
+    document.getElementById('orderName').value = myObj.name || '';
+    document.getElementById('orderPhone').value = '';
+    document.getElementById('orderLocLink').value = '';
+    document.getElementById('orderAddress').value = '';
+
+    document.getElementById('buyProductModal').classList.remove('hidden');
+  };
+
+  window.closeBuyModal = () => {
+    document.getElementById('buyProductModal').classList.add('hidden');
+    selectedBuyProduct = null;
+  };
+
+  window.openMediaFromBuy = () => {
+    if(selectedBuyProduct && selectedBuyProduct.image) {
+      openMediaModal(selectedBuyProduct.image, 'image');
+    }
+  };
+
+  window.detectUserLocation = () => {
+    if (navigator.geolocation) {
+      toast('Fetching GPS Location...');
+      navigator.geolocation.getCurrentPosition((pos) => {
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+        let mapLink = `https://maps.google.com/?q=${lat},${lon}`;
+        document.getElementById('orderLocLink').value = mapLink;
+        toast('GPS Location attached!');
+      }, () => {
+        toast('Unable to fetch GPS. Type address manually.');
+      });
+    } else {
+      toast('GPS not supported.');
+    }
+  };
+
+  window.placeOrderNow = () => {
+    if(!selectedBuyProduct) return;
+    let name = document.getElementById('orderName').value.trim();
+    let phone = document.getElementById('orderPhone').value.trim();
+    let locLink = document.getElementById('orderLocLink').value.trim();
+    let address = document.getElementById('orderAddress').value.trim();
+
+    if(!name || !phone || (!address && !locLink)) {
+      return toast('Please enter Name, Mobile No. and Address / Location!');
+    }
+
+    push(ref(db, 'orders'), {
+      buyerId: currentUid,
+      buyerName: name,
+      buyerPhone: phone,
+      buyerLocation: locLink || 'N/A',
+      buyerAddress: address || 'N/A',
+      productId: selectedBuyProduct.id || '',
+      productTitle: selectedBuyProduct.title,
+      productPrice: selectedBuyProduct.price,
+      productImage: selectedBuyProduct.image,
+      status: 'Pending',
+      time: Date.now()
+    });
+
+    closeBuyModal();
+    toast('🎉 Order Placed Successfully!');
+  };
+
+  window.proceedToShareProduct = () => {
+    if(!selectedBuyProduct) return;
+    let prod = selectedBuyProduct;
+    closeBuyModal();
+    shareProductObj(prod);
+  };
+
+  // Admin Orders Panel Render
+  function renderAdminOrders() {
+    let box = document.getElementById('adminOrdersList');
+    if(!box) return;
+
+    let orderKeys = Object.keys(dbOrders).sort((a,b) => dbOrders[b].time - dbOrders[a].time);
+    if(orderKeys.length === 0) {
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:#777">No orders received yet.</div>';
+      return;
+    }
+
+    box.innerHTML = orderKeys.map(k => {
+      let ord = dbOrders[k];
+      let dateStr = new Date(ord.time).toLocaleString('en-IN', {dateStyle:'short', timeStyle:'short'});
+      let statusCls = ord.status === 'Delivered' ? 'status-delivered' : (ord.status === 'Shipped' ? 'status-shipped' : 'status-pending');
+
+      return `<div class="order-card">
+        <div class="order-header">
+          <span>📅 ${dateStr}</span>
+          <span class="order-status ${statusCls}">${ord.status || 'Pending'}</span>
+        </div>
+        <div class="order-body">
+          <div class="order-thumb" style="background-image:url('${ord.productImage}')"></div>
+          <div class="order-details">
+            <b style="font-size:14px;color:#fff">${esc(ord.productTitle)}</b>
+            <div style="color:#2ecc71;font-weight:bold">Price: ₹${esc(ord.productPrice)}</div>
+            <div style="color:#aaa;margin-top:4px"><b>Buyer:</b> ${esc(ord.buyerName)} (${esc(ord.buyerPhone)})</div>
+            <div style="color:#aaa"><b>Address:</b> ${esc(ord.buyerAddress)}</div>
+            ${ord.buyerLocation !== 'N/A' ? `<div style="margin-top:4px;"><a href="${ord.buyerLocation}" target="_blank" style="color:#0095f6;font-size:12px;">📍 Open GPS Map Location</a></div>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <button class="secondary" style="padding:6px;font-size:11px" onclick="updateOrderStatus('${k}', 'Shipped')">🚚 Shipped</button>
+          <button class="primary" style="padding:6px;font-size:11px;background:#2ecc71" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Delivered</button>
+          <button class="secondary" style="padding:6px;font-size:11px;background:#0095f6;border:0" onclick="chatWithBuyer('${ord.buyerId}')">💬 Chat</button>
+          <button class="secondary" style="padding:6px;font-size:11px;background:#ff3040;border:0" onclick="deleteOrder('${k}')">🗑️ Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  window.updateOrderStatus = (ordId, newStatus) => {
+    update(ref(db, `orders/${ordId}`), { status: newStatus });
+    toast(`Order status: ${newStatus}`);
+  };
+
+  window.deleteOrder = (ordId) => {
+    if(confirm('Delete this order?')) {
+      remove(ref(db, `orders/${ordId}`));
+      toast('Order deleted');
+    }
+  };
+
+  window.chatWithBuyer = (buyerId) => {
+    closeAdminMainModal();
+    openChat(buyerId);
+  };
+
+  // Admin Add Product Logic
+  window.previewProductImg = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      prodImageData = r.result;
+      document.getElementById('prodPreview').innerHTML = `<img src="${prodImageData}" style="max-height:100%;max-width:100%;object-fit:contain">`;
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.publishProduct = () => {
+    let title = document.getElementById('prodTitle').value.trim();
+    let price = document.getElementById('prodPrice').value.trim();
+    let desc = document.getElementById('prodDesc').value.trim();
+    if(!title || !price || !prodImageData) return toast('Please fill all fields & add photo');
+
+    push(ref(db, 'products'), {
+      sellerId: currentUid,
+      title: title,
+      price: price,
+      desc: desc,
+      image: prodImageData,
+      time: Date.now()
+    });
+
+    document.getElementById('prodTitle').value = '';
+    document.getElementById('prodPrice').value = '';
+    document.getElementById('prodDesc').value = '';
+    document.getElementById('prodPreview').innerHTML = 'No image selected';
+    prodImageData = '';
+
+    toast('Product published to Store!');
+  };
+
+  // Render Shop Grid
+  function renderShop() {
+    let box = document.getElementById('shopGrid');
+    if(!box) return;
+
+    let products = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
+    box.innerHTML = products.map(p => {
+      return `<div class="product-card">
+        <div class="product-img" style="background-image:url('${p.image}')" onclick="openBuyModal('${p.id}')"></div>
+        <div class="product-info">
+          <div class="product-title">${esc(p.title)}</div>
+          <div class="product-price">₹${esc(p.price)}</div>
+          <div class="product-desc">${esc(p.desc)}</div>
+          <button class="primary" style="padding:9px;font-size:13px;margin-top:4px;background:linear-gradient(45deg,#2ecc71,#27ae60)" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
+        </div>
+      </div>`;
+    }).join('') || '<div style="grid-column:1/-1;padding:40px;text-align:center;color:#777">No official items listed in store yet.</div>';
+  }
+
+  function shareProductObj(prodObj) {
+    productToShare = prodObj;
+    if(!productToShare) return;
+    let list = document.getElementById('friendListForSend');
+    let myObj = dbUsers[currentUid] || {};
+    let myFollowing = myObj.following || [];
+    let otherUsers = Object.keys(dbUsers)
+      .filter(id => id !== currentUid && (myFollowing.includes(id) || hasChatHistory(id)))
+      .map(id => dbUsers[id]);
+
+    list.innerHTML = otherUsers.map(u => `
+      <div class="chat-row" onclick="sendProductToChat('${u.id}')">
+        ${renderAvatar(u, true)}
+        <div><b>${esc(u.username)}</b><div style="color:#777;font-size:12px">${esc(u.name)}</div></div>
+      </div>
+    `).join('') || '<div style="padding:20px;text-align:center;color:#777">No followed friends available to send</div>';
+    document.getElementById('sendProductModal').classList.remove('hidden');
+  }
+
+  window.closeSendModal = () => {
+    document.getElementById('sendProductModal').classList.add('hidden');
+    productToShare = null;
+  };
+
+  window.sendProductToChat = (targetUid) => {
+    if(!productToShare) return;
+    let chatKey = getChatKey(currentUid, targetUid);
+    let msgText = `🛍️ **Product Inquiry:**\n*${productToShare.title}*\n💰 Price: ₹${productToShare.price}\n📝 Details: ${productToShare.desc}`;
+    push(ref(db, `chats/${chatKey}/messages`), {
+      sender: currentUid,
+      text: msgText,
+      time: Date.now()
+    });
+    closeSendModal();
+    toast('Product sent to chat!');
+  };
+
+  // Feed & Posts
+  function renderFeed() {
+    let f = document.getElementById('feed');
+    let posts = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).sort((a,b) => b.time - a.time);
+    f.innerHTML = posts.map(post => {
+      let u = dbUsers[post.userId] || {};
+      let liked = (post.likes || []).includes(currentUid);
+      let isSaved = (post.saved || []).includes(currentUid);
+      let commentsCount = Object.keys(post.comments || {}).length;
+
+      return `<article class="post">
+        <div class="post-head">
+          <div class="person" onclick="openUser('${post.userId}')">
+            ${renderAvatar(u, true)}
+            <b>${esc(u.username || 'user')}</b>
+          </div>
+        </div>
+        <div class="post-media" onclick="openMediaModal('${post.data}', '${post.type}')">
+          ${post.type === 'video' ? `<video src="${post.data}"></video>` : `<img src="${post.data}">`}
+        </div>
+        <div class="actions">
+          <div class="actions-left">
+            <button class="action ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
+            <button class="action" onclick="openComments('${post.id}')">💬</button>
+            ${post.userId === currentUid ? `<button class="delete-btn" onclick="deletePost('${post.id}')" title="Delete Post">🗑️</button>` : ''}
+          </div>
+          <button class="action" onclick="savePost('${post.id}')">${isSaved?'🔖':'📑'}</button>
+        </div>
+        <div class="details">
+          <div class="likes">${(post.likes||[]).length} likes</div>
+          <div class="caption"><b>${esc(u.username||'user')}</b> ${esc(post.caption||'')}</div>
+          <div class="comment-link" onclick="openComments('${post.id}')">
+            ${commentsCount > 0 ? `View all ${commentsCount} comments` : 'Add a comment...'}
+          </div>
+        </div>
+      </article>`;
+    }).join('') || '<div style="padding:40px;text-align:center;color:#777">No posts available</div>';
+  }
+
+  window.likePost = (postId) => {
+    let p = dbPosts[postId];
+    if(!p) return;
+    let likes = p.likes || [];
+    let idx = likes.indexOf(currentUid);
+    if(idx >= 0) likes.splice(idx, 1);
+    else likes.push(currentUid);
+    set(ref(db, `posts/${postId}/likes`), likes);
+  };
+
+  window.savePost = (postId) => {
+    let p = dbPosts[postId];
+    if(!p) return;
+    let saved = p.saved || [];
+    let idx = saved.indexOf(currentUid);
+    if(idx >= 0) saved.splice(idx, 1);
+    else saved.push(currentUid);
+    set(ref(db, `posts/${postId}/saved`), saved);
+  };
+
+  window.deletePost = (postId) => {
+    if (confirm('Delete this post?')) {
+      remove(ref(db, `posts/${postId}`));
+      toast('Post deleted');
+    }
+  };
+
+  // Uploading
+  window.openUpload = () => { window.showTab('upload'); selectedFile = null; };
+
+  document.getElementById('fileInput').onchange = e => {
+    let f = e.target.files[0];
+    if(!f) return;
+    selectedFile = f;
+    let r = new FileReader();
+    r.onload = () => {
+      previewUrl = r.result;
+      previewType = f.type.startsWith('video') ? 'video' : 'image';
+      document.getElementById('preview').innerHTML = previewType === 'video' ? `<video src="${previewUrl}" controls></video>` : `<img src="${previewUrl}">`;
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.publish = () => {
+    if(!previewUrl) return toast('Select a file first');
+    let newPostRef = push(ref(db, 'posts'));
+    set(newPostRef, {
+      userId: currentUid,
+      data: previewUrl,
+      type: previewType,
+      caption: document.getElementById('caption').value,
+      time: Date.now(),
+      likes: [],
+      saved: []
+    });
+    document.getElementById('caption').value = '';
+    document.getElementById('preview').textContent = 'Select a photo or video';
+    previewUrl = '';
+    window.showTab('home');
+    toast('Post published live!');
+  };
+
+  // Stories
+  function renderStories() {
+    let box = document.getElementById('stories');
+    if(!box) return;
+    let html = `<div class="story" onclick="document.getElementById('storyFileInput').click()">
+      <div class="ring add-story-ring"><div class="avatar">+</div></div>
+      <div style="margin-top:4px">Your story</div>
+    </div>`;
+
+    Object.keys(dbStories).forEach(k => {
+      let s = dbStories[k];
+      let u = dbUsers[s.userId] || {};
+      html += `<div class="story" onclick="viewStory('${k}')">
+        <div class="ring">${renderAvatar(u, false)}</div>
+        <div style="margin-top:4px">${esc(u.username || 'user')}</div>
+      </div>`;
+    });
+    box.innerHTML = html;
+  }
+
+  window.handleStoryUpload = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      push(ref(db, 'stories'), {
+        userId: currentUid,
+        data: r.result,
+        time: Date.now()
+      });
+      toast('Story uploaded!');
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.viewStory = (storyId) => {
+    let s = dbStories[storyId];
+    if(!s) return;
+    let u = dbUsers[s.userId] || {};
+    document.getElementById('storyUser').textContent = u.username || 'Story';
+    document.getElementById('storyBody').innerHTML = `<img src="${s.data}" style="width:100%;max-height:60vh;object-fit:contain">`;
+    document.getElementById('storyModal').classList.remove('hidden');
+  };
+
+  window.closeStory = () => {
+    document.getElementById('storyModal').classList.add('hidden');
+  };
+
+  // Reels
+  function renderReels() {
+    let box = document.getElementById('reelsList');
+    if(!box) return;
+    let reels = Object.keys(dbPosts).filter(k => dbPosts[k].type === 'video').map(k => ({id: k, ...dbPosts[k]}));
+    box.innerHTML = reels.map(r => {
+      let u = dbUsers[r.userId] || {};
+      return `<div class="reel">
+        <video src="${r.data}" loop onclick="this.paused ? this.play() : this.pause()"></video>
+        <div class="reel-info">
+          <b>@${esc(u.username||'user')}</b>
+          <p style="margin-top:4px">${esc(r.caption||'')}</p>
+        </div>
+        <div class="reel-actions">
+          <button class="action" onclick="likePost('${r.id}')">♥</button>
+          <button class="action" onclick="openComments('${r.id}')">💬</button>
+        </div>
+      </div>`;
+    }).join('') || '<div style="padding:40px;text-align:center;color:#777">No video reels available</div>';
+  }
+
+  // Comments
+  window.openComments = (postId) => {
+    activeCommentPostId = postId;
+    renderCommentsList();
+    document.getElementById('commentModal').classList.remove('hidden');
+  };
+
+  window.closeComments = () => {
+    document.getElementById('commentModal').classList.add('hidden');
+    activeCommentPostId = null;
+  };
+
+  function renderCommentsList() {
+    let p = dbPosts[activeCommentPostId];
+    if(!p) return;
+    let comments = p.comments || {};
+    let box = document.getElementById('commentsList');
+    box.innerHTML = Object.keys(comments).map(k => {
+      let c = comments[k];
+      let u = dbUsers[c.userId] || {};
+      return `<div class="comment-item">
+        ${renderAvatar(u, true)}
+        <div><b>${esc(u.username||'user')}:</b> ${esc(c.text)}</div>
+      </div>`;
+    }).join('') || '<p style="color:#777;text-align:center">No comments yet.</p>';
+  }
+
+  window.submitComment = () => {
+    let inp = document.getElementById('commentInput');
+    let txt = inp.value.trim();
+    if(!txt || !activeCommentPostId) return;
+    push(ref(db, `posts/${activeCommentPostId}/comments`), {
+      userId: currentUid,
+      text: txt,
+      time: Date.now()
+    });
+    inp.value = '';
+    renderCommentsList();
+  };
+
+  // Search
+  window.searchUsers = (query) => {
+    let q = query.toLowerCase().trim();
+    let box = document.getElementById('searchResults');
+    if(!q) { box.innerHTML = ''; return; }
+    let matches = Object.keys(dbUsers)
+      .filter(id => id !== currentUid && ((dbUsers[id].username||'').includes(q) || (dbUsers[id].name||'').toLowerCase().includes(q)))
+      .map(id => dbUsers[id]);
+    box.innerHTML = matches.map(u => `
+      <div class="search-result" onclick="openUser('${u.id}')">
+        ${renderAvatar(u, true)}
+        <div><b>${esc(u.username)}</b><div style="color:#888;font-size:12px">${esc(u.name)}</div></div>
+      </div>
+    `).join('') || '<div style="padding:15px;color:#777">No users found</div>';
+  };
+
+  // Profile & Nav Functions
+  window.showTab = (id) => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.bottom button').forEach(b => b.classList.remove('active-nav'));
+    let navBtn = document.getElementById('nav-' + id);
+    if(navBtn) navBtn.classList.add('active-nav');
+  };
+
+  window.switchProfileTab = (tab) => {
+    profileTab = tab;
+    document.getElementById('btnMyPosts').classList.toggle('active', tab === 'posts');
+    document.getElementById('btnSavedPosts').classList.toggle('active', tab === 'saved');
+    renderProfile();
+  };
+
+  function renderProfile() {
+    let myObj = dbUsers[currentUid] || {};
+    let avatarBox = document.getElementById('myAvatar');
+    avatarBox.innerHTML = '';
+    if (myObj.pic) {
+      avatarBox.style.backgroundImage = `url('${myObj.pic}')`;
+      avatarBox.textContent = '';
+    } else {
+      avatarBox.style.backgroundImage = 'none';
+      avatarBox.textContent = (myObj.username || myObj.name || 'U').charAt(0).toUpperCase();
+    }
+    document.getElementById('myName').textContent = myObj.name || '';
+    let myPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
+    document.getElementById('postCount').textContent = myPosts.length;
+    document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(currentUid)).length;
+    document.getElementById('followingCount').textContent = (myObj.following || []).length;
+    
+    let gridPosts = profileTab === 'posts' ? myPosts : Object.keys(dbPosts).filter(k => (dbPosts[k].saved||[]).includes(currentUid));
+    document.getElementById('myGrid').innerHTML = gridPosts.map(k => {
+      let p = dbPosts[k];
+      return `<div class="grid-item" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}">`}</div>`;
+    }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
+  }
+
+  window.changeProfilePic = () => document.getElementById('profileInput').click();
+  window.saveProfilePic = (e) => {
+    let f = e.target.files[0];
+    if(!f) return;
+    let r = new FileReader();
+    r.onload = () => {
+      update(ref(db, `users/${currentUid}`), { pic: r.result });
+      toast('Profile photo updated!');
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.openUser = (userId) => {
+    if(userId === currentUid) return window.showTab('profile');
+    profileUser = userId;
+    let u = dbUsers[userId] || {};
+    let myObj = dbUsers[currentUid] || {};
+    
+    let pAvatar = document.getElementById('personAvatar');
+    pAvatar.innerHTML = '';
+    if (u.pic) {
+      pAvatar.style.backgroundImage = `url('${u.pic}')`;
+      pAvatar.textContent = '';
+    } else {
+      pAvatar.style.backgroundImage = 'none';
+      pAvatar.textContent = (u.username || u.name || 'U').charAt(0).toUpperCase();
+    }
+
+    document.getElementById('personName').textContent = u.name || 'User';
+    document.getElementById('personUsername').textContent = '@' + (u.username || 'user');
+    
+    let isFollowing = (myObj.following || []).includes(userId);
+    let btn = document.getElementById('personFollowBtn');
+    btn.textContent = isFollowing ? 'Unfollow' : 'Follow';
+    btn.className = isFollowing ? 'secondary' : 'primary';
+
+    let followersCount = Object.keys(dbUsers).filter(k => (dbUsers[k].following || []).includes(userId)).length;
+    let followingCount = (u.following || []).length;
+    document.getElementById('personFollowerCount').textContent = followersCount;
+    document.getElementById('personFollowingCount').textContent = followingCount;
+
+    let userPosts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === userId);
+    document.getElementById('personGrid').innerHTML = userPosts.map(k => {
+      let p = dbPosts[k];
+      return `<div class="grid-item" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type === 'video' ? `<video src="${p.data}"></video>` : `<img src="${p.data}">`}</div>`;
+    }).join('') || '<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777">No posts</div>';
+
+    window.showTab('personProfile');
+  };
+
+  window.toggleFollowPerson = () => {
+    if (!profileUser) return;
+    let myObj = dbUsers[currentUid] || {};
+    let following = myObj.following || [];
+    let idx = following.indexOf(profileUser);
+    if (idx >= 0) {
+      following.splice(idx, 1);
+    } else {
+      following.push(profileUser);
+    }
+    update(ref(db, `users/${currentUid}`), { following: following });
+    window.openUser(profileUser);
+  };
+
+  // Chat Logic (WhatsApp Style: Sort by latest message time)
+  function getChatKey(uid1, uid2) {
+    return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
+  }
+
+  function getLatestMessageTime(targetUid) {
+    let chatKey = getChatKey(currentUid, targetUid);
+    let chatObj = dbChats[chatKey];
+    if (!chatObj || !chatObj.messages) return 0;
+    let msgKeys = Object.keys(chatObj.messages);
+    if (msgKeys.length === 0) return 0;
+    let latest = 0;
+    msgKeys.forEach(k => {
+      let m = chatObj.messages[k];
+      if (m.time > latest) latest = m.time;
+    });
+    return latest;
+  }
+
+  function hasChatHistory(targetUid) {
+    return getLatestMessageTime(targetUid) > 0;
+  }
+
+  window.openChatList = () => {
+    window.showTab('chat');
+    document.getElementById('chatListView').classList.remove('hidden');
+    document.getElementById('chatRoom').classList.add('hidden');
+  };
+
+  function renderChats() {
+    let list = document.getElementById('chatList');
+    if (!list) return;
+    let myObj = dbUsers[currentUid] || {};
+    let myFollowing = myObj.following || [];
+
+    let allowedUsers = Object.keys(dbUsers)
+      .filter(id => id !== currentUid && (myFollowing.includes(id) || hasChatHistory(id)))
+      .map(id => {
+        let u = dbUsers[id];
+        return {
+          ...u,
+          lastTime: getLatestMessageTime(id)
+        };
+      });
+
     allowedUsers.sort((a, b) => b.lastTime - a.lastTime);
 
     list.innerHTML = allowedUsers.map(u => `
@@ -1468,4 +3043,3 @@ main{width:min(650px,100%);margin:auto}
 </script>
 </body>
 </html>
-aditya.com
