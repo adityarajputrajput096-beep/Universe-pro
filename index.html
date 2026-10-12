@@ -17,7 +17,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-button,input{font:inherit}
+button,input,textarea{font:inherit}
 button{cursor:pointer;transition:transform 0.1s ease, opacity 0.2s ease}
 button:active{transform:scale(0.96)}
 .hidden{display:none!important}
@@ -33,8 +33,8 @@ button:active{transform:scale(0.96)}
 #app{display:none;min-height:100vh;padding-top:56px;padding-bottom:65px}
 .header{height:56px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
 .header .brand{font-size:24px;font-weight:800;background:linear-gradient(45deg,#fff,#ccc);-webkit-background-clip:text;color:transparent}
-.header-icons{display:flex;gap:12px;font-size:20px;align-items:center}
-.icon-btn{background:none;border:0;color:#fff;font-size:20px}
+.header-icons{display:flex;gap:10px;font-size:20px;align-items:center}
+.icon-btn{background:none;border:0;color:#fff;font-size:15px;padding:6px 10px;background:#222;border-radius:6px}
 
 main{width:min(650px,100%);margin:auto}
 .tab{display:none}.tab.active{display:block}
@@ -73,16 +73,24 @@ main{width:min(650px,100%);margin:auto}
 .product-price{color:#2ecc71;font-weight:800;font-size:16px}
 .product-desc{font-size:12px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
+/* Admin Dashboard Sub-Nav Tabs */
+.admin-tab-nav{display:flex;border-bottom:1px solid #333;margin-bottom:12px;}
+.admin-tab-btn{flex:1;padding:10px;background:none;border:0;color:#888;font-weight:700;font-size:13px;border-bottom:2px solid transparent;}
+.admin-tab-btn.active{color:#0095f6;border-color:#0095f6;}
+
 /* Order Item Card (Admin Panel) */
-.order-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:14px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
-.order-header{display:flex;justify-content:space-between;border-bottom:1px solid #222;padding-bottom:8px;font-size:13px}
-.order-body{display:flex;gap:12px;align-items:center}
-.order-thumb{width:60px;height:60px;border-radius:8px;background-size:cover;background-position:center;background-color:#222;border:1px solid #333}
+.order-card{background:#181818;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+.order-header{display:flex;justify-content:space-between;border-bottom:1px solid #2a2a2a;padding-bottom:6px;font-size:12px;color:#aaa}
+.order-body{display:flex;gap:10px;align-items:center}
+.order-thumb{width:55px;height:55px;border-radius:6px;background-size:cover;background-position:center;background-color:#222;border:1px solid #333}
 .order-details{flex:1;font-size:13px;line-height:1.4}
-.order-status{display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:bold;margin-top:4px}
+.order-status{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold;margin-top:2px}
 .status-pending{background:#f39c12;color:#000}
 .status-shipped{background:#3498db;color:#fff}
 .status-delivered{background:#2ecc71;color:#fff}
+
+/* Edit Product Admin Card */
+.admin-prod-card{background:#181818;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px;display:flex;gap:10px;align-items:center}
 
 /* Search Tab */
 .search-box{padding:13px;border-bottom:1px solid var(--card-border)}
@@ -148,7 +156,7 @@ main{width:min(650px,100%);margin:auto}
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--card-border);
   display: flex;
-  justify-style: space-around;
+  justify-content: space-around;
   align-items: center;
   z-index: 100;
 }
@@ -320,39 +328,55 @@ main{width:min(650px,100%);margin:auto}
   <div class="modal-card" style="width:min(380px,100%);" onclick="event.stopPropagation()">
     <div class="modal-head"><span>🔐 Admin Protection</span><button class="action" onclick="closeAdminAuthModal()">✕</button></div>
     <div class="modal-body" style="text-align:center;">
-      <p style="font-size:13px;color:#aaa;margin-bottom:12px;">Enter Admin Password to manage items & customer orders:</p>
-      <input id="adminPassInput" type="password" class="input" placeholder="Enter Password (9911)" style="text-align:center;font-size:18px;letter-spacing:4px;">
+      <p style="font-size:13px;color:#aaa;margin-bottom:12px;">Enter Admin Password (9911) to open Control Panel:</p>
+      <input id="adminPassInput" type="password" class="input" placeholder="Enter Password" style="text-align:center;font-size:20px;letter-spacing:6px;">
       <button class="primary" onclick="verifyAdminPassword()">Login to Admin Panel</button>
     </div>
   </div>
 </div>
 
-<!-- Admin Main Dashboard Modal -->
+<!-- Admin Dashboard Modal (2 Sub-Panels: Orders & Store Items) -->
 <div id="adminMainModal" class="modal hidden" onclick="closeAdminMainModal()">
-  <div class="modal-card" style="width:min(550px,100%);" onclick="event.stopPropagation()">
-    <div class="modal-head"><span>👑 Admin Control Dashboard</span><button class="action" onclick="closeAdminMainModal()">✕</button></div>
+  <div class="modal-card" style="width:min(580px,100%);" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <span>👑 Admin Dashboard</span>
+      <button class="action" onclick="closeAdminMainModal()">✕</button>
+    </div>
+    
+    <div class="admin-tab-nav">
+      <button id="adminTabOrdersBtn" class="admin-tab-btn active" onclick="switchAdminSubTab('orders')">📦 View Orders</button>
+      <button id="adminTabProductsBtn" class="admin-tab-btn" onclick="switchAdminSubTab('products')">🛍️ Edit & Add Products</button>
+    </div>
+
     <div class="modal-body">
-      <!-- Section 1: Add Product -->
-      <div style="background:#1e1e1e;padding:14px;border-radius:10px;border:1px solid #333;margin-bottom:16px;">
-        <b style="font-size:15px;color:#0095f6;display:block;margin-bottom:8px;">➕ Post New Product to Store:</b>
-        <input id="prodTitle" class="input" placeholder="Product Name">
-        <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
-        <textarea id="prodDesc" class="input" placeholder="Product Description & Quality details..." style="height:60px;resize:none;padding:8px;"></textarea>
-        <input id="prodFile" type="file" accept="image/*" style="margin:8px 0" onchange="previewProductImg(event)">
-        <div id="prodPreview" style="height:120px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden">No image selected</div>
-        <button class="primary" onclick="publishProduct()">Publish Item to Shop</button>
+      <!-- Sub-Panel 1: Orders -->
+      <div id="adminSubPanelOrders">
+        <b style="font-size:14px;color:#2ecc71;display:block;margin-bottom:10px;">📦 Customer Orders Received:</b>
+        <div id="adminOrdersList"></div>
       </div>
 
-      <!-- Section 2: Manage Received Orders -->
-      <div>
-        <b style="font-size:15px;color:#2ecc71;display:block;margin-bottom:10px;">📦 Customer Orders Received:</b>
-        <div id="adminOrdersList"></div>
+      <!-- Sub-Panel 2: Products Add, Edit & Delete -->
+      <div id="adminSubPanelProducts" class="hidden">
+        <!-- Add New Product Form -->
+        <div style="background:#1e1e1e;padding:12px;border-radius:10px;border:1px solid #333;margin-bottom:16px;">
+          <b style="font-size:14px;color:#0095f6;display:block;margin-bottom:8px;">➕ Add New Product to Store:</b>
+          <input id="prodTitle" class="input" placeholder="Product Title">
+          <input id="prodPrice" class="input" type="number" placeholder="Price (₹)">
+          <textarea id="prodDesc" class="input" placeholder="Product Description..." style="height:55px;resize:none;padding:8px;"></textarea>
+          <input id="prodFile" type="file" accept="image/*" style="margin:8px 0" onchange="previewProductImg(event)">
+          <div id="prodPreview" style="height:100px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden">No image selected</div>
+          <button class="primary" onclick="publishProduct()">Publish Product</button>
+        </div>
+
+        <!-- Manage Existing Store Items -->
+        <b style="font-size:14px;color:#fff;display:block;margin-bottom:10px;">✏️ Edit Existing Products:</b>
+        <div id="adminProductsEditList"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Product Buy / Details Modal -->
+<!-- Product Buy & Checkout Modal -->
 <div id="buyProductModal" class="modal hidden" onclick="closeBuyModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-head"><span id="buyProdTitle">Product Details</span><button class="action" onclick="closeBuyModal()">✕</button></div>
@@ -360,19 +384,25 @@ main{width:min(650px,100%);margin:auto}
       <div id="buyProdImg" style="width:100%;height:200px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;cursor:pointer;" onclick="openMediaFromBuy()"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span id="buyProdPrice" style="color:#2ecc71;font-size:22px;font-weight:800;">₹0</span>
-        <span style="background:#222;border:1px solid #444;color:#f39c12;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;">★ Official Product</span>
+        <span style="background:#222;border:1px solid #444;color:#f39c12;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;">★ Official Store</span>
       </div>
       <div style="background:#1e1e1e;padding:10px;border-radius:8px;border:1px solid #333;">
         <div style="font-size:12px;color:#aaa;margin-bottom:2px;"><b>Description:</b></div>
         <p id="buyProdDesc" style="font-size:13px;color:#fff;white-space:pre-wrap;"></p>
       </div>
 
-      <!-- Checkout Details Form -->
+      <!-- Checkout Form -->
       <div style="border-top:1px solid #333;padding-top:10px;display:flex;flex-direction:column;gap:6px;">
         <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
         <input id="orderName" class="input" placeholder="Your Full Name">
         <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-        <textarea id="orderAddress" class="input" placeholder="Write Address Details (e.g. Ramnagar Khajuri Bahraich)..." style="height:60px;resize:none;padding:8px;"></textarea>
+        
+        <div style="display:flex;gap:6px;align-items:center;margin-top:2px;">
+          <button class="secondary" style="flex:1;padding:8px;font-size:12px;background:#262626;" onclick="detectUserLocation()">📍 Get GPS Location</button>
+        </div>
+        <input id="orderLocLink" class="input" placeholder="GPS Location Link (Auto-filled)" readonly style="font-size:11px;color:#a8a8a8;">
+
+        <textarea id="orderAddress" class="input" placeholder="Write Address (e.g. Ramnagar Khajuri Bahraich)..." style="height:60px;resize:none;padding:8px;"></textarea>
       </div>
 
       <div style="display:flex;gap:8px;margin-top:4px;">
@@ -455,7 +485,7 @@ main{width:min(650px,100%);margin:auto}
   let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {};
   let signup = false, selectedFile = null, previewUrl = '', previewType = '', activeChat = null, profileUser = null;
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', productToShare = null, selectedBuyProduct = null;
-  let isAdminAuthenticated = false;
+  let isAdminAuthenticated = false, activeAdminTab = 'orders';
 
   // Video Call WebRTC State
   let localStream = null;
@@ -503,9 +533,16 @@ main{width:min(650px,100%);margin:auto}
     onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
-    onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; if(activeChat) renderMessages(); });
-    onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); });
-    onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
+    onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; renderChats(); if(activeChat) renderMessages(); });
+    onValue(ref(db, 'products'), snapshot => { 
+      dbProducts = snapshot.val() || {}; 
+      renderShop(); 
+      if(isAdminAuthenticated) renderAdminProductsEdit(); 
+    });
+    onValue(ref(db, 'orders'), snapshot => { 
+      dbOrders = snapshot.val() || {}; 
+      if(isAdminAuthenticated) renderAdminOrders(); 
+    });
   }
 
   function renderAll() {
@@ -556,7 +593,7 @@ main{width:min(650px,100%);margin:auto}
 
   window.logout = () => signOut(auth);
 
-  // Admin Password Protected Panel
+  // Admin Password Protected Panel (Password: 9911)
   window.openAdminAuthModal = () => {
     if (isAdminAuthenticated) {
       openAdminMainModal();
@@ -578,17 +615,68 @@ main{width:min(650px,100%);margin:auto}
       openAdminMainModal();
       toast('Admin Access Granted!');
     } else {
-      toast('Incorrect Admin Password!');
+      toast('Incorrect Password! (Use 9911)');
     }
   };
 
   window.openAdminMainModal = () => {
-    renderAdminOrders();
+    switchAdminSubTab('orders');
     document.getElementById('adminMainModal').classList.remove('hidden');
   };
 
   window.closeAdminMainModal = () => {
     document.getElementById('adminMainModal').classList.add('hidden');
+  };
+
+  window.switchAdminSubTab = (tab) => {
+    activeAdminTab = tab;
+    document.getElementById('adminTabOrdersBtn').classList.toggle('active', tab === 'orders');
+    document.getElementById('adminTabProductsBtn').classList.toggle('active', tab === 'products');
+    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
+    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
+
+    if(tab === 'orders') renderAdminOrders();
+    if(tab === 'products') renderAdminProductsEdit();
+  };
+
+  // Admin Manage/Edit Products Logic
+  function renderAdminProductsEdit() {
+    let box = document.getElementById('adminProductsEditList');
+    if(!box) return;
+
+    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
+    if(prods.length === 0) {
+      box.innerHTML = '<div style="color:#777;font-size:13px;">No items in shop to edit.</div>';
+      return;
+    }
+
+    box.innerHTML = prods.map(p => `
+      <div class="admin-prod-card">
+        <div style="width:50px;height:50px;border-radius:6px;background-image:url('${p.image}');background-size:cover;background-position:center;border:1px solid #333;"></div>
+        <div style="flex:1;">
+          <b style="font-size:13px;color:#fff">${esc(p.title)}</b>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <input id="editPrice_${p.id}" type="number" class="input" value="${esc(p.price)}" style="width:80px;padding:4px;font-size:12px;">
+            <button class="secondary" style="padding:4px 8px;font-size:11px;" onclick="updateProductPrice('${p.id}')">Save Price</button>
+          </div>
+        </div>
+        <button class="secondary" style="background:#ff3040;border:0;padding:6px 10px;font-size:11px;" onclick="deleteProduct('${p.id}')">🗑️ Delete</button>
+      </div>
+    `).join('');
+  }
+
+  window.updateProductPrice = (prodId) => {
+    let newP = document.getElementById(`editPrice_${prodId}`).value.trim();
+    if(!newP) return toast('Price cannot be empty');
+    update(ref(db, `products/${prodId}`), { price: newP });
+    toast('Product price updated!');
+  };
+
+  window.deleteProduct = (prodId) => {
+    if(confirm('Delete this product from shop?')) {
+      remove(ref(db, `products/${prodId}`));
+      toast('Product deleted!');
+    }
   };
 
   // Full Screen Media Modal
@@ -619,6 +707,7 @@ main{width:min(650px,100%);margin:auto}
     
     document.getElementById('orderName').value = myObj.name || '';
     document.getElementById('orderPhone').value = '';
+    document.getElementById('orderLocLink').value = '';
     document.getElementById('orderAddress').value = '';
 
     document.getElementById('buyProductModal').classList.remove('hidden');
@@ -635,21 +724,40 @@ main{width:min(650px,100%);margin:auto}
     }
   };
 
+  window.detectUserLocation = () => {
+    if (navigator.geolocation) {
+      toast('Fetching GPS Location...');
+      navigator.geolocation.getCurrentPosition((pos) => {
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+        let mapLink = `https://maps.google.com/?q=${lat},${lon}`;
+        document.getElementById('orderLocLink').value = mapLink;
+        toast('GPS Location attached!');
+      }, () => {
+        toast('Unable to fetch GPS. Type address manually.');
+      });
+    } else {
+      toast('GPS not supported.');
+    }
+  };
+
   window.placeOrderNow = () => {
     if(!selectedBuyProduct) return;
     let name = document.getElementById('orderName').value.trim();
     let phone = document.getElementById('orderPhone').value.trim();
+    let locLink = document.getElementById('orderLocLink').value.trim();
     let address = document.getElementById('orderAddress').value.trim();
 
-    if(!name || !phone || !address) {
-      return toast('Please enter Name, Mobile No. and Address!');
+    if(!name || !phone || (!address && !locLink)) {
+      return toast('Please enter Name, Mobile No. and Address / Location!');
     }
 
     push(ref(db, 'orders'), {
       buyerId: currentUid,
       buyerName: name,
       buyerPhone: phone,
-      buyerAddress: address,
+      buyerLocation: locLink || 'N/A',
+      buyerAddress: address || 'N/A',
       productId: selectedBuyProduct.id || '',
       productTitle: selectedBuyProduct.title,
       productPrice: selectedBuyProduct.price,
@@ -697,6 +805,7 @@ main{width:min(650px,100%);margin:auto}
             <div style="color:#2ecc71;font-weight:bold">Price: ₹${esc(ord.productPrice)}</div>
             <div style="color:#aaa;margin-top:4px"><b>Buyer:</b> ${esc(ord.buyerName)} (${esc(ord.buyerPhone)})</div>
             <div style="color:#aaa"><b>Address:</b> ${esc(ord.buyerAddress)}</div>
+            ${ord.buyerLocation !== 'N/A' ? `<div style="margin-top:4px;"><a href="${ord.buyerLocation}" target="_blank" style="color:#0095f6;font-size:12px;">📍 Open GPS Map Location</a></div>` : ''}
           </div>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
@@ -711,11 +820,11 @@ main{width:min(650px,100%);margin:auto}
 
   window.updateOrderStatus = (ordId, newStatus) => {
     update(ref(db, `orders/${ordId}`), { status: newStatus });
-    toast(`Order marked as ${newStatus}`);
+    toast(`Order status: ${newStatus}`);
   };
 
   window.deleteOrder = (ordId) => {
-    if(confirm('Delete this order entry?')) {
+    if(confirm('Delete this order?')) {
       remove(ref(db, `orders/${ordId}`));
       toast('Order deleted');
     }
@@ -759,10 +868,10 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('prodPreview').innerHTML = 'No image selected';
     prodImageData = '';
 
-    toast('Product added to Official Store!');
+    toast('Product published to Store!');
   };
 
-  // Render Shop Grid (Without Delete Button)
+  // Render Shop Grid
   function renderShop() {
     let box = document.getElementById('shopGrid');
     if(!box) return;
@@ -785,13 +894,18 @@ main{width:min(650px,100%);margin:auto}
     productToShare = prodObj;
     if(!productToShare) return;
     let list = document.getElementById('friendListForSend');
-    let otherUsers = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
+    let myObj = dbUsers[currentUid] || {};
+    let myFollowing = myObj.following || [];
+    let otherUsers = Object.keys(dbUsers)
+      .filter(id => id !== currentUid && (myFollowing.includes(id) || hasChatHistory(id)))
+      .map(id => dbUsers[id]);
+
     list.innerHTML = otherUsers.map(u => `
       <div class="chat-row" onclick="sendProductToChat('${u.id}')">
         ${renderAvatar(u, true)}
         <div><b>${esc(u.username)}</b><div style="color:#777;font-size:12px">${esc(u.name)}</div></div>
       </div>
-    `).join('') || '<div style="padding:20px;text-align:center;color:#777">No friends available to send</div>';
+    `).join('') || '<div style="padding:20px;text-align:center;color:#777">No followed friends available to send</div>';
     document.getElementById('sendProductModal').classList.remove('hidden');
   }
 
@@ -873,7 +987,7 @@ main{width:min(650px,100%);margin:auto}
   };
 
   window.deletePost = (postId) => {
-    if (confirm('Are you sure you want to delete this post?')) {
+    if (confirm('Delete this post?')) {
       remove(ref(db, `posts/${postId}`));
       toast('Post deleted');
     }
@@ -1143,9 +1257,28 @@ main{width:min(650px,100%);margin:auto}
     window.openUser(profileUser);
   };
 
-  // Chat Logic
+  // Chat Logic (WhatsApp Style: Sort by latest message time)
   function getChatKey(uid1, uid2) {
     return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
+  }
+
+  function getLatestMessageTime(targetUid) {
+    let chatKey = getChatKey(currentUid, targetUid);
+    let chatObj = dbChats[chatKey];
+    if (!chatObj || !chatObj.messages) return 0;
+    let msgKeys = Object.keys(chatObj.messages);
+    if (msgKeys.length === 0) return 0;
+    // Find latest timestamp among messages
+    let latest = 0;
+    msgKeys.forEach(k => {
+      let m = chatObj.messages[k];
+      if (m.time > latest) latest = m.time;
+    });
+    return latest;
+  }
+
+  function hasChatHistory(targetUid) {
+    return getLatestMessageTime(targetUid) > 0;
   }
 
   window.openChatList = () => {
@@ -1157,13 +1290,29 @@ main{width:min(650px,100%);margin:auto}
   function renderChats() {
     let list = document.getElementById('chatList');
     if (!list) return;
-    let otherUsers = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
-    list.innerHTML = otherUsers.map(u => `
+    let myObj = dbUsers[currentUid] || {};
+    let myFollowing = myObj.following || [];
+
+    // Filter users: only show if I follow them OR we have a chat history
+    let allowedUsers = Object.keys(dbUsers)
+      .filter(id => id !== currentUid && (myFollowing.includes(id) || hasChatHistory(id)))
+      .map(id => {
+        let u = dbUsers[id];
+        return {
+          ...u,
+          lastTime: getLatestMessageTime(id)
+        };
+      });
+
+    // Sort by latest message time descending (WhatsApp style: newest on top)
+    allowedUsers.sort((a, b) => b.lastTime - a.lastTime);
+
+    list.innerHTML = allowedUsers.map(u => `
       <div class="chat-row" onclick="openChat('${u.id}')">
         ${renderAvatar(u, true)}
         <div><b>${esc(u.username || 'user')}</b><div style="color:#777;font-size:12px">${esc(u.name || '')}</div></div>
       </div>
-    `).join('') || '<div style="padding:20px;color:#777;text-align:center">No chats available</div>';
+    `).join('') || '<div style="padding:20px;color:#777;text-align:center">No chats available. Follow users to chat!</div>';
   }
 
   window.startProfileChat = () => {
@@ -1184,6 +1333,7 @@ main{width:min(650px,100%);margin:auto}
     document.getElementById('chatRoom').classList.add('hidden');
     document.getElementById('chatListView').classList.remove('hidden');
     activeChat = null;
+    renderChats();
   };
 
   function renderMessages() {
@@ -1318,3 +1468,4 @@ main{width:min(650px,100%);margin:auto}
 </script>
 </body>
 </html>
+aditya.com
