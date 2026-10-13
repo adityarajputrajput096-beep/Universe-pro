@@ -58,7 +58,7 @@ button:active {
   display: none !important;
 }
 
-/* Hide Scrollbars Cleanly Across All Browsers */
+/* Hide Scrollbars Cleanly */
 ::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
@@ -70,7 +70,7 @@ button:active {
   scrollbar-width: none !important;
 }
 
-/* Initial Global Loader Screen */
+/* App Loader */
 #appLoader {
   position: fixed;
   inset: 0;
@@ -96,7 +96,7 @@ button:active {
   to { transform: rotate(360deg); }
 }
 
-/* Authentication Screen */
+/* Auth */
 #auth {
   display: none;
   min-height: 100vh;
@@ -423,11 +423,41 @@ main {
 .nav-tab-btn.active {
   color: #fff;
 }
+
+/* Chat Styling */
+.chat-msg-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+.chat-msg-row.sent {
+  justify-content: flex-end;
+}
+.chat-msg-row.received {
+  justify-content: flex-start;
+}
+.chat-bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.chat-msg-row.sent .chat-bubble {
+  background: var(--accent-color);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.chat-msg-row.received .chat-bubble {
+  background: #262626;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
 </style>
 </head>
 <body>
 
-<!-- Initial Universal Loader -->
+<!-- Initial Universal LoaderScreen -->
 <div id="appLoader">
   <div class="spinner"></div>
   <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
@@ -503,7 +533,6 @@ main {
         <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;">
         <div id="preview" style="height:320px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
         
-        <!-- Filter Controls for Video/Image -->
         <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;">
           <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('none')">Normal</button>
           <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('brightness(1.3) contrast(1.1)')">✨ Beauty / Bright</button>
@@ -556,6 +585,33 @@ main {
       <button onclick="closeUsersListModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
     </div>
     <div id="usersListContent" style="padding:12px;overflow-y:auto;flex:1;"></div>
+  </div>
+</div>
+
+<!-- Chat Main Modal -->
+<div id="chatModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;" onclick="closeChatModal()">
+  <!-- Main Inbox List Header -->
+  <div id="chatHeaderMain" style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
+    <b style="color:#fff;font-size:16px;">💬 VIP Chats & Messages</b>
+    <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
+  </div>
+  
+  <!-- Inbox Chat Users List -->
+  <div id="chatList" style="flex:1;overflow-y:auto;padding:12px;" onclick="event.stopPropagation()"></div>
+
+  <!-- Individual Private Chat Conversation Screen -->
+  <div id="privateChatRoom" class="hidden" style="position:absolute;inset:0;background:#050505;z-index:10;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+    <div style="background:#121212;padding:12px 15px;border-bottom:1px solid #333;display:flex;align-items:center;gap:12px;">
+      <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;"><i class="fa-solid fa-arrow-left"></i></button>
+      <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;"></div>
+      <b id="chatTargetName" style="color:#fff;font-size:15px;flex:1;">User</b>
+      <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
+    </div>
+    <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:15px;"></div>
+    <div style="padding:12px;background:#121212;border-top:1px solid #333;display:flex;gap:10px;">
+      <input id="directMessageInput" class="input" placeholder="Type a message..." style="border-radius:20px;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
+      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
   </div>
 </div>
 
@@ -641,15 +697,6 @@ main {
   </div>
 </div>
 
-<!-- Chat Modal -->
-<div id="chatModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;" onclick="closeChatModal()">
-  <div style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
-    <b style="color:#fff;font-size:16px;">💬 VIP Chats & Messages</b>
-    <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
-  </div>
-  <div id="chatList" style="flex:1;overflow-y:auto;padding:12px;" onclick="event.stopPropagation()"></div>
-</div>
-
 <div id="mediaModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px;" onclick="closeMediaModal()">
   <button style="position:absolute;top:20px;right:20px;color:#fff;font-size:28px;background:none;border:none;" onclick="closeMediaModal()">✕</button>
   <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
@@ -703,11 +750,11 @@ main {
   const db = getDatabase(app);
 
   let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {}, dbSaved = {};
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {}, dbSaved = {}, dbChats = {};
   let signup = false, previewUrl = '', previewType = '';
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
-  let viewingUserId = null;
+  let viewingUserId = null, activeChatUserId = null;
   let currentFilterCss = 'none';
 
   function toast(msg){
@@ -757,6 +804,7 @@ main {
     onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
     onValue(ref(db, 'lives'), snapshot => { dbLives = snapshot.val() || {}; renderLiveBar(); });
     onValue(ref(db, 'saved'), snapshot => { dbSaved = snapshot.val() || {}; renderProfile(); });
+    onValue(ref(db, 'direct_chats'), snapshot => { dbChats = snapshot.val() || {}; if(activeChatUserId) renderDirectMessages(); });
   }
 
   function renderAll() {
@@ -949,24 +997,87 @@ main {
   };
   window.closeMediaModal = () => document.getElementById('mediaModal').classList.add('hidden');
 
+  /* Private Direct Chat System */
   window.openChatModal = () => {
     let box = document.getElementById('chatList');
     let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
     box.innerHTML = users.map(u => `
-      <div style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #222;cursor:pointer;" onclick="openUserProfile('${u.id}')">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #222;cursor:pointer;" onclick="openPrivateChat('${u.id}')">
         ${renderAvatar(u, true)}
         <div>
           <b style="color:#fff;font-size:14px;">${esc(u.username || u.name)}</b>
-          <div style="color:#888;font-size:12px;">Tap to view profile</div>
+          <div style="color:#888;font-size:12px;">Tap to open chat room</div>
         </div>
       </div>
-    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No other users found.</div>';
+    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No users found.</div>';
+    
+    document.getElementById('privateChatRoom').classList.add('hidden');
     document.getElementById('chatModal').classList.remove('hidden');
   };
-  window.closeChatModal = () => document.getElementById('chatModal').classList.add('hidden');
+
+  window.closeChatModal = () => {
+    document.getElementById('chatModal').classList.add('hidden');
+    activeChatUserId = null;
+  };
+
+  window.openPrivateChat = (targetUserId) => {
+    activeChatUserId = targetUserId;
+    let targetUser = dbUsers[targetUserId] || { username: 'User' };
+    
+    document.getElementById('chatTargetName').textContent = targetUser.username || targetUser.name || 'User';
+    let avBox = document.getElementById('chatTargetAvatar');
+    avBox.innerHTML = renderAvatar(targetUser, true);
+
+    document.getElementById('privateChatRoom').classList.remove('hidden');
+    document.getElementById('chatModal').classList.remove('hidden');
+    renderDirectMessages();
+  };
+
+  window.backToChatList = () => {
+    activeChatUserId = null;
+    document.getElementById('privateChatRoom').classList.add('hidden');
+  };
+
+  function getChatRoomKey(id1, id2) {
+    return id1 < id2 ? `${id1}_${id2}` : `${id2}_${id1}`;
+  }
+
+  function renderDirectMessages() {
+    if (!activeChatUserId || !currentUid) return;
+    let roomKey = getChatRoomKey(currentUid, activeChatUserId);
+    let msgsObj = dbChats[roomKey] || {};
+    let msgList = Object.keys(msgsObj).map(k => msgsObj[k]).sort((a,b) => a.time - b.time);
+    
+    let box = document.getElementById('chatMessagesBox');
+    box.innerHTML = msgList.map(m => {
+      let isMe = m.senderId === currentUid;
+      return `
+        <div class="chat-msg-row ${isMe ? 'sent' : 'received'}">
+          <div class="chat-bubble">${esc(m.text)}</div>
+        </div>
+      `;
+    }).join('') || '<div style="text-align:center;color:#666;margin-top:40px;font-size:13px;">No messages yet. Say hi! 👋</div>';
+
+    box.scrollTop = box.scrollHeight;
+  }
+
+  window.sendDirectMessage = () => {
+    let inp = document.getElementById('directMessageInput');
+    let text = inp.value.trim();
+    if (!text || !activeChatUserId || !currentUid) return;
+
+    let roomKey = getChatRoomKey(currentUid, activeChatUserId);
+    push(ref(db, `direct_chats/${roomKey}`), {
+      senderId: currentUid,
+      receiverId: activeChatUserId,
+      text: text,
+      time: Date.now()
+    });
+
+    inp.value = '';
+  };
 
   window.openUserProfile = (userId) => {
-    closeChatModal();
     viewingUserId = userId;
     showTab('profile');
   };
@@ -1177,7 +1288,6 @@ main {
     `).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items in store.</div>';
   }
 
-  // Toggle Video Audio Mute/Unmute
   window.toggleAudioPlay = (vEl) => {
     if (vEl.paused) {
       vEl.play();
@@ -1427,7 +1537,7 @@ main {
       actBox.style.display = 'flex';
       actBox.innerHTML = `
         <button class="primary-btn" style="background:${isFollowing?'#262626':'var(--accent-color)'};margin:0;" onclick="toggleFollowUser('${viewingUserId}')">${isFollowing?'Unfollow':'Follow'}</button>
-        <button class="primary-btn" style="background:#262626;margin:0;" onclick="openChatModal()">💬 Chat</button>
+        <button class="primary-btn" style="background:#262626;margin:0;" onclick="openPrivateChat('${viewingUserId}')">💬 Chat</button>
       `;
     }
 
