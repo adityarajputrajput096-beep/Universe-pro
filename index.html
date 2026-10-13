@@ -649,11 +649,11 @@ main {
   </div>
 </div>
 
-<!-- Admin Protection Auth -->
+<!-- Admin Protection Auth Modal -->
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password:</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 9911):</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
@@ -840,6 +840,46 @@ main {
     renderShop();
     renderLiveBar();
   }
+
+  /* Admin Auth Handling */
+  window.openAdminAuthModal = () => {
+    if (isAdminAuthenticated) {
+      openAdminMainModal();
+    } else {
+      document.getElementById('adminPassInput').value = '';
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+    }
+  };
+  
+  window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
+
+  window.verifyAdminPassword = () => {
+    let enteredVal = document.getElementById('adminPassInput').value.trim();
+    if (enteredVal === '9911') {
+      isAdminAuthenticated = true;
+      closeAdminAuthModal();
+      openAdminMainModal();
+      toast('Admin VIP Access Granted!');
+    } else {
+      toast('❌ Incorrect Password');
+      document.getElementById('adminPassInput').value = '';
+    }
+  };
+
+  window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
+  window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
+
+  window.switchAdminSubTab = (tab) => {
+    activeAdminTab = tab;
+    document.getElementById('adminTabOrdersBtn').style.color = tab==='orders'?'#0095f6':'#888';
+    document.getElementById('adminTabOrdersBtn').style.borderColor = tab==='orders'?'#0095f6':'transparent';
+    document.getElementById('adminTabProductsBtn').style.color = tab==='products'?'#0095f6':'#888';
+    document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
+    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
+    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
+    if(tab==='orders') renderAdminOrders();
+    if(tab==='products') renderAdminProductsEdit();
+  };
 
   /* Multiple Product Photos Upload */
   window.previewMultipleProductImgs = (e) => {
@@ -1050,7 +1090,8 @@ main {
       startCanvasFilterLoop();
       toast('🔴 You are now Live!');
     } catch(e) {
-      toast('Camera/Mic permission required');
+      toast('Camera/Mic permission required!');
+      alert('⚠️ Camera and Microphone permission is required to start Live Stream.');
     }
   };
 
@@ -1127,44 +1168,6 @@ main {
   };
 
   window.logout = () => signOut(auth);
-
-  window.openAdminAuthModal = () => {
-    if (isAdminAuthenticated) {
-      openAdminMainModal();
-    } else {
-      document.getElementById('adminPassInput').value = '';
-      document.getElementById('adminAuthModal').classList.remove('hidden');
-    }
-  };
-  window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
-  
-  window.verifyAdminPassword = () => {
-    let enteredVal = document.getElementById('adminPassInput').value.trim();
-    if (enteredVal === '9911') {
-      isAdminAuthenticated = true;
-      closeAdminAuthModal();
-      openAdminMainModal();
-      toast('Admin VIP Access Granted!');
-    } else {
-      toast('❌ Incorrect Password');
-      document.getElementById('adminPassInput').value = '';
-    }
-  };
-
-  window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
-  window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
-
-  window.switchAdminSubTab = (tab) => {
-    activeAdminTab = tab;
-    document.getElementById('adminTabOrdersBtn').style.color = tab==='orders'?'#0095f6':'#888';
-    document.getElementById('adminTabOrdersBtn').style.borderColor = tab==='orders'?'#0095f6':'transparent';
-    document.getElementById('adminTabProductsBtn').style.color = tab==='products'?'#0095f6':'#888';
-    document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
-    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
-    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
-    if(tab==='orders') renderAdminOrders();
-    if(tab==='products') renderAdminProductsEdit();
-  };
 
   function renderAdminProductsEdit() {
     let box = document.getElementById('adminProductsEditList');
