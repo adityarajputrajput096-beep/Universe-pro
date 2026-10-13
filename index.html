@@ -383,77 +383,6 @@ main {
   font-size: 14px;
 }
 
-/* Chat Screen */
-.chat-window {
-  height: calc(100vh - 116px - var(--safe-bottom));
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.messages-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.chat-bubble {
-  max-width: 78%;
-  padding: 11px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  line-height: 1.4;
-  word-break: break-word;
-}
-
-.chat-bubble.sent {
-  align-self: flex-end;
-  background: var(--accent-color);
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-
-.chat-bubble.received {
-  align-self: flex-start;
-  background: #222;
-  color: #fff;
-  border-bottom-left-radius: 4px;
-}
-
-.chat-bottom-input {
-  display: flex;
-  align-items: center;
-  padding: 10px 14px calc(10px + var(--safe-bottom)) 14px;
-  gap: 10px;
-  background: #000;
-  border-top: 1px solid var(--border-color);
-  position: sticky;
-  bottom: 0;
-  z-index: 100;
-}
-
-.chat-bottom-input input {
-  flex: 1;
-  background: var(--bg-input);
-  border: 1px solid #333;
-  border-radius: 25px;
-  color: #fff;
-  padding: 12px 18px;
-  font-size: 14px;
-}
-
-.chat-bottom-input button {
-  background: var(--accent-color);
-  color: #fff;
-  border-radius: 25px;
-  padding: 12px 22px;
-  font-weight: 700;
-  font-size: 14px;
-}
-
 /* Bottom Nav Bar */
 .bottom-nav-bar {
   position: fixed;
@@ -531,7 +460,6 @@ main {
     <div class="header-actions">
       <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
-      <button class="icon-circle-btn" onclick="openChatList()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </header>
 
@@ -570,28 +498,6 @@ main {
         <div id="preview" style="height:350px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
         <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
         <button class="primary-btn" onclick="publish()">Publish Post</button>
-      </div>
-    </section>
-
-    <!-- Chat Tab -->
-    <section id="chat" class="tab-pane">
-      <div id="chatListView">
-        <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color)">Messages</div>
-        <div id="chatList" style="padding:8px;"></div>
-      </div>
-      <div id="chatRoom" class="chat-room hidden chat-window">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-color);background:#080808;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <button onclick="backChats()" style="color:#fff;font-size:18px;"><i class="fa-solid fa-arrow-left"></i></button>
-            <span id="chatTitle" style="font-weight:700;"></span>
-          </div>
-          <button onclick="startVideoCall()" style="color:#fff;font-size:20px;" title="Video Call"><i class="fa-solid fa-video"></i></button>
-        </div>
-        <div class="messages-area" id="messages"></div>
-        <div class="chat-bottom-input">
-          <input id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
-          <button onclick="sendMessage()">Send</button>
-        </div>
       </div>
     </section>
 
@@ -658,7 +564,7 @@ main {
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter Password () to access Dashboard:</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter Password (9911) to access Dashboard:</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Password" style="text-align:center;font-size:20px;letter-spacing:6px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
@@ -768,8 +674,8 @@ main {
   const db = getDatabase(app);
 
   let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {}, dbLives = {};
-  let signup = false, previewUrl = '', previewType = '', activeChat = null;
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {};
+  let signup = false, previewUrl = '', previewType = '';
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
 
@@ -817,7 +723,6 @@ main {
     onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
-    onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; renderChats(); if(activeChat) renderMessages(); });
     onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); if(isAdminAuthenticated) renderAdminProductsEdit(); });
     onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
     onValue(ref(db, 'lives'), snapshot => { dbLives = snapshot.val() || {}; renderLiveBar(); });
@@ -828,7 +733,6 @@ main {
     renderFeed();
     renderReels();
     renderProfile();
-    renderChats();
     renderShop();
     renderLiveBar();
   }
@@ -1020,17 +924,50 @@ main {
   };
   window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
+  // Improved Robust GPS Location Fetcher with Detailed Alerts
   window.detectUserLocation = () => {
-    if (!navigator.geolocation) return toast("GPS not supported");
+    if (!navigator.onLine) {
+      toast("⚠️ Internet Off Hai!");
+      alert("⚠️ AAPKA INTERNET OFF HAI!\nKripya Mobile Data/Wi-Fi On Karke Dobara Try Karein.");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      toast("⚠️ GPS Supported Nahi Hai!");
+      alert("⚠️ Aapke Browser Me Geolocation Supported Nahi Hai. Kripya Manual Address Type Karein.");
+      return;
+    }
+
     toast("📡 Fetching GPS Location...");
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        let mapLink = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+        let lat = pos.coords.latitude;
+        let lng = pos.coords.longitude;
+        let mapLink = `https://maps.google.com/?q=${lat},${lng}`;
         document.getElementById('orderLocLink').value = mapLink;
-        toast("GPS Location attached!");
+        toast("✅ GPS Location Attached!");
+        alert("✅ Aapki Exact Live Location Successfully Attach Ho Gayi Hai!");
       },
-      () => toast("GPS Fetching Failed"),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (err) => {
+        let errorMsg = "";
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            errorMsg = "⚠️ Location Permission Denied! Phone Settings ya Browser Permission me Location Allow Karein.";
+            break;
+          case err.POSITION_UNAVAILABLE:
+            errorMsg = "⚠️ GPS Signal Unavailable! Apne phone ka GPS/Location switch On karein.";
+            break;
+          case err.TIMEOUT:
+            errorMsg = "⚠️ Request Timeout! Network signal weak hai, kripya dobara try karein.";
+            break;
+          default:
+            errorMsg = "⚠️ Location fetch karne me kuch problem aayi hai.";
+        }
+        toast("❌ GPS Failed");
+        alert(`${errorMsg}\n\n💡 Tip: Aap niche 'Delivery Address' box me directly apna address type kar sakte hain.`);
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
     );
   };
 
