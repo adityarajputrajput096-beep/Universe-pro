@@ -533,9 +533,16 @@ main {
       <div id="searchResults"></div>
     </section>
 
+    <!-- SHOP SECTION WITH LIVE SEARCH BAR -->
     <section id="shop" class="tab-pane">
-      <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color);font-size:16px;">🛍️ Official VIP Store</div>
-      <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px;"></div>
+      <div style="font-weight:700;padding:16px 16px 8px;font-size:16px;">🛍️ Official VIP Store</div>
+      
+      <!-- Store Search Input Bar -->
+      <div style="padding:0 14px 10px;">
+        <input id="shopSearchInput" class="input" placeholder="🔍 Search products in store..." oninput="renderShop()" style="border-radius:20px;padding:10px 16px;background:#181818;">
+      </div>
+
+      <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 14px 14px;"></div>
     </section>
 
     <section id="reels" class="tab-pane">
@@ -659,17 +666,24 @@ main {
   </div>
 </div>
 
-<!-- Admin Dashboard Modal -->
+<!-- ADMIN DASHBOARD MODAL WITH SEARCH -->
 <div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
       <span>👑 VIP Admin Dashboard</span>
       <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
     </div>
+    
     <div style="display:flex;border-bottom:1px solid #333;">
       <button id="adminTabOrdersBtn" style="flex:1;padding:12px;background:none;color:#0095f6;font-weight:bold;border-bottom:2px solid #0095f6;border:none;" onclick="switchAdminSubTab('orders')">📦 View Orders</button>
       <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('products')">🛍️ Manage Products</button>
     </div>
+
+    <!-- Admin Panel Search Bar -->
+    <div style="padding:10px 15px 0;">
+      <input id="adminSearchInput" class="input" placeholder="🔍 Search in Admin (Orders / Products)..." oninput="filterAdminContent(this.value)" style="border-radius:20px;padding:8px 14px;font-size:13px;background:#121212;">
+    </div>
+
     <div style="padding:15px;overflow-y:auto;flex:1;">
       <div id="adminSubPanelOrders"><div id="adminOrdersList"></div></div>
       <div id="adminSubPanelProducts" class="hidden">
@@ -841,6 +855,95 @@ main {
     renderLiveBar();
   }
 
+  /* Store Live Search Implementation */
+  window.renderShop = () => {
+    let box = document.getElementById('shopGrid');
+    if(!box) return;
+    
+    let query = (document.getElementById('shopSearchInput')?.value || '').toLowerCase().trim();
+    
+    let prods = Object.keys(dbProducts)
+      .map(k => ({id: k, ...dbProducts[k]}))
+      .filter(p => (p.title || '').toLowerCase().includes(query) || (p.desc || '').toLowerCase().includes(query))
+      .sort((a,b) => b.time - a.time);
+
+    box.innerHTML = prods.map(p => {
+      let mainImg = (p.images && p.images.length > 0) ? p.images[0] : p.image;
+      return `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="width:100%;aspect-ratio:1;background-image:url('${mainImg}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
+            <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
+            <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
+            <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
+          </div>
+        </div>
+      `;
+    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items match search.</div>';
+  };
+
+  /* Admin Live Search Filter */
+  window.filterAdminContent = (q) => {
+    if(activeAdminTab === 'orders') renderAdminOrders(q);
+    if(activeAdminTab === 'products') renderAdminProductsEdit(q);
+  };
+
+  function renderAdminOrders(query = '') {
+    let box = document.getElementById('adminOrdersList');
+    if(!box) return;
+    
+    let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+    
+    let keys = Object.keys(dbOrders)
+      .filter(k => {
+        let o = dbOrders[k];
+        return (o.productTitle || '').toLowerCase().includes(q) ||
+               (o.buyerName || '').toLowerCase().includes(q) ||
+               (o.buyerPhone || '').toLowerCase().includes(q);
+      })
+      .sort((a,b) => dbOrders[b].time - dbOrders[a].time);
+
+    box.innerHTML = keys.map(k => {
+      let o = dbOrders[k];
+      return `<div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:10px;font-size:13px;">
+        <b style="color:#fff;">${esc(o.productTitle)} (₹${esc(o.productPrice)})</b>
+        <div style="color:#aaa;margin-top:4px;">Buyer: ${esc(o.buyerName)} (${esc(o.buyerPhone)})</div>
+        <div style="color:#aaa;">Address: ${esc(o.buyerAddress)}</div>
+        ${o.buyerLocation !== 'N/A' ? `<div style="margin-top:4px;"><a href="${o.buyerLocation}" target="_blank" style="color:#0095f6;font-size:12px;">📍 Open GPS Map Location</a></div>` : ''}
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="primary-btn" style="background:#2ecc71;padding:6px;font-size:11px;margin:0;" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Deliver & Send OTP</button>
+          <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteOrder('${k}')">Delete</button>
+        </div>
+      </div>`;
+    }).join('') || '<div style="color:#777;font-size:13px;">No matching orders.</div>';
+  }
+
+  function renderAdminProductsEdit(query = '') {
+    let box = document.getElementById('adminProductsEditList');
+    if(!box) return;
+    
+    let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+
+    let prods = Object.keys(dbProducts)
+      .map(k => ({id: k, ...dbProducts[k]}))
+      .filter(p => (p.title || '').toLowerCase().includes(q))
+      .sort((a,b) => b.time - a.time);
+
+    box.innerHTML = prods.map(p => `
+      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
+        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
+        <div style="flex:1;">
+          <b style="color:#fff;">${esc(p.title)}</b>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
+            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
+          </div>
+        </div>
+        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
+      </div>
+    `).join('') || '<div style="color:#777;font-size:13px;">No items match search.</div>';
+  }
+
   /* Admin Auth Handling */
   window.openAdminAuthModal = () => {
     if (isAdminAuthenticated) {
@@ -877,8 +980,9 @@ main {
     document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
     document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
     document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
-    if(tab==='orders') renderAdminOrders();
-    if(tab==='products') renderAdminProductsEdit();
+    let q = document.getElementById('adminSearchInput')?.value || '';
+    if(tab==='orders') renderAdminOrders(q);
+    if(tab==='products') renderAdminProductsEdit(q);
   };
 
   /* Multiple Product Photos Upload */
@@ -922,25 +1026,6 @@ main {
     prodImagesArray = [];
     toast('Product Published!');
   };
-
-  function renderShop() {
-    let box = document.getElementById('shopGrid');
-    if(!box) return;
-    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
-    box.innerHTML = prods.map(p => {
-      let mainImg = (p.images && p.images.length > 0) ? p.images[0] : p.image;
-      return `
-        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
-          <div style="width:100%;aspect-ratio:1;background-image:url('${mainImg}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
-          <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
-            <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
-            <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
-            <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
-          </div>
-        </div>
-      `;
-    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items in store.</div>';
-  }
 
   window.openBuyModal = (id) => {
     selectedBuyProduct = dbProducts[id];
@@ -1169,25 +1254,6 @@ main {
 
   window.logout = () => signOut(auth);
 
-  function renderAdminProductsEdit() {
-    let box = document.getElementById('adminProductsEditList');
-    if(!box) return;
-    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
-    box.innerHTML = prods.map(p => `
-      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
-        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
-        <div style="flex:1;">
-          <b style="color:#fff;">${esc(p.title)}</b>
-          <div style="display:flex;gap:6px;margin-top:4px;">
-            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
-            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
-          </div>
-        </div>
-        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>
-    `).join('') || '<div style="color:#777;font-size:13px;">No items.</div>';
-  }
-
   window.updateProductPrice = (id) => {
     let val = document.getElementById(`ep_${id}`).value.trim();
     if(val) { update(ref(db, `products/${id}`), { price: val }); toast('Price updated!'); }
@@ -1319,25 +1385,6 @@ main {
     closeBuyModal();
     toast("🎉 Order Placed Successfully!");
   };
-
-  function renderAdminOrders() {
-    let box = document.getElementById('adminOrdersList');
-    if(!box) return;
-    let keys = Object.keys(dbOrders).sort((a,b) => dbOrders[b].time - dbOrders[a].time);
-    box.innerHTML = keys.map(k => {
-      let o = dbOrders[k];
-      return `<div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:10px;font-size:13px;">
-        <b style="color:#fff;">${esc(o.productTitle)} (₹${esc(o.productPrice)})</b>
-        <div style="color:#aaa;margin-top:4px;">Buyer: ${esc(o.buyerName)} (${esc(o.buyerPhone)})</div>
-        <div style="color:#aaa;">Address: ${esc(o.buyerAddress)}</div>
-        ${o.buyerLocation !== 'N/A' ? `<div style="margin-top:4px;"><a href="${o.buyerLocation}" target="_blank" style="color:#0095f6;font-size:12px;">📍 Open GPS Map Location</a></div>` : ''}
-        <div style="display:flex;gap:6px;margin-top:8px;">
-          <button class="primary-btn" style="background:#2ecc71;padding:6px;font-size:11px;margin:0;" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Deliver & Send OTP</button>
-          <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteOrder('${k}')">Delete</button>
-        </div>
-      </div>`;
-    }).join('') || '<div style="color:#777;font-size:13px;">No orders.</div>';
-  }
 
   window.updateOrderStatus = (id, st) => {
     if(st === 'Delivered') {
