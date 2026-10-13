@@ -453,11 +453,26 @@ main {
   color: #fff;
   border-bottom-left-radius: 4px;
 }
+
+.thumb-img-box {
+  width: 55px;
+  height: 55px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.thumb-img-box.active {
+  border-color: #0095f6;
+  box-shadow: 0 0 8px rgba(0,149,246,0.6);
+}
 </style>
 </head>
 <body>
 
-<!-- Initial Universal LoaderScreen -->
+<!-- Initial Universal Loader -->
 <div id="appLoader">
   <div class="spinner"></div>
   <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
@@ -590,16 +605,13 @@ main {
 
 <!-- Chat Main Modal -->
 <div id="chatModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;" onclick="closeChatModal()">
-  <!-- Main Inbox List Header -->
   <div id="chatHeaderMain" style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
     <b style="color:#fff;font-size:16px;">💬 VIP Chats & Messages</b>
     <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
   </div>
   
-  <!-- Inbox Chat Users List -->
   <div id="chatList" style="flex:1;overflow-y:auto;padding:12px;" onclick="event.stopPropagation()"></div>
 
-  <!-- Individual Private Chat Conversation Screen -->
   <div id="privateChatRoom" class="hidden" style="position:absolute;inset:0;background:#050505;z-index:10;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
     <div style="background:#121212;padding:12px 15px;border-bottom:1px solid #333;display:flex;align-items:center;gap:12px;">
       <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;"><i class="fa-solid fa-arrow-left"></i></button>
@@ -615,37 +627,7 @@ main {
   </div>
 </div>
 
-<!-- Modals -->
-<div id="liveModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:flex;align-items:center;justify-content:center;padding:10px;">
-  <div style="position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column;">
-    <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-      <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
-      <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
-      <video id="liveRemoteVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
-      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE</div>
-      <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
-      
-      <div id="liveFilterBar" style="position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
-        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('none', this)">Normal</button>
-        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
-      </div>
-
-      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;">
-        <button style="padding:10px 24px;border-radius:25px;background:#ff3040;color:#fff;font-weight:bold;" onclick="stopLiveStream()">Stop Live</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
-    <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password:</p>
-    <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
-    <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
-  </div>
-</div>
-
+<!-- Admin Dashboard Modal -->
 <div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
@@ -660,12 +642,15 @@ main {
       <div id="adminSubPanelOrders"><div id="adminOrdersList"></div></div>
       <div id="adminSubPanelProducts" class="hidden">
         <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
-          <b style="color:#fff;">➕ Add Product:</b>
+          <b style="color:#fff;">➕ Add Product (Multiple Photos Allowed):</b>
           <input id="prodTitle" class="input" placeholder="Product Title" style="margin-top:6px;">
           <input id="prodPrice" class="input" type="number" placeholder="Price (₹)" style="margin-top:6px;">
           <textarea id="prodDesc" class="input" placeholder="Description..." style="height:55px;margin-top:6px;resize:none;"></textarea>
-          <input id="prodFile" type="file" accept="image/*" style="margin:8px 0;color:#fff;" onchange="previewProductImg(event)">
-          <div id="prodPreview" style="height:90px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:#777;overflow:hidden;">No image</div>
+          
+          <label style="display:block;margin-top:8px;font-size:12px;color:#aaa;">Select 3-4 Photos (Front, Back, Side view):</label>
+          <input id="prodFile" type="file" accept="image/*" multiple style="margin:6px 0;color:#fff;" onchange="previewMultipleProductImgs(event)">
+          
+          <div id="prodPreviewGrid" style="display:flex;gap:8px;overflow-x:auto;padding:8px 0;"></div>
           <button class="primary-btn" onclick="publishProduct()">Publish Product</button>
         </div>
         <div id="adminProductsEditList"></div>
@@ -674,15 +659,23 @@ main {
   </div>
 </div>
 
+<!-- Buy Product Modal -->
 <div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <span id="buyProdTitle" style="font-weight:bold;font-size:16px;color:#fff;">Product Details</span>
       <button onclick="closeBuyModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
     </div>
-    <div id="buyProdImg" style="width:100%;height:190px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:12px;"></div>
+    
+    <!-- Main Display Photo -->
+    <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:10px;"></div>
+    
+    <!-- Thumbnails Gallery for 3-4 Photos -->
+    <div id="buyProdThumbs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;"></div>
+
     <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
     <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
+    
     <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
       <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
       <input id="orderName" class="input" placeholder="Your Full Name">
@@ -752,7 +745,7 @@ main {
   let currentUid = null;
   let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {}, dbSaved = {}, dbChats = {};
   let signup = false, previewUrl = '', previewType = '';
-  let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', selectedBuyProduct = null;
+  let activeCommentPostId = null, profileTab = 'posts', prodImagesArray = [], selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
   let viewingUserId = null, activeChatUserId = null;
   let currentFilterCss = 'none';
@@ -816,186 +809,100 @@ main {
     renderLiveBar();
   }
 
-  function renderLiveBar() {
-    let bar = document.getElementById('liveStreamsBar');
-    if(!bar) return;
-    let liveKeys = Object.keys(dbLives);
-    if(liveKeys.length === 0) { bar.style.display = 'none'; return; }
-    bar.style.display = 'flex';
-    bar.innerHTML = liveKeys.map(k => {
-      let l = dbLives[k];
-      let u = dbUsers[l.hostId] || {};
-      return `<div class="live-card-sm" onclick="watchLiveStream('${k}')" style="min-width:110px;height:150px;border-radius:14px;background:#181818;position:relative;overflow:hidden;border:1px solid #333;cursor:pointer;">
-        ${u.pic ? `<img src="${u.pic}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="padding:20px;text-align:center;font-weight:bold;color:#fff;">${(u.username||'Live').charAt(0).toUpperCase()}</div>`}
-        <div style="position:absolute;top:8px;left:8px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:4px;">🔴 LIVE</div>
-        <div style="position:absolute;bottom:8px;left:8px;right:8px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 4px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.username || 'User')}</div>
-      </div>`;
-    }).join('');
-  }
+  /* Multiple Photos Product Upload */
+  window.previewMultipleProductImgs = (e) => {
+    let files = Array.from(e.target.files);
+    if(files.length === 0) return;
+    prodImagesArray = [];
+    let grid = document.getElementById('prodPreviewGrid');
+    grid.innerHTML = '';
 
-  window.startBroadcastingLive = async () => {
-    try {
-      liveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      document.getElementById('liveRawVideo').srcObject = liveStream;
-      document.getElementById('liveCanvas').style.display = 'block';
-      document.getElementById('liveRemoteVideo').style.display = 'none';
-      document.getElementById('liveFilterBar').style.display = 'flex';
-      let myObj = dbUsers[currentUid] || {};
-      document.getElementById('liveHostName').textContent = (myObj.username || myObj.name || 'Your Stream');
-      document.getElementById('liveModal').classList.remove('hidden');
-      isBroadcaster = true;
-      activeLiveKey = currentUid;
-      set(ref(db, `lives/${activeLiveKey}`), { hostId: currentUid, time: Date.now() });
-      startCanvasFilterLoop();
-      toast('🔴 You are now Live!');
-    } catch(e) {
-      toast('Camera/Mic permission required');
-    }
+    files.forEach(file => {
+      let r = new FileReader();
+      r.onload = () => {
+        prodImagesArray.push(r.result);
+        grid.innerHTML += `<div style="width:60px;height:60px;border-radius:6px;background-image:url('${r.result}');background-size:cover;flex-shrink:0;"></div>`;
+      };
+      r.readAsDataURL(file);
+    });
   };
 
-  function startCanvasFilterLoop() {
-    let video = document.getElementById('liveRawVideo');
-    let canvas = document.getElementById('liveCanvas');
-    let ctx = canvas.getContext('2d');
-    function draw() {
-      if (!isBroadcaster) return;
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
-      ctx.filter = currentFilter === 'fair' ? 'brightness(1.25) contrast(1.05)' : 'none';
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      liveCanvasAnim = requestAnimationFrame(draw);
-    }
-    draw();
-  }
+  window.publishProduct = () => {
+    let title = document.getElementById('prodTitle').value.trim();
+    let price = document.getElementById('prodPrice').value.trim();
+    let desc = document.getElementById('prodDesc').value.trim();
+    if(!title || !price || prodImagesArray.length === 0) return toast('Fill all fields & select photos');
+    
+    push(ref(db, 'products'), {
+      sellerId: currentUid,
+      title: title,
+      price: price,
+      desc: desc,
+      image: prodImagesArray[0],
+      images: prodImagesArray,
+      time: Date.now()
+    });
 
-  window.applyBeautyFilter = (f, btn) => {
-    currentFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.style.borderColor='rgba(255,255,255,0.2)');
-    if(btn) btn.style.borderColor='#0095f6';
-    toast(`Filter: ${f.toUpperCase()}`);
+    document.getElementById('prodTitle').value = '';
+    document.getElementById('prodPrice').value = '';
+    document.getElementById('prodDesc').value = '';
+    document.getElementById('prodPreviewGrid').innerHTML = '';
+    prodImagesArray = [];
+    toast('Product Published!');
   };
 
-  window.watchLiveStream = (key) => {
-    let l = dbLives[key];
-    if(!l) return;
-    let u = dbUsers[l.hostId] || {};
-    document.getElementById('liveCanvas').style.display = 'none';
-    document.getElementById('liveRemoteVideo').style.display = 'block';
-    document.getElementById('liveFilterBar').style.display = 'none';
-    document.getElementById('liveHostName').textContent = u.username || 'Live';
-    document.getElementById('liveModal').classList.remove('hidden');
-    isBroadcaster = false;
-  };
-
-  window.stopLiveStream = () => {
-    if (isBroadcaster && liveStream) {
-      liveStream.getTracks().forEach(t => t.stop());
-      if(liveCanvasAnim) cancelAnimationFrame(liveCanvasAnim);
-      if(activeLiveKey) remove(ref(db, `lives/${activeLiveKey}`));
-    }
-    document.getElementById('liveModal').classList.add('hidden');
-    isBroadcaster = false;
-  };
-
-  document.getElementById('switchBtn').onclick = () => {
-    signup = !signup;
-    document.getElementById('fullNameGroup').classList.toggle('hidden', !signup);
-    document.getElementById('authBtn').textContent = signup ? 'Sign Up' : 'Log In';
-    document.getElementById('switchText').textContent = signup ? 'Already have an account?' : "Don't have an account?";
-    document.getElementById('switchBtn').textContent = signup ? 'Log in' : 'Sign up';
-  };
-
-  document.getElementById('authForm').onsubmit = async (e) => {
-    e.preventDefault();
-    let email = document.getElementById('email').value.trim();
-    let pass = document.getElementById('password').value;
-    let username = document.getElementById('username').value.trim().toLowerCase();
-    let name = document.getElementById('fullName').value.trim();
-    try {
-      if (signup) {
-        let res = await createUserWithEmailAndPassword(auth, email, pass);
-        await set(ref(db, 'users/' + res.user.uid), { id: res.user.uid, name, username, email, pic: '', following: [] });
-        toast('Account Created!');
-      } else {
-        await signInWithEmailAndPassword(auth, email, pass);
-        toast('Logged In!');
-      }
-    } catch (err) {
-      toast(err.message.replace('Firebase: ', ''));
-    }
-  };
-
-  window.logout = () => signOut(auth);
-
-  window.openAdminAuthModal = () => {
-    if (isAdminAuthenticated) {
-      openAdminMainModal();
-    } else {
-      document.getElementById('adminPassInput').value = '';
-      document.getElementById('adminAuthModal').classList.remove('hidden');
-    }
-  };
-  window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
-  
-  window.verifyAdminPassword = () => {
-    let enteredVal = document.getElementById('adminPassInput').value.trim();
-    if (enteredVal === '9911') {
-      isAdminAuthenticated = true;
-      closeAdminAuthModal();
-      openAdminMainModal();
-      toast('Admin VIP Access Granted!');
-    } else {
-      toast('❌ Incorrect Password');
-      document.getElementById('adminPassInput').value = '';
-    }
-  };
-
-  window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
-  window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
-
-  window.switchAdminSubTab = (tab) => {
-    activeAdminTab = tab;
-    document.getElementById('adminTabOrdersBtn').style.color = tab==='orders'?'#0095f6':'#888';
-    document.getElementById('adminTabOrdersBtn').style.borderColor = tab==='orders'?'#0095f6':'transparent';
-    document.getElementById('adminTabProductsBtn').style.color = tab==='products'?'#0095f6':'#888';
-    document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
-    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
-    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
-    if(tab==='orders') renderAdminOrders();
-    if(tab==='products') renderAdminProductsEdit();
-  };
-
-  function renderAdminProductsEdit() {
-    let box = document.getElementById('adminProductsEditList');
+  function renderShop() {
+    let box = document.getElementById('shopGrid');
     if(!box) return;
     let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
-    box.innerHTML = prods.map(p => `
-      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
-        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
-        <div style="flex:1;">
-          <b style="color:#fff;">${esc(p.title)}</b>
-          <div style="display:flex;gap:6px;margin-top:4px;">
-            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
-            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
+    box.innerHTML = prods.map(p => {
+      let mainImg = (p.images && p.images.length > 0) ? p.images[0] : p.image;
+      return `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="width:100%;aspect-ratio:1;background-image:url('${mainImg}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
+            <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
+            <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
+            <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
           </div>
         </div>
-        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>
-    `).join('') || '<div style="color:#777;font-size:13px;">No items.</div>';
+      `;
+    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items in store.</div>';
   }
 
-  window.updateProductPrice = (id) => {
-    let val = document.getElementById(`ep_${id}`).value.trim();
-    if(val) { update(ref(db, `products/${id}`), { price: val }); toast('Price updated!'); }
-  };
-  window.deleteProduct = (id) => { if(confirm('Delete product?')) { remove(ref(db, `products/${id}`)); toast('Deleted'); } };
+  window.openBuyModal = (id) => {
+    selectedBuyProduct = dbProducts[id];
+    if(!selectedBuyProduct) return;
+    let myObj = dbUsers[currentUid] || {};
+    
+    let allImgs = selectedBuyProduct.images && selectedBuyProduct.images.length > 0 ? selectedBuyProduct.images : [selectedBuyProduct.image];
 
-  window.openMediaModal = (data, type) => {
-    let body = document.getElementById('mediaModalBody');
-    body.innerHTML = type === 'video' ? `<video src="${data}" controls autoplay style="max-width:100%;max-height:100%;"></video>` : `<img src="${data}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
-    document.getElementById('mediaModal').classList.remove('hidden');
+    document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title;
+    document.getElementById('buyProdPrice').textContent = `₹${selectedBuyProduct.price}`;
+    document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No description.';
+    
+    let mainView = document.getElementById('buyProdImg');
+    mainView.style.backgroundImage = `url('${allImgs[0]}')`;
+
+    let thumbsBox = document.getElementById('buyProdThumbs');
+    thumbsBox.innerHTML = allImgs.map((img, idx) => `
+      <div class="thumb-img-box ${idx===0?'active':''}" style="background-image:url('${img}');" onclick="switchProductMainImg('${img}', this)"></div>
+    `).join('');
+
+    document.getElementById('orderName').value = myObj.name || '';
+    document.getElementById('orderPhone').value = '';
+    document.getElementById('orderLocLink').value = '';
+    document.getElementById('orderAddress').value = '';
+    document.getElementById('buyProductModal').classList.remove('hidden');
   };
-  window.closeMediaModal = () => document.getElementById('mediaModal').classList.add('hidden');
+
+  window.switchProductMainImg = (imgUrl, el) => {
+    document.getElementById('buyProdImg').style.backgroundImage = `url('${imgUrl}')`;
+    document.querySelectorAll('.thumb-img-box').forEach(b => b.classList.remove('active'));
+    if(el) el.classList.add('active');
+  };
+
+  window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
   /* Private Direct Chat System */
   window.openChatModal = () => {
@@ -1129,22 +1036,6 @@ main {
 
   window.closeUsersListModal = () => document.getElementById('usersListModal').classList.add('hidden');
 
-  window.openBuyModal = (id) => {
-    selectedBuyProduct = dbProducts[id];
-    if(!selectedBuyProduct) return;
-    let myObj = dbUsers[currentUid] || {};
-    document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title;
-    document.getElementById('buyProdPrice').textContent = `₹${selectedBuyProduct.price}`;
-    document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No description.';
-    document.getElementById('buyProdImg').style.backgroundImage = `url('${selectedBuyProduct.image}')`;
-    document.getElementById('orderName').value = myObj.name || '';
-    document.getElementById('orderPhone').value = '';
-    document.getElementById('orderLocLink').value = '';
-    document.getElementById('orderAddress').value = '';
-    document.getElementById('buyProductModal').classList.remove('hidden');
-  };
-  window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
-
   window.detectUserLocation = () => {
     if (!navigator.onLine) {
       toast("⚠️ Internet Off Hai!");
@@ -1250,43 +1141,30 @@ main {
 
   window.deleteOrder = (id) => { if(confirm('Delete order?')) remove(ref(db, `orders/${id}`)); };
 
-  window.previewProductImg = (e) => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => { prodImageData = r.result; document.getElementById('prodPreview').innerHTML = `<img src="${prodImageData}" style="max-height:100%;object-fit:contain;">`; };
-    r.readAsDataURL(f);
-  };
-
-  window.publishProduct = () => {
-    let title = document.getElementById('prodTitle').value.trim();
-    let price = document.getElementById('prodPrice').value.trim();
-    let desc = document.getElementById('prodDesc').value.trim();
-    if(!title || !price || !prodImageData) return toast('Fill all fields & photo');
-    push(ref(db, 'products'), { sellerId: currentUid, title, price, desc, image: prodImageData, time: Date.now() });
-    document.getElementById('prodTitle').value = '';
-    document.getElementById('prodPrice').value = '';
-    document.getElementById('prodDesc').value = '';
-    document.getElementById('prodPreview').innerHTML = 'No image';
-    prodImageData = '';
-    toast('Product Published!');
-  };
-
-  function renderShop() {
-    let box = document.getElementById('shopGrid');
+  function renderAdminProductsEdit() {
+    let box = document.getElementById('adminProductsEditList');
     if(!box) return;
     let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
     box.innerHTML = prods.map(p => `
-      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
-        <div style="width:100%;aspect-ratio:1;background-image:url('${p.image}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
-        <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
-          <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
-          <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
-          <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
+      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
+        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
+        <div style="flex:1;">
+          <b style="color:#fff;">${esc(p.title)}</b>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
+            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
+          </div>
         </div>
+        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
       </div>
-    `).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items in store.</div>';
+    `).join('') || '<div style="color:#777;font-size:13px;">No items.</div>';
   }
+
+  window.updateProductPrice = (id) => {
+    let val = document.getElementById(`ep_${id}`).value.trim();
+    if(val) { update(ref(db, `products/${id}`), { price: val }); toast('Price updated!'); }
+  };
+  window.deleteProduct = (id) => { if(confirm('Delete product?')) { remove(ref(db, `products/${id}`)); toast('Deleted'); } };
 
   window.toggleAudioPlay = (vEl) => {
     if (vEl.paused) {
