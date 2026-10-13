@@ -241,6 +241,17 @@ main {
   display: block;
 }
 
+/* Live Top Bar */
+.live-bar {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 12px 16px;
+  background: #080808;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+}
+
 /* Stories Bar */
 .stories-container {
   display: flex;
@@ -372,6 +383,77 @@ main {
   font-size: 14px;
 }
 
+/* Chat Screen */
+.chat-window {
+  height: calc(100vh - 116px - var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 11px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-bubble.sent {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.received {
+  align-self: flex-start;
+  background: #222;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bottom-input {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px calc(10px + var(--safe-bottom)) 14px;
+  gap: 10px;
+  background: #000;
+  border-top: 1px solid var(--border-color);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+.chat-bottom-input input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid #333;
+  border-radius: 25px;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+}
+
+.chat-bottom-input button {
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 25px;
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
 /* Bottom Nav Bar */
 .bottom-nav-bar {
   position: fixed;
@@ -475,6 +557,11 @@ main {
       <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px;"></div>
     </section>
 
+    <!-- Reels / Short Videos Tab -->
+    <section id="reels" class="tab-pane">
+      <div class="reels" id="reelsList" style="height:calc(100vh - 116px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
+    </section>
+
     <!-- Upload Tab -->
     <section id="upload" class="tab-pane">
       <div style="padding:16px;">
@@ -483,6 +570,28 @@ main {
         <div id="preview" style="height:350px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
         <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
         <button class="primary-btn" onclick="publish()">Publish Post</button>
+      </div>
+    </section>
+
+    <!-- Chat Tab -->
+    <section id="chat" class="tab-pane">
+      <div id="chatListView">
+        <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color)">Messages</div>
+        <div id="chatList" style="padding:8px;"></div>
+      </div>
+      <div id="chatRoom" class="chat-room hidden chat-window">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-color);background:#080808;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button onclick="backChats()" style="color:#fff;font-size:18px;"><i class="fa-solid fa-arrow-left"></i></button>
+            <span id="chatTitle" style="font-weight:700;"></span>
+          </div>
+          <button onclick="startVideoCall()" style="color:#fff;font-size:20px;" title="Video Call"><i class="fa-solid fa-video"></i></button>
+        </div>
+        <div class="messages-area" id="messages"></div>
+        <div class="chat-bottom-input">
+          <input id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+          <button onclick="sendMessage()">Send</button>
+        </div>
       </div>
     </section>
 
@@ -505,6 +614,10 @@ main {
         <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="logout()">Log Out</button>
       </div>
       <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
+      <div style="display:flex;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;" onclick="switchProfileTab('posts')">📷 POSTS</button>
+        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;" onclick="switchProfileTab('saved')">🔖 SAVED</button>
+      </div>
       <div id="myGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;"></div>
     </section>
   </main>
@@ -515,12 +628,33 @@ main {
     <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
     <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
+    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
     <button id="nav-profile" class="nav-tab-btn" onclick="showTab('profile')"><i class="fa-solid fa-user"></i></button>
   </nav>
 </div>
 
-<div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
-<!-- Admin Password Modal -->
+<!-- Modals -->
+<div id="liveModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:flex;align-items:center;justify-content:center;padding:10px;">
+  <div style="position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column;">
+    <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+      <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
+      <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
+      <video id="liveRemoteVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE</div>
+      <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
+      
+      <div id="liveFilterBar" style="position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('none', this)">Normal</button>
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
+      </div>
+
+      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;">
+        <button style="padding:10px 24px;border-radius:25px;background:#ff3040;color:#fff;font-weight:bold;" onclick="stopLiveStream()">Stop Live</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
@@ -530,7 +664,6 @@ main {
   </div>
 </div>
 
-<!-- Admin Main Dashboard Modal -->
 <div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
@@ -542,9 +675,7 @@ main {
       <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('products')">🛍️ Manage Products</button>
     </div>
     <div style="padding:15px;overflow-y:auto;flex:1;">
-      <div id="adminSubPanelOrders">
-        <div id="adminOrdersList"></div>
-      </div>
+      <div id="adminSubPanelOrders"><div id="adminOrdersList"></div></div>
       <div id="adminSubPanelProducts" class="hidden">
         <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
           <b style="color:#fff;">➕ Add Product:</b>
@@ -561,7 +692,6 @@ main {
   </div>
 </div>
 
-<!-- Product Buy & Checkout Modal -->
 <div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -585,13 +715,11 @@ main {
   </div>
 </div>
 
-<!-- Fullscreen Media Modal -->
 <div id="mediaModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px;" onclick="closeMediaModal()">
   <button style="position:absolute;top:20px;right:20px;color:#fff;font-size:28px;background:none;border:none;" onclick="closeMediaModal()">✕</button>
   <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
 </div>
 
-<!-- Story Modal -->
 <div id="storyModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeStory()">
   <div style="background:#181818;border-radius:14px;width:min(400px,100%);overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
@@ -602,6 +730,22 @@ main {
   </div>
 </div>
 <input id="storyFileInput" type="file" accept="image/*" class="hidden" onchange="handleStoryUpload(event)">
+
+<div id="commentModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeComments()">
+  <div style="background:#181818;border:1px solid #333;border-radius:14px;width:min(450px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
+    <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
+      <span>Comments</span>
+      <button onclick="closeComments()" style="color:#fff;background:none;border:none;">✕</button>
+    </div>
+    <div id="commentsList" style="padding:14px;overflow-y:auto;flex:1;"></div>
+    <div style="display:flex;padding:10px;border-top:1px solid #333;background:#000;gap:8px;">
+      <input id="commentInput" class="input" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()">
+      <button class="primary-btn" style="width:80px;margin:0;" onclick="submitComment()">Post</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
 <!-- Firebase Modular Script -->
 <script type="module">
@@ -624,574 +768,8 @@ main {
   const db = getDatabase(app);
 
   let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {};
-  let signup = false, previewUrl = '', previewType = '', profileTab = 'posts', prodImageData = '', selectedBuyProduct = null;
-  let isAdminAuthenticated = false, activeAdminTab = 'orders';
-
-  function toast(msg){
-    let x = document.getElementById('toast');
-    if(!x) return;
-    x.textContent = msg;
-    x.style.display = 'block';
-    clearTimeout(window.tt);
-    window.tt = setTimeout(()=>x.style.display='none', 2200);
-  }
-
-  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
-
-  function renderAvatar(u, isSmall = false) {
-    let name = u && (u.username || u.name) ? (u.username || u.name) : 'user';
-    let initial = name.charAt(0).toUpperCase();
-    let cls = isSmall ? 'avatar-sm' : 'avatar-img';
-    if (u && u.pic) {
-      return `<div class="${cls}" style="background-image:url('${u.pic}')"></div>`;
-    } else {
-      return `<div class="${cls}">${initial}</div>`;
-    }
-  }
-
-  onAuthStateChanged(auth, user => {
-    // Hide global loader once auth state is resolved
-    let loader = document.getElementById('appLoader');
-    if(loader) loader.style.display = 'none';
-
-    if (user) {
-      currentUid = user.uid;
-      document.getElementById('auth').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      listenToDatabase();
-    } else {
-      currentUid = null;
-      document.getElementById('auth').style.display = 'flex';
-      document.getElementById('app').style.display = 'none';
-    }
-  });
-
-  function listenToDatabase() {
-    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); });
-    onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
-    onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
-    onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); if(isAdminAuthenticated) renderAdminProductsEdit(); });
-    onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
-  }
-
-  function renderAll() {
-    renderStories();
-    renderFeed();
-    renderProfile();
-    renderShop();
-  }
-
-  document.getElementById('switchBtn').onclick = () => {
-    signup = !signup;
-    document.getElementById('fullNameGroup').classList.toggle('hidden', !signup);
-    document.getElementById('authBtn').textContent = signup ? 'Sign Up' : 'Log In';
-    document.getElementById('switchText').textContent = signup ? 'Already have an account?' : "Don't have an account?";
-    document.getElementById('switchBtn').textContent = signup ? 'Log in' : 'Sign up';
-  };
-
-  document.getElementById('authForm').onsubmit = async (e) => {
-    e.preventDefault();
-    let email = document.getElementById('email').value.trim();
-    let pass = document.getElementById('password').value;
-    let username = document.getElementById('username').value.trim().toLowerCase();
-    let name = document.getElementById('fullName').value.trim();
-    try {
-      if (signup) {
-        let res = await createUserWithEmailAndPassword(auth, email, pass);
-        await set(ref(db, 'users/' + res.user.uid), { id: res.user.uid, name, username, email, pic: '', following: [] });
-        toast('Account Created!');
-      } else {
-        await signInWithEmailAndPassword(auth, email, pass);
-        toast('Logged In!');
-      }
-    } catch (err) {
-      toast(err.message.replace('Firebase: ', ''));
-    }
-  };
-
-  window.logout = () => signOut(auth);
-
-  window.openAdminAuthModal = () => {
-    if (isAdminAuthenticated) openAdminMainModal();
-    else { document.getElementById('adminPassInput').value = ''; document.getElementById('adminAuthModal').classList.remove('hidden'); }
-  };
-  window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
-  window.verifyAdminPassword = () => {
-    if (document.getElementById('adminPassInput').value.trim() === '9911') {
-      isAdminAuthenticated = true;
-      closeAdminAuthModal();
-      openAdminMainModal();
-      toast('Admin VIP Access Granted!');
-    } else toast('Incorrect Password (9911)');
-  };
-  window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
-  window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
-
-  window.switchAdminSubTab = (tab) => {
-    activeAdminTab = tab;
-    document.getElementById('adminTabOrdersBtn').style.color = tab==='orders'?'#0095f6':'#888';
-    document.getElementById('adminTabOrdersBtn').style.borderColor = tab==='orders'?'#0095f6':'transparent';
-    document.getElementById('adminTabProductsBtn').style.color = tab==='products'?'#0095f6':'#888';
-    document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
-    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
-    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
-    if(tab==='orders') renderAdminOrders();
-    if(tab==='products') renderAdminProductsEdit();
-  };
-
-  function renderAdminProductsEdit() {
-    let box = document.getElementById('adminProductsEditList');
-    if(!box) return;
-    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
-    box.innerHTML = prods.map(p => `
-      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
-        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
-        <div style="flex:1;">
-          <b style="color:#fff;">${esc(p.title)}</b>
-          <div style="display:flex;gap:6px;margin-top:4px;">
-            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
-            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
-          </div>
-        </div>
-        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>
-    `).join('') || '<div style="color:#777;font-size:13px;">No items.</div>';
-  }
-
-  window.updateProductPrice = (id) => {
-    let val = document.getElementById(`ep_${id}`).value.trim();
-    if(val) { update(ref(db, `products/${id}`), { price: val }); toast('Price updated!'); }
-  };
-  window.deleteProduct = (id) => { if(confirm('Delete product?')) { remove(ref(db, `products/${id}`)); toast('Deleted'); } };
-
-  window.openMediaModal = (data, type) => {
-    let body = document.getElementById('mediaModalBody');
-    body.innerHTML = type === 'video' ? `<video src="${data}" controls autoplay style="max-width:100%;max-height:100%;"></video>` : `<img src="${data}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
-    document.getElementById('mediaModal').classList.remove('hidden');
-  };
-  window.closeMediaModal = () => document.getElementById('mediaModal').classList.add('hidden');
-
-  window.openBuyModal = (id) => {
-    selectedBuyProduct = dbProducts[id];
-    if(!selectedBuyProduct) return;
-    let myObj = dbUsers[currentUid] || {};
-    document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title;
-    document.getElementById('buyProdPrice').textContent = `₹${selectedBuyProduct.price}`;
-    document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No description.';
-    document.getElementById('buyProdImg').style.backgroundImage = `url('${selectedBuyProduct.image}')`;
-    document.getElementById('orderName').value = myObj.name || '';
-    document.getElementById('orderPhone').value = '';
-    document.getElementById('orderLocLink').value = '';
-    document.getElementById('orderAddress').value = '';
-    document.getElementById('buyProductModal').classList.remove('hidden');
-  };
-  window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
-
-  window.detectUserLocation = () => {
-    if (!navigator.geolocation) return toast("GPS not supported");
-    toast("📡 Fetching GPS Location...");
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        let mapLink = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-        document.getElementById('orderLocLink').value = mapLink;
-        toast("GPS Location attached!");
-      },
-      () => toast("GPS Fetching Failed"),
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  };
-
-  window.placeOrderNow = () => {
-    if (!selectedBuyProduct) return;
-    let name = document.getElementById('orderName').value.trim();
-    let phone = document.getElementById('orderPhone').value.trim();
-    let locLink = document.getElementById('orderLocLink').value.trim();
-    let address = document.getElementById('orderAddress').value.trim();
-
-    if (!name || !phone) return toast("Name & Phone required!");
-
-    push(ref(db, 'orders'), {
-      buyerId: currentUid, buyerName: name, buyerPhone: phone,
-      buyerLocation: locLink || 'N/A', buyerAddress: address || 'N/A',
-      productId: selectedBuyProduct.id || '', productTitle: selectedBuyProduct.title,
-      productPrice: selectedBuyProduct.price, productImage: selectedBuyProduct.image,
-      status: 'Pending', time: Date.now()
-    });
-
-    closeBuyModal();
-    toast("🎉 Order Placed Successfully!");
-  };
-
-  function renderAdminOrders() {
-    let box = document.getElementById('adminOrdersList');
-    if(!box) return;
-    let keys = Object.keys(dbOrders).sort((a,b) => dbOrders[b].time - dbOrders[a].time);
-    box.innerHTML = keys.map(k => {
-      let o = dbOrders[k];
-      return `<div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:10px;font-size:13px;">
-        <b style="color:#fff;">${esc(o.productTitle)} (₹${esc(o.productPrice)})</b>
-        <div style="color:#aaa;margin-top:4px;">Buyer: ${esc(o.buyerName)} (${esc(o.buyerPhone)})</div>
-        <div style="color:#aaa;">Address: ${esc(o.buyerAddress)}</div>
-        ${o.buyerLocation !== 'N/A' ? `<div style="margin-top:4px;"><a href="${o.buyerLocation}" target="_blank" style="color:#0095f6;font-size:12px;">📍 Open GPS Map Location</a></div>` : ''}
-        <div style="display:flex;gap:6px;margin-top:8px;">
-          <button class="primary-btn" style="background:#2ecc71;padding:6px;font-size:11px;margin:0;" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Deliver & Send OTP</button>
-          <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteOrder('${k}')">Delete</button>
-        </div>
-      </div>`;
-    }).join('') || '<div style="color:#777;font-size:13px;">No orders.</div>';
-  }
-
-  window.updateOrderStatus = (id, st) => {
-    if(st === 'Delivered') {
-      let otp = Math.floor(1000 + Math.random()*9000);
-      let o = dbOrders[id] || {};
-      let uOtp = prompt(`OTP Verification [ Generated: ${otp} ]\nEnter OTP to confirm delivery:`);
-      
-      if(uOtp && (uOtp.trim() === String(otp) || uOtp.trim() === '9911')) {
-        update(ref(db, `orders/${id}`), { status: 'Delivered', otp: otp });
-        if(o.buyerPhone) {
-          let messageText = encodeURIComponent(`👑 Universe Pro Alert: Your order for "${o.productTitle}" has been delivered! Your Delivery OTP verification code is: *${otp}*. Thank you! 🚀`);
-          window.open(`https://api.whatsapp.com/send?phone=${o.buyerPhone}&text=${messageText}`, '_blank');
-        }
-        toast('✅ Delivered & WhatsApp OTP sent!');
-      } else toast('❌ Incorrect OTP');
-    }
-  };
-
-  window.deleteOrder = (id) => { if(confirm('Delete order?')) remove(ref(db, `orders/${id}`)); };
-
-  window.previewProductImg = (e) => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => { prodImageData = r.result; document.getElementById('prodPreview').innerHTML = `<img src="${prodImageData}" style="max-height:100%;object-fit:contain;">`; };
-    r.readAsDataURL(f);
-  };
-
-  window.publishProduct = () => {
-    let title = document.getElementById('prodTitle').value.trim();
-    let price = document.getElementById('prodPrice').value.trim();
-    let desc = document.getElementById('prodDesc').value.trim();
-    if(!title || !price || !prodImageData) return toast('Fill all fields & photo');
-    push(ref(db, 'products'), { sellerId: currentUid, title, price, desc, image: prodImageData, time: Date.now() });
-    document.getElementById('prodTitle').value = '';
-    document.getElementById('prodPrice').value = '';
-    document.getElementById('prodDesc').value = '';
-    document.getElementById('prodPreview').innerHTML = 'No image';
-    prodImageData = '';
-    toast('Product Published!');
-  };
-
-  function renderShop() {
-    let box = document.getElementById('shopGrid');
-    if(!box) return;
-    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
-    box.innerHTML = prods.map(p => `
-      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
-        <div style="width:100%;aspect-ratio:1;background-image:url('${p.image}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
-        <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
-          <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
-          <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
-          <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
-        </div>
-      </div>
-    `).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items in store.</div>';
-  }
-
-  function renderFeed() {
-    let f = document.getElementById('feed');
-    if(!f) return;
-    let posts = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).sort((a,b) => b.time - a.time);
-    f.innerHTML = posts.map(post => {
-      let u = dbUsers[post.userId] || { username: 'user', name: 'User', pic: '' };
-      let liked = (post.likes || []).includes(currentUid);
-      return `<article class="post-card">
-        <div class="post-header">
-          <div class="user-info-row">
-            ${renderAvatar(u, true)}
-            <b style="color:#fff;">${esc(u.username || u.name || 'user')}</b>
-          </div>
-        </div>
-        <div class="post-media-box" onclick="openMediaModal('${post.data}', '${post.type}')">
-          ${post.type === 'video' ? `<video src="${post.data}"></video>` : `<img src="${post.data}">`}
-        </div>
-        <div class="post-actions-bar">
-          <div class="left-actions">
-            <button class="action-icon-btn ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
-            ${post.userId === currentUid ? `<button class="action-icon-btn" onclick="deletePost('${post.id}')" style="font-size:18px;"><i class="fa-solid fa-trash"></i></button>` : ''}
-          </div>
-        </div>
-        <div class="post-meta-details">
-          <div style="font-weight:700;margin-bottom:6px;color:#fff;">${(post.likes||[]).length} likes</div>
-          <div style="color:#fff;"><b style="color:#fff;">${esc(u.username || u.name || 'user')}</b> ${esc(post.caption||'')}</div>
-        </div>
-      </article>`;
-    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available</div>';
-  }
-
-  window.likePost = (id) => {
-    let p = dbPosts[id];
-    if(!p) return;
-    let l = p.likes || [];
-    let idx = l.indexOf(currentUid);
-    if(idx >= 0) l.splice(idx, 1); else l.push(currentUid);
-    set(ref(db, `posts/${id}/likes`), l);
-  };
-
-  window.deletePost = (id) => { if(confirm('Delete post?')) remove(ref(db, `posts/${id}`)); };
-
-  window.openUpload = () => window.showTab('upload');
-  document.getElementById('fileInput').onchange = e => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => {
-      previewUrl = r.result;
-      previewType = f.type.startsWith('video') ? 'video' : 'image';
-      document.getElementById('preview').innerHTML = previewType === 'video' ? `<video src="${previewUrl}" controls></video>` : `<img src="${previewUrl}">`;
-    };
-    r.readAsDataURL(f);
-  };
-
-  window.publish = () => {
-    if(!previewUrl) return toast('Select a file');
-    push(ref(db, 'posts'), { userId: currentUid, data: previewUrl, type: previewType, caption: document.getElementById('caption').value, time: Date.now(), likes: [] });
-    document.getElementById('caption').value = '';
-    document.getElementById('preview').innerHTML = 'Select photo or video';
-    previewUrl = '';
-    window.showTab('home');
-    toast('Published!');
-  };
-
-  function renderStories() {
-    let box = document.getElementById('stories');
-    if(!box) return;
-    let h = `<div class="story-item" onclick="document.getElementById('storyFileInput').click()">
-      <div class="story-ring add-story"><div class="avatar-img" style="font-size:22px;">+</div></div>
-      <div style="color:#fff;">Your story</div>
-    </div>`;
-    Object.keys(dbStories).forEach(k => {
-      let s = dbStories[k];
-      let u = dbUsers[s.userId] || { username: 'user', name: 'User' };
-      h += `<div class="story-item" onclick="viewStory('${k}')">
-        <div class="story-ring">${renderAvatar(u, false)}</div>
-        <div style="color:#fff;">${esc(u.username || u.name || 'user')}</div>
-      </div>`;
-    });
-    box.innerHTML = h;
-  }
-
-  window.handleStoryUpload = (e) => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => { push(ref(db, 'stories'), { userId: currentUid, data: r.result, time: Date.now() }); toast('Story uploaded'); };
-    r.readAsDataURL(f);
-  };
-  window.viewStory = (id) => {
-    let s = dbStories[id];
-    if(!s) return;
-    let u = dbUsers[s.userId] || {};
-    document.getElementById('storyUser').textContent = u.username || 'Story';
-    document.getElementById('storyBody').innerHTML = `<img src="${s.data}" style="width:100%;max-height:60vh;object-fit:contain;">`;
-    document.getElementById('storyModal').classList.remove('hidden');
-  };
-  window.closeStory = () => document.getElementById('storyModal').classList.add('hidden');
-
-  window.searchUsers = (q) => {
-    q = q.toLowerCase().trim();
-    let box = document.getElementById('searchResults');
-    if(!q) { box.innerHTML = ''; return; }
-    let matches = Object.keys(dbUsers).filter(id => id !== currentUid && (dbUsers[id].username||'').includes(q)).map(id => dbUsers[id]);
-    box.innerHTML = matches.map(u => `
-      <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #1a1a1a;">
-        ${renderAvatar(u, true)}
-        <div><b style="color:#fff;">${esc(u.username)}</b></div>
-      </div>
-    `).join('') || '<div style="padding:15px;color:#777;">No users found</div>';
-  };
-
-  window.showTab = (id) => {
-    document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
-    let b = document.getElementById('nav-' + id);
-    if(b) b.classList.add('active');
-  };
-
-  function renderProfile() {
-    let u = dbUsers[currentUid] || {};
-    let ab = document.getElementById('myAvatar');
-    ab.innerHTML = '';
-    if(u.pic) { ab.style.backgroundImage = `url('${u.pic}')`; ab.textContent = ''; }
-    else { ab.style.backgroundImage = 'none'; ab.textContent = (u.username||'U').charAt(0).toUpperCase(); }
-    document.getElementById('myName').textContent = u.name || '';
-    let posts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
-    document.getElementById('postCount').textContent = posts.length;
-    document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(currentUid)).length;
-    document.getElementById('followingCount').textContent = (u.following||[]).length;
-    document.getElementById('myGrid').innerHTML = posts.map(k => {
-      let p = dbPosts[k];
-      return `<div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}</div>`;
-    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No posts</div>';
-  }
-
-  window.changeProfilePic = () => document.getElementById('profileInput').click();
-  window.saveProfilePic = (e) => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => { update(ref(db, `users/${currentUid}`), { pic: r.result }); toast('Profile photo updated!'); };
-    r.readAsDataURL(f);
-  };
-</script>
-</body>
-</html>
-<!-- Admin Password Modal -->
-<div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
-    <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter Password (9911) to access Dashboard:</p>
-    <input id="adminPassInput" class="input" type="password" placeholder="Password" style="text-align:center;font-size:20px;letter-spacing:6px;margin-bottom:12px;">
-    <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
-  </div>
-</div>
-
-<!-- Admin Main Dashboard Modal -->
-<div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
-      <span>👑 VIP Admin Dashboard</span>
-      <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    <div style="display:flex;border-bottom:1px solid #333;">
-      <button id="adminTabOrdersBtn" style="flex:1;padding:12px;background:none;color:#0095f6;font-weight:bold;border-bottom:2px solid #0095f6;border:none;" onclick="switchAdminSubTab('orders')">📦 View Orders</button>
-      <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('products')">🛍️ Manage Products</button>
-    </div>
-    <div style="padding:15px;overflow-y:auto;flex:1;">
-      <div id="adminSubPanelOrders">
-        <div id="adminOrdersList"></div>
-      </div>
-      <div id="adminSubPanelProducts" class="hidden">
-        <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
-          <b style="color:#fff;">➕ Add Product:</b>
-          <input id="prodTitle" class="input" placeholder="Product Title" style="margin-top:6px;">
-          <input id="prodPrice" class="input" type="number" placeholder="Price (₹)" style="margin-top:6px;">
-          <textarea id="prodDesc" class="input" placeholder="Description..." style="height:55px;margin-top:6px;resize:none;"></textarea>
-          <input id="prodFile" type="file" accept="image/*" style="margin:8px 0;color:#fff;" onchange="previewProductImg(event)">
-          <div id="prodPreview" style="height:90px;background:#080808;border:1px dashed #444;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:#777;overflow:hidden;">No image</div>
-          <button class="primary-btn" onclick="publishProduct()">Publish Product</button>
-        </div>
-        <div id="adminProductsEditList"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Product Buy & Checkout Modal -->
-<div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <span id="buyProdTitle" style="font-weight:bold;font-size:16px;color:#fff;">Product Details</span>
-      <button onclick="closeBuyModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    <div id="buyProdImg" style="width:100%;height:190px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:12px;"></div>
-    <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
-    <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
-    <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
-      <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
-      <input id="orderName" class="input" placeholder="Your Full Name">
-      <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-      <button class="primary-btn" style="background:#262626;margin:0;padding:9px;" onclick="detectUserLocation()">📍 Get GPS Location</button>
-      <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
-      <textarea id="orderAddress" class="input" placeholder="Delivery Address..." style="height:55px;resize:none;"></textarea>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="primary-btn" style="background:linear-gradient(45deg,#2ecc71,#27ae60);margin:0;" onclick="placeOrderNow()">🛒 Place Order</button>
-    </div>
-  </div>
-</div>
-
-<!-- Live Stream Modal -->
-<div id="liveModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:flex;align-items:center;justify-content:center;padding:10px;">
-  <div style="position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column;">
-    <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-      <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
-      <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
-      <video id="liveRemoteVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
-      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE</div>
-      <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
-      
-      <div id="liveFilterBar" style="position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
-        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('none', this)">Normal</button>
-        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
-        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('glow', this)">🌟 Smooth Glow</button>
-      </div>
-
-      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;">
-        <button style="padding:10px 24px;border-radius:25px;background:#ff3040;color:#fff;font-weight:bold;" onclick="stopLiveStream()">Stop Live</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Fullscreen Media Modal -->
-<div id="mediaModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px;" onclick="closeMediaModal()">
-  <button style="position:absolute;top:20px;right:20px;color:#fff;font-size:28px;background:none;border:none;" onclick="closeMediaModal()">✕</button>
-  <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
-</div>
-
-<!-- Story Modal -->
-<div id="storyModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeStory()">
-  <div style="background:#181818;border-radius:14px;width:min(400px,100%);overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
-      <span id="storyUser"></span>
-      <button onclick="closeStory()" style="color:#fff;background:none;border:none;">✕</button>
-    </div>
-    <div id="storyBody" style="padding:10px;display:flex;align-items:center;justify-content:center;"></div>
-  </div>
-</div>
-<input id="storyFileInput" type="file" accept="image/*" class="hidden" onchange="handleStoryUpload(event)">
-
-<!-- Comments Modal -->
-<div id="commentModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeComments()">
-  <div style="background:#181818;border:1px solid #333;border-radius:14px;width:min(450px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
-      <span>Comments</span>
-      <button onclick="closeComments()" style="color:#fff;background:none;border:none;">✕</button>
-    </div>
-    <div id="commentsList" style="padding:14px;overflow-y:auto;flex:1;"></div>
-    <div style="display:flex;padding:10px;border-top:1px solid #333;background:#000;gap:8px;">
-      <input id="commentInput" class="input" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()">
-      <button class="primary-btn" style="width:80px;margin:0;" onclick="submitComment()">Post</button>
-    </div>
-  </div>
-</div>
-
-<!-- Firebase Modular Script & Advanced Logic -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
-    authDomain: "universe-pro-f36a8.firebaseapp.com",
-    databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
-    projectId: "universe-pro-f36a8",
-    storageBucket: "universe-pro-f36a8.firebasestorage.app",
-    messagingSenderId: "1051673611050",
-    appId: "1:1051673611050:web:24d6db4c72628131d42c53"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getDatabase(app);
-
-  let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {};
-  let signup = false, previewUrl = '', previewType = '';
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbChats = {}, dbProducts = {}, dbOrders = {}, dbLives = {};
+  let signup = false, previewUrl = '', previewType = '', activeChat = null;
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
 
@@ -1239,6 +817,7 @@ main {
     onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
+    onValue(ref(db, 'chats'), snapshot => { dbChats = snapshot.val() || {}; renderChats(); if(activeChat) renderMessages(); });
     onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); if(isAdminAuthenticated) renderAdminProductsEdit(); });
     onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
     onValue(ref(db, 'lives'), snapshot => { dbLives = snapshot.val() || {}; renderLiveBar(); });
@@ -1247,7 +826,9 @@ main {
   function renderAll() {
     renderStories();
     renderFeed();
+    renderReels();
     renderProfile();
+    renderChats();
     renderShop();
     renderLiveBar();
   }
@@ -1297,7 +878,7 @@ main {
       if (!isBroadcaster) return;
       canvas.width = video.videoWidth || 640;
       canvas.height = video.videoHeight || 480;
-      ctx.filter = currentFilter === 'fair' ? 'brightness(1.25) contrast(1.05)' : currentFilter === 'glow' ? 'brightness(1.15) saturate(1.25)' : 'none';
+      ctx.filter = currentFilter === 'fair' ? 'brightness(1.25) contrast(1.05)' : 'none';
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       liveCanvasAnim = requestAnimationFrame(draw);
     }
@@ -1651,6 +1232,22 @@ main {
     document.getElementById('storyModal').classList.remove('hidden');
   };
   window.closeStory = () => document.getElementById('storyModal').classList.add('hidden');
+
+  function renderReels() {
+    let box = document.getElementById('reelsList');
+    if(!box) return;
+    let reels = Object.keys(dbPosts).filter(k => dbPosts[k].type === 'video').map(k => ({id: k, ...dbPosts[k]}));
+    box.innerHTML = reels.map(r => {
+      let u = dbUsers[r.userId] || {};
+      return `<div style="height:calc(100vh - 116px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
+        <video src="${r.data}" loop autoplay muted style="width:100%;height:100%;object-fit:contain;" onclick="this.paused?this.play():this.pause()"></video>
+        <div style="position:absolute;left:16px;bottom:24px;text-shadow:0 2px 5px #000;color:#fff;">
+          <b style="color:#fff;">@${esc(u.username||'user')}</b>
+          <p style="margin-top:4px;font-size:13px;color:#fff;">${esc(r.caption||'')}</p>
+        </div>
+      </div>`;
+    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No reels available</div>';
+  }
 
   window.openComments = (id) => { activeCommentPostId = id; renderCommentsList(); document.getElementById('commentModal').classList.remove('hidden'); };
   window.closeComments = () => { document.getElementById('commentModal').classList.add('hidden'); activeCommentPostId = null; };
