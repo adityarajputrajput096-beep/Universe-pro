@@ -58,6 +58,18 @@ button:active {
   display: none !important;
 }
 
+/* Hide Scrollbars Cleanly Across All Browsers */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+* {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* Initial Global Loader Screen */
 #appLoader {
   position: fixed;
@@ -248,7 +260,6 @@ main {
   padding: 12px 16px;
   background: #080808;
   border-bottom: 1px solid var(--border-color);
-  scrollbar-width: none;
 }
 
 .stories-container {
@@ -257,7 +268,6 @@ main {
   overflow-x: auto;
   padding: 15px 16px;
   border-bottom: 1px solid var(--border-color);
-  scrollbar-width: none;
   background: #000;
 }
 
@@ -375,6 +385,10 @@ main {
   color: var(--like-color);
 }
 
+.action-icon-btn.saved {
+  color: #f1c40f;
+}
+
 .post-meta-details {
   padding: 0 16px 14px;
   font-size: 14px;
@@ -455,6 +469,7 @@ main {
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
       <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
+      <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
     </div>
   </header>
@@ -484,31 +499,36 @@ main {
 
     <section id="upload" class="tab-pane">
       <div style="padding:16px;">
-        <h3 style="margin-bottom:10px;">Create Post</h3>
+        <h3 style="margin-bottom:10px;">Create Post / Reel</h3>
         <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;">
-        <div id="preview" style="height:350px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
+        <div id="preview" style="height:320px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
+        
+        <!-- Filter Controls for Video/Image -->
+        <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;">
+          <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('none')">Normal</button>
+          <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('brightness(1.3) contrast(1.1)')">✨ Beauty / Bright</button>
+          <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('grayscale(1)')">🖤 B&W Filter</button>
+        </div>
+
         <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
-        <button class="primary-btn" onclick="publish()">Publish Post</button>
+        <button class="primary-btn" onclick="publish()">Publish</button>
       </div>
     </section>
 
     <section id="profile" class="tab-pane">
       <div style="display:flex;gap:20px;align-items:center;padding:22px 16px;border-bottom:1px solid var(--border-color)">
         <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;"></div>
-        <div style="display:flex;gap:20px;text-align:center;flex:1;justify-content:space-around;">
-          <div><strong id="postCount" style="display:block;font-size:18px;">0</strong>posts</div>
-          <div><strong id="followerCount" style="display:block;font-size:18px;">0</strong>followers</div>
-          <div><strong id="followingCount" style="display:block;font-size:18px;">0</strong>following</div>
+        <div style="display:flex;gap:15px;text-align:center;flex:1;justify-content:space-around;">
+          <div><strong id="postCount" style="display:block;font-size:18px;color:#fff;">0</strong><span style="color:#888;font-size:12px;">posts</span></div>
+          <div onclick="showUsersListModal('followers')" style="cursor:pointer;"><strong id="followerCount" style="display:block;font-size:18px;color:#fff;">0</strong><span style="color:#888;font-size:12px;">followers</span></div>
+          <div onclick="showUsersListModal('following')" style="cursor:pointer;"><strong id="followingCount" style="display:block;font-size:18px;color:#fff;">0</strong><span style="color:#888;font-size:12px;">following</span></div>
         </div>
       </div>
       <div style="padding:14px 16px;">
         <b id="myName"></b>
         <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Welcome to Universe Pro VIP 🚀</p>
       </div>
-      <div style="display:flex;gap:8px;padding:0 16px 14px;">
-        <button class="primary-btn" style="background:#262626;margin:0;" onclick="changeProfilePic()">Change Photo</button>
-        <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="logout()">Log Out</button>
-      </div>
+      <div style="display:flex;gap:8px;padding:0 16px 14px;" id="profileActionsBox"></div>
       <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
       <div style="display:flex;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
         <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;" onclick="switchProfileTab('posts')">📷 POSTS</button>
@@ -524,8 +544,19 @@ main {
     <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
     <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
     <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
-    <button id="nav-profile" class="nav-tab-btn" onclick="showTab('profile')"><i class="fa-solid fa-user"></i></button>
+    <button id="nav-profile" class="nav-tab-btn" onclick="openMyProfile()"><i class="fa-solid fa-user"></i></button>
   </nav>
+</div>
+
+<!-- Followers / Following List Modal -->
+<div id="usersListModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:800;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeUsersListModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(400px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
+    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
+      <b id="usersListTitle" style="color:#fff;font-size:16px;">Users</b>
+      <button onclick="closeUsersListModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
+    </div>
+    <div id="usersListContent" style="padding:12px;overflow-y:auto;flex:1;"></div>
+  </div>
 </div>
 
 <!-- Modals -->
@@ -550,7 +581,6 @@ main {
   </div>
 </div>
 
-<!-- Admin Password Modal (Fixed: No preset number autofill) -->
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
@@ -611,6 +641,15 @@ main {
   </div>
 </div>
 
+<!-- Chat Modal -->
+<div id="chatModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;" onclick="closeChatModal()">
+  <div style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
+    <b style="color:#fff;font-size:16px;">💬 VIP Chats & Messages</b>
+    <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
+  </div>
+  <div id="chatList" style="flex:1;overflow-y:auto;padding:12px;" onclick="event.stopPropagation()"></div>
+</div>
+
 <div id="mediaModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px;" onclick="closeMediaModal()">
   <button style="position:absolute;top:20px;right:20px;color:#fff;font-size:28px;background:none;border:none;" onclick="closeMediaModal()">✕</button>
   <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
@@ -643,7 +682,7 @@ main {
 
 <div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
-  <!-- Firebase Modular Script -->
+<!-- Firebase Modular Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -664,12 +703,12 @@ main {
   const db = getDatabase(app);
 
   let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {};
+  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {}, dbSaved = {};
   let signup = false, previewUrl = '', previewType = '';
   let activeCommentPostId = null, profileTab = 'posts', prodImageData = '', selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
-
-  let liveStream = null, liveCanvasAnim = null, currentFilter = 'none', isBroadcaster = false, activeLiveKey = null;
+  let viewingUserId = null;
+  let currentFilterCss = 'none';
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -699,6 +738,7 @@ main {
 
     if (user) {
       currentUid = user.uid;
+      viewingUserId = currentUid;
       document.getElementById('auth').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       listenToDatabase();
@@ -716,6 +756,7 @@ main {
     onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); if(isAdminAuthenticated) renderAdminProductsEdit(); });
     onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
     onValue(ref(db, 'lives'), snapshot => { dbLives = snapshot.val() || {}; renderLiveBar(); });
+    onValue(ref(db, 'saved'), snapshot => { dbSaved = snapshot.val() || {}; renderProfile(); });
   }
 
   function renderAll() {
@@ -838,7 +879,6 @@ main {
 
   window.logout = () => signOut(auth);
 
-  // Admin Protection Logic (Fixed: Clears and prompts correctly without preset codes)
   window.openAdminAuthModal = () => {
     if (isAdminAuthenticated) {
       openAdminMainModal();
@@ -909,6 +949,75 @@ main {
   };
   window.closeMediaModal = () => document.getElementById('mediaModal').classList.add('hidden');
 
+  window.openChatModal = () => {
+    let box = document.getElementById('chatList');
+    let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
+    box.innerHTML = users.map(u => `
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #222;cursor:pointer;" onclick="openUserProfile('${u.id}')">
+        ${renderAvatar(u, true)}
+        <div>
+          <b style="color:#fff;font-size:14px;">${esc(u.username || u.name)}</b>
+          <div style="color:#888;font-size:12px;">Tap to view profile</div>
+        </div>
+      </div>
+    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No other users found.</div>';
+    document.getElementById('chatModal').classList.remove('hidden');
+  };
+  window.closeChatModal = () => document.getElementById('chatModal').classList.add('hidden');
+
+  window.openUserProfile = (userId) => {
+    closeChatModal();
+    viewingUserId = userId;
+    showTab('profile');
+  };
+
+  window.openMyProfile = () => {
+    viewingUserId = currentUid;
+    showTab('profile');
+  };
+
+  window.toggleFollowUser = (targetId) => {
+    let myObj = dbUsers[currentUid] || {};
+    let myFollowing = myObj.following || [];
+    let idx = myFollowing.indexOf(targetId);
+    if (idx >= 0) {
+      myFollowing.splice(idx, 1);
+      toast('Unfollowed');
+    } else {
+      myFollowing.push(targetId);
+      toast('Following!');
+    }
+    set(ref(db, `users/${currentUid}/following`), myFollowing);
+  };
+
+  window.showUsersListModal = (type) => {
+    let title = type === 'followers' ? 'Followers' : 'Following';
+    document.getElementById('usersListTitle').textContent = title;
+    let listContent = document.getElementById('usersListContent');
+    let u = dbUsers[viewingUserId] || {};
+    
+    let targetUserIds = [];
+    if (type === 'following') {
+      targetUserIds = u.following || [];
+    } else {
+      targetUserIds = Object.keys(dbUsers).filter(id => (dbUsers[id].following || []).includes(viewingUserId));
+    }
+
+    listContent.innerHTML = targetUserIds.map(id => {
+      let usr = dbUsers[id] || {};
+      return `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #222;cursor:pointer;" onclick="closeUsersListModal(); openUserProfile('${id}');">
+          ${renderAvatar(usr, true)}
+          <b style="color:#fff;">${esc(usr.username || usr.name || 'user')}</b>
+        </div>
+      `;
+    }).join('') || `<div style="color:#777;text-align:center;padding:20px;">No ${type} yet.</div>`;
+
+    document.getElementById('usersListModal').classList.remove('hidden');
+  };
+
+  window.closeUsersListModal = () => document.getElementById('usersListModal').classList.add('hidden');
+
   window.openBuyModal = (id) => {
     selectedBuyProduct = dbProducts[id];
     if(!selectedBuyProduct) return;
@@ -925,7 +1034,6 @@ main {
   };
   window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
-  // Advanced GPS Location Fetcher with Error Diagnostics
   window.detectUserLocation = () => {
     if (!navigator.onLine) {
       toast("⚠️ Internet Off Hai!");
@@ -1069,33 +1177,49 @@ main {
     `).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items in store.</div>';
   }
 
+  // Toggle Video Audio Mute/Unmute
+  window.toggleAudioPlay = (vEl) => {
+    if (vEl.paused) {
+      vEl.play();
+      vEl.muted = false;
+    } else {
+      vEl.muted = !vEl.muted;
+      if (vEl.muted) toast('🔇 Muted'); else toast('🔊 Sound On');
+    }
+  };
+
   function renderFeed() {
     let f = document.getElementById('feed');
     if(!f) return;
     let posts = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).sort((a,b) => b.time - a.time);
+    let mySavedKeys = dbSaved[currentUid] ? Object.values(dbSaved[currentUid]) : [];
+
     f.innerHTML = posts.map(post => {
       let u = dbUsers[post.userId] || { username: 'user', name: 'User', pic: '' };
       let liked = (post.likes || []).includes(currentUid);
+      let saved = mySavedKeys.includes(post.id);
+
       return `<article class="post-card">
         <div class="post-header">
-          <div class="user-info-row">
+          <div class="user-info-row" onclick="openUserProfile('${post.userId}')">
             ${renderAvatar(u, true)}
             <b style="color:#fff;">${esc(u.username || u.name || 'user')}</b>
           </div>
         </div>
-        <div class="post-media-box" onclick="openMediaModal('${post.data}', '${post.type}')">
-          ${post.type === 'video' ? `<video src="${post.data}"></video>` : `<img src="${post.data}">`}
+        <div class="post-media-box">
+          ${post.type === 'video' ? `<video src="${post.data}" controls style="filter:${post.filter||'none'};width:100%;max-height:600px;" onclick="toggleAudioPlay(this)"></video>` : `<img src="${post.data}" style="filter:${post.filter||'none'}" onclick="openMediaModal('${post.data}', '${post.type}')">`}
         </div>
         <div class="post-actions-bar">
           <div class="left-actions">
             <button class="action-icon-btn ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
             <button class="action-icon-btn" onclick="openComments('${post.id}')"><i class="fa-regular fa-comment"></i></button>
+            <button class="action-icon-btn ${saved?'saved':''}" onclick="toggleSavePost('${post.id}')"><i class="fa-solid fa-bookmark"></i></button>
             ${post.userId === currentUid ? `<button class="action-icon-btn" onclick="deletePost('${post.id}')" style="font-size:18px;"><i class="fa-solid fa-trash"></i></button>` : ''}
           </div>
         </div>
         <div class="post-meta-details">
           <div style="font-weight:700;margin-bottom:6px;color:#fff;">${(post.likes||[]).length} likes</div>
-          <div style="color:#fff;"><b style="color:#fff;">${esc(u.username || u.name || 'user')}</b> ${esc(post.caption||'')}</div>
+          <div style="color:#fff;"><b style="color:#fff;" onclick="openUserProfile('${post.userId}')">${esc(u.username || u.name || 'user')}</b> ${esc(post.caption||'')}</div>
           <div style="color:var(--text-muted);font-size:13px;margin-top:6px;cursor:pointer;" onclick="openComments('${post.id}')">View comments</div>
         </div>
       </article>`;
@@ -1111,6 +1235,20 @@ main {
     set(ref(db, `posts/${id}/likes`), l);
   };
 
+  window.toggleSavePost = (postId) => {
+    let userSavedRef = ref(db, `saved/${currentUid}`);
+    let mySaved = dbSaved[currentUid] || {};
+    let existingKey = Object.keys(mySaved).find(k => mySaved[k] === postId);
+
+    if (existingKey) {
+      remove(ref(db, `saved/${currentUid}/${existingKey}`));
+      toast('Post Unsaved');
+    } else {
+      push(userSavedRef, postId);
+      toast('Post Saved! 🔖');
+    }
+  };
+
   window.deletePost = (id) => { if(confirm('Delete post?')) remove(ref(db, `posts/${id}`)); };
 
   window.openUpload = () => window.showTab('upload');
@@ -1121,17 +1259,42 @@ main {
     r.onload = () => {
       previewUrl = r.result;
       previewType = f.type.startsWith('video') ? 'video' : 'image';
-      document.getElementById('preview').innerHTML = previewType === 'video' ? `<video src="${previewUrl}" controls></video>` : `<img src="${previewUrl}">`;
+      renderUploadPreview();
     };
     r.readAsDataURL(f);
   };
 
+  window.setMediaFilter = (filterVal) => {
+    currentFilterCss = filterVal;
+    renderUploadPreview();
+    toast('Filter applied!');
+  };
+
+  function renderUploadPreview() {
+    let prev = document.getElementById('preview');
+    if (!previewUrl) return;
+    if (previewType === 'video') {
+      prev.innerHTML = `<video src="${previewUrl}" controls style="filter:${currentFilterCss};width:100%;height:100%;object-fit:contain;"></video>`;
+    } else {
+      prev.innerHTML = `<img src="${previewUrl}" style="filter:${currentFilterCss};width:100%;height:100%;object-fit:contain;">`;
+    }
+  }
+
   window.publish = () => {
     if(!previewUrl) return toast('Select a file');
-    push(ref(db, 'posts'), { userId: currentUid, data: previewUrl, type: previewType, caption: document.getElementById('caption').value, time: Date.now(), likes: [] });
+    push(ref(db, 'posts'), {
+      userId: currentUid,
+      data: previewUrl,
+      type: previewType,
+      caption: document.getElementById('caption').value,
+      filter: currentFilterCss,
+      time: Date.now(),
+      likes: []
+    });
     document.getElementById('caption').value = '';
     document.getElementById('preview').innerHTML = 'Select photo or video';
     previewUrl = '';
+    currentFilterCss = 'none';
     window.showTab('home');
     toast('Published!');
   };
@@ -1178,9 +1341,13 @@ main {
     box.innerHTML = reels.map(r => {
       let u = dbUsers[r.userId] || {};
       return `<div style="height:calc(100vh - 116px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
-        <video src="${r.data}" loop autoplay muted style="width:100%;height:100%;object-fit:contain;" onclick="this.paused?this.play():this.pause()"></video>
-        <div style="position:absolute;left:16px;bottom:24px;text-shadow:0 2px 5px #000;color:#fff;">
-          <b style="color:#fff;">@${esc(u.username||'user')}</b>
+        <video src="${r.data}" loop playsinline style="width:100%;height:100%;object-fit:contain;filter:${r.filter||'none'}" onclick="toggleAudioPlay(this)"></video>
+        <div style="position:absolute;right:16px;bottom:90px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:10;">
+          <button class="action-icon-btn" onclick="likePost('${r.id}')" style="font-size:28px;">♥</button>
+          <button class="action-icon-btn" onclick="openComments('${r.id}')" style="font-size:24px;"><i class="fa-regular fa-comment"></i></button>
+        </div>
+        <div style="position:absolute;left:16px;bottom:24px;text-shadow:0 2px 5px #000;color:#fff;cursor:pointer;z-index:10;" onclick="openUserProfile('${r.userId}')">
+          <b style="color:#fff;font-size:15px;">@${esc(u.username||'user')}</b>
           <p style="margin-top:4px;font-size:13px;color:#fff;">${esc(r.caption||'')}</p>
         </div>
       </div>`;
@@ -1196,7 +1363,7 @@ main {
     document.getElementById('commentsList').innerHTML = Object.keys(c).map(k => {
       let cm = c[k];
       let u = dbUsers[cm.userId] || {};
-      return `<div style="display:flex;gap:10px;margin-bottom:12px;font-size:13px;color:#fff;">${renderAvatar(u, true)}<div><b style="color:#fff;">${esc(u.username)}:</b> ${esc(cm.text)}</div></div>`;
+      return `<div style="display:flex;gap:10px;margin-bottom:12px;font-size:13px;color:#fff;" onclick="openUserProfile('${cm.userId}')">${renderAvatar(u, true)}<div><b style="color:#fff;">${esc(u.username)}:</b> ${esc(cm.text)}</div></div>`;
     }).join('') || '<p style="color:#777;text-align:center;">No comments yet.</p>';
   }
   window.submitComment = () => {
@@ -1214,7 +1381,7 @@ main {
     if(!q) { box.innerHTML = ''; return; }
     let matches = Object.keys(dbUsers).filter(id => id !== currentUid && (dbUsers[id].username||'').includes(q)).map(id => dbUsers[id]);
     box.innerHTML = matches.map(u => `
-      <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #1a1a1a;">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #1a1a1a;cursor:pointer;" onclick="openUserProfile('${u.id}')">
         ${renderAvatar(u, true)}
         <div><b style="color:#fff;">${esc(u.username)}</b></div>
       </div>
@@ -1227,23 +1394,64 @@ main {
     document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
     let b = document.getElementById('nav-' + id);
     if(b) b.classList.add('active');
+    if(id === 'profile') renderProfile();
+  };
+
+  window.switchProfileTab = (tab) => {
+    profileTab = tab;
+    document.getElementById('btnMyPosts').style.color = tab==='posts'?'#fff':'#a8a8a8';
+    document.getElementById('btnMyPosts').style.borderBottomColor = tab==='posts'?'#fff':'transparent';
+    document.getElementById('btnSavedPosts').style.color = tab==='saved'?'#fff':'#a8a8a8';
+    document.getElementById('btnSavedPosts').style.borderBottomColor = tab==='saved'?'#fff':'transparent';
+    renderProfile();
   };
 
   function renderProfile() {
-    let u = dbUsers[currentUid] || {};
+    let u = dbUsers[viewingUserId] || {};
     let ab = document.getElementById('myAvatar');
     ab.innerHTML = '';
     if(u.pic) { ab.style.backgroundImage = `url('${u.pic}')`; ab.textContent = ''; }
     else { ab.style.backgroundImage = 'none'; ab.textContent = (u.username||'U').charAt(0).toUpperCase(); }
     document.getElementById('myName').textContent = u.name || '';
-    let posts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === currentUid);
+    
+    let actBox = document.getElementById('profileActionsBox');
+    if (viewingUserId === currentUid) {
+      actBox.style.display = 'flex';
+      actBox.innerHTML = `
+        <button class="primary-btn" style="background:#262626;margin:0;" onclick="changeProfilePic()">Change Photo</button>
+        <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="logout()">Log Out</button>
+      `;
+    } else {
+      let myObj = dbUsers[currentUid] || {};
+      let isFollowing = (myObj.following || []).includes(viewingUserId);
+      actBox.style.display = 'flex';
+      actBox.innerHTML = `
+        <button class="primary-btn" style="background:${isFollowing?'#262626':'var(--accent-color)'};margin:0;" onclick="toggleFollowUser('${viewingUserId}')">${isFollowing?'Unfollow':'Follow'}</button>
+        <button class="primary-btn" style="background:#262626;margin:0;" onclick="openChatModal()">💬 Chat</button>
+      `;
+    }
+
+    let posts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === viewingUserId);
     document.getElementById('postCount').textContent = posts.length;
-    document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(currentUid)).length;
+    document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(viewingUserId)).length;
     document.getElementById('followingCount').textContent = (u.following||[]).length;
-    document.getElementById('myGrid').innerHTML = posts.map(k => {
-      let p = dbPosts[k];
-      return `<div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}</div>`;
-    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No posts</div>';
+
+    let gridBox = document.getElementById('myGrid');
+    if (profileTab === 'posts') {
+      gridBox.innerHTML = posts.map(k => {
+        let p = dbPosts[k];
+        return `<div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}</div>`;
+      }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No posts</div>';
+    } else {
+      let savedPostIds = dbSaved[viewingUserId] ? Object.values(dbSaved[viewingUserId]) : [];
+      let savedPosts = savedPostIds.map(id => ({ id, ...dbPosts[id] })).filter(p => p.data);
+
+      gridBox.innerHTML = savedPosts.map(p => `
+        <div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">
+          ${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}
+        </div>
+      `).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No saved posts</div>';
+    }
   }
 
   window.changeProfilePic = () => document.getElementById('profileInput').click();
