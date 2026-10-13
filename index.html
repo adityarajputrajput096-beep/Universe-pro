@@ -58,7 +58,7 @@ button:active {
   display: none !important;
 }
 
-/* Hide Scrollbars Cleanly */
+/* Hide Scrollbars Cleanly Across All Browsers */
 ::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
@@ -96,7 +96,7 @@ button:active {
   to { transform: rotate(360deg); }
 }
 
-/* Auth */
+/* Auth Screen */
 #auth {
   display: none;
   min-height: 100vh;
@@ -472,14 +472,14 @@ main {
 </head>
 <body>
 
-<!-- Initial Universal Loader -->
+<!-- Initial Loader -->
 <div id="appLoader">
   <div class="spinner"></div>
   <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
   <div style="font-size:12px;color:#888;">Loading VIP Data...</div>
 </div>
 
-<!-- Login & Register Screen -->
+<!-- Login & Register -->
 <section id="auth">
   <div class="auth-card">
     <div class="logo">Universe Pro</div>
@@ -508,7 +508,7 @@ main {
   </div>
 </section>
 
-<!-- Main VIP Application Shell -->
+<!-- Main VIP App -->
 <div id="app">
   <header class="header">
     <div class="brand-title">Universe Pro</div>
@@ -627,6 +627,38 @@ main {
   </div>
 </div>
 
+<!-- Live Stream Modal -->
+<div id="liveModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:flex;align-items:center;justify-content:center;padding:10px;">
+  <div style="position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column;">
+    <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+      <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
+      <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
+      <video id="liveRemoteVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE</div>
+      <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
+      
+      <div id="liveFilterBar" style="position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('none', this)">Normal</button>
+        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
+      </div>
+
+      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;">
+        <button style="padding:10px 24px;border-radius:25px;background:#ff3040;color:#fff;font-weight:bold;" onclick="stopLiveStream()">Stop Live</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Protection Auth -->
+<div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
+    <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password:</p>
+    <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
+    <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
+  </div>
+</div>
+
 <!-- Admin Dashboard Modal -->
 <div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
@@ -647,7 +679,7 @@ main {
           <input id="prodPrice" class="input" type="number" placeholder="Price (₹)" style="margin-top:6px;">
           <textarea id="prodDesc" class="input" placeholder="Description..." style="height:55px;margin-top:6px;resize:none;"></textarea>
           
-          <label style="display:block;margin-top:8px;font-size:12px;color:#aaa;">Select 3-4 Photos (Front, Back, Side view):</label>
+          <label style="display:block;margin-top:8px;font-size:12px;color:#aaa;">Select 3-4 Photos (Front, Back, Side views):</label>
           <input id="prodFile" type="file" accept="image/*" multiple style="margin:6px 0;color:#fff;" onchange="previewMultipleProductImgs(event)">
           
           <div id="prodPreviewGrid" style="display:flex;gap:8px;overflow-x:auto;padding:8px 0;"></div>
@@ -667,10 +699,10 @@ main {
       <button onclick="closeBuyModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
     </div>
     
-    <!-- Main Display Photo -->
+    <!-- Main Photo -->
     <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:10px;"></div>
     
-    <!-- Thumbnails Gallery for 3-4 Photos -->
+    <!-- Thumbnails Gallery -->
     <div id="buyProdThumbs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;"></div>
 
     <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
@@ -748,7 +780,7 @@ main {
   let activeCommentPostId = null, profileTab = 'posts', prodImagesArray = [], selectedBuyProduct = null;
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
   let viewingUserId = null, activeChatUserId = null;
-  let currentFilterCss = 'none';
+  let currentFilterCss = 'none', liveStream = null, isBroadcaster = false, activeLiveKey = null, currentFilter = 'none', liveCanvasAnim = null;
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -809,7 +841,7 @@ main {
     renderLiveBar();
   }
 
-  /* Multiple Photos Product Upload */
+  /* Multiple Product Photos Upload */
   window.previewMultipleProductImgs = (e) => {
     let files = Array.from(e.target.files);
     if(files.length === 0) return;
@@ -904,7 +936,7 @@ main {
 
   window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
-  /* Private Direct Chat System */
+  /* Direct Private Messaging */
   window.openChatModal = () => {
     let box = document.getElementById('chatList');
     let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
@@ -983,6 +1015,188 @@ main {
 
     inp.value = '';
   };
+
+  /* Live Stream Handling */
+  function renderLiveBar() {
+    let bar = document.getElementById('liveStreamsBar');
+    if(!bar) return;
+    let liveKeys = Object.keys(dbLives);
+    if(liveKeys.length === 0) { bar.style.display = 'none'; return; }
+    bar.style.display = 'flex';
+    bar.innerHTML = liveKeys.map(k => {
+      let l = dbLives[k];
+      let u = dbUsers[l.hostId] || {};
+      return `<div class="live-card-sm" onclick="watchLiveStream('${k}')" style="min-width:110px;height:150px;border-radius:14px;background:#181818;position:relative;overflow:hidden;border:1px solid #333;cursor:pointer;">
+        ${u.pic ? `<img src="${u.pic}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="padding:20px;text-align:center;font-weight:bold;color:#fff;">${(u.username||'Live').charAt(0).toUpperCase()}</div>`}
+        <div style="position:absolute;top:8px;left:8px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:4px;">🔴 LIVE</div>
+        <div style="position:absolute;bottom:8px;left:8px;right:8px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 4px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.username || 'User')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  window.startBroadcastingLive = async () => {
+    try {
+      liveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      document.getElementById('liveRawVideo').srcObject = liveStream;
+      document.getElementById('liveCanvas').style.display = 'block';
+      document.getElementById('liveRemoteVideo').style.display = 'none';
+      document.getElementById('liveFilterBar').style.display = 'flex';
+      let myObj = dbUsers[currentUid] || {};
+      document.getElementById('liveHostName').textContent = (myObj.username || myObj.name || 'Your Stream');
+      document.getElementById('liveModal').classList.remove('hidden');
+      isBroadcaster = true;
+      activeLiveKey = currentUid;
+      set(ref(db, `lives/${activeLiveKey}`), { hostId: currentUid, time: Date.now() });
+      startCanvasFilterLoop();
+      toast('🔴 You are now Live!');
+    } catch(e) {
+      toast('Camera/Mic permission required');
+    }
+  };
+
+  function startCanvasFilterLoop() {
+    let video = document.getElementById('liveRawVideo');
+    let canvas = document.getElementById('liveCanvas');
+    let ctx = canvas.getContext('2d');
+    function draw() {
+      if (!isBroadcaster) return;
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      ctx.filter = currentFilter === 'fair' ? 'brightness(1.25) contrast(1.05)' : 'none';
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      liveCanvasAnim = requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  window.applyBeautyFilter = (f, btn) => {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.style.borderColor='rgba(255,255,255,0.2)');
+    if(btn) btn.style.borderColor='#0095f6';
+    toast(`Filter: ${f.toUpperCase()}`);
+  };
+
+  window.watchLiveStream = (key) => {
+    let l = dbLives[key];
+    if(!l) return;
+    let u = dbUsers[l.hostId] || {};
+    document.getElementById('liveCanvas').style.display = 'none';
+    document.getElementById('liveRemoteVideo').style.display = 'block';
+    document.getElementById('liveFilterBar').style.display = 'none';
+    document.getElementById('liveHostName').textContent = u.username || 'Live';
+    document.getElementById('liveModal').classList.remove('hidden');
+    isBroadcaster = false;
+  };
+
+  window.stopLiveStream = () => {
+    if (isBroadcaster && liveStream) {
+      liveStream.getTracks().forEach(t => t.stop());
+      if(liveCanvasAnim) cancelAnimationFrame(liveCanvasAnim);
+      if(activeLiveKey) remove(ref(db, `lives/${activeLiveKey}`));
+    }
+    document.getElementById('liveModal').classList.add('hidden');
+    isBroadcaster = false;
+  };
+
+  document.getElementById('switchBtn').onclick = () => {
+    signup = !signup;
+    document.getElementById('fullNameGroup').classList.toggle('hidden', !signup);
+    document.getElementById('authBtn').textContent = signup ? 'Sign Up' : 'Log In';
+    document.getElementById('switchText').textContent = signup ? 'Already have an account?' : "Don't have an account?";
+    document.getElementById('switchBtn').textContent = signup ? 'Log in' : 'Sign up';
+  };
+
+  document.getElementById('authForm').onsubmit = async (e) => {
+    e.preventDefault();
+    let email = document.getElementById('email').value.trim();
+    let pass = document.getElementById('password').value;
+    let username = document.getElementById('username').value.trim().toLowerCase();
+    let name = document.getElementById('fullName').value.trim();
+    try {
+      if (signup) {
+        let res = await createUserWithEmailAndPassword(auth, email, pass);
+        await set(ref(db, 'users/' + res.user.uid), { id: res.user.uid, name, username, email, pic: '', following: [] });
+        toast('Account Created!');
+      } else {
+        await signInWithEmailAndPassword(auth, email, pass);
+        toast('Logged In!');
+      }
+    } catch (err) {
+      toast(err.message.replace('Firebase: ', ''));
+    }
+  };
+
+  window.logout = () => signOut(auth);
+
+  window.openAdminAuthModal = () => {
+    if (isAdminAuthenticated) {
+      openAdminMainModal();
+    } else {
+      document.getElementById('adminPassInput').value = '';
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+    }
+  };
+  window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
+  
+  window.verifyAdminPassword = () => {
+    let enteredVal = document.getElementById('adminPassInput').value.trim();
+    if (enteredVal === '9911') {
+      isAdminAuthenticated = true;
+      closeAdminAuthModal();
+      openAdminMainModal();
+      toast('Admin VIP Access Granted!');
+    } else {
+      toast('❌ Incorrect Password');
+      document.getElementById('adminPassInput').value = '';
+    }
+  };
+
+  window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
+  window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
+
+  window.switchAdminSubTab = (tab) => {
+    activeAdminTab = tab;
+    document.getElementById('adminTabOrdersBtn').style.color = tab==='orders'?'#0095f6':'#888';
+    document.getElementById('adminTabOrdersBtn').style.borderColor = tab==='orders'?'#0095f6':'transparent';
+    document.getElementById('adminTabProductsBtn').style.color = tab==='products'?'#0095f6':'#888';
+    document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
+    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
+    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
+    if(tab==='orders') renderAdminOrders();
+    if(tab==='products') renderAdminProductsEdit();
+  };
+
+  function renderAdminProductsEdit() {
+    let box = document.getElementById('adminProductsEditList');
+    if(!box) return;
+    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
+    box.innerHTML = prods.map(p => `
+      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
+        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
+        <div style="flex:1;">
+          <b style="color:#fff;">${esc(p.title)}</b>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
+            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
+          </div>
+        </div>
+        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
+      </div>
+    `).join('') || '<div style="color:#777;font-size:13px;">No items.</div>';
+  }
+
+  window.updateProductPrice = (id) => {
+    let val = document.getElementById(`ep_${id}`).value.trim();
+    if(val) { update(ref(db, `products/${id}`), { price: val }); toast('Price updated!'); }
+  };
+  window.deleteProduct = (id) => { if(confirm('Delete product?')) { remove(ref(db, `products/${id}`)); toast('Deleted'); } };
+
+  window.openMediaModal = (data, type) => {
+    let body = document.getElementById('mediaModalBody');
+    body.innerHTML = type === 'video' ? `<video src="${data}" controls autoplay style="max-width:100%;max-height:100%;"></video>` : `<img src="${data}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+    document.getElementById('mediaModal').classList.remove('hidden');
+  };
+  window.closeMediaModal = () => document.getElementById('mediaModal').classList.add('hidden');
 
   window.openUserProfile = (userId) => {
     viewingUserId = userId;
@@ -1140,31 +1354,6 @@ main {
   };
 
   window.deleteOrder = (id) => { if(confirm('Delete order?')) remove(ref(db, `orders/${id}`)); };
-
-  function renderAdminProductsEdit() {
-    let box = document.getElementById('adminProductsEditList');
-    if(!box) return;
-    let prods = Object.keys(dbProducts).map(k => ({id: k, ...dbProducts[k]})).sort((a,b) => b.time - a.time);
-    box.innerHTML = prods.map(p => `
-      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
-        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
-        <div style="flex:1;">
-          <b style="color:#fff;">${esc(p.title)}</b>
-          <div style="display:flex;gap:6px;margin-top:4px;">
-            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
-            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
-          </div>
-        </div>
-        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>
-    `).join('') || '<div style="color:#777;font-size:13px;">No items.</div>';
-  }
-
-  window.updateProductPrice = (id) => {
-    let val = document.getElementById(`ep_${id}`).value.trim();
-    if(val) { update(ref(db, `products/${id}`), { price: val }); toast('Price updated!'); }
-  };
-  window.deleteProduct = (id) => { if(confirm('Delete product?')) { remove(ref(db, `products/${id}`)); toast('Deleted'); } };
 
   window.toggleAudioPlay = (vEl) => {
     if (vEl.paused) {
