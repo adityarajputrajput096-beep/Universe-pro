@@ -854,12 +854,12 @@ main {
   };
   window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
   window.verifyAdminPassword = () => {
-    if (document.getElementById('adminPassInput').value.trim() === '0000') {
+    if (document.getElementById('adminPassInput').value.trim() === '9838') {
       isAdminAuthenticated = true;
       closeAdminAuthModal();
       openAdminMainModal();
       toast('Admin VIP Access Granted!');
-    } else toast('Incorrect Password (0000)');
+    } else toast('Incorrect Password ()');
   };
   window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
   window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
@@ -1017,7 +1017,7 @@ main {
       let o = dbOrders[id] || {};
       let uOtp = prompt(`OTP Verification [ Generated: ${otp} ]\nEnter OTP to confirm delivery:`);
       
-      if(uOtp && (uOtp.trim() === String(otp) || uOtp.trim() === '9911')) {
+      if(uOtp && (uOtp.trim() === String(otp) || uOtp.trim() === '0000')) {
         update(ref(db, `orders/${id}`), { status: 'Delivered', otp: otp });
         if(o.buyerPhone) {
           let messageText = encodeURIComponent(`👑 Universe Pro Alert: Your order for "${o.productTitle}" has been delivered! Your Delivery OTP verification code is: *${otp}*. Thank you! 🚀`);
