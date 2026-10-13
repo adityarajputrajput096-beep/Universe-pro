@@ -241,7 +241,6 @@ main {
   display: block;
 }
 
-/* Live Top Bar */
 .live-bar {
   display: flex;
   gap: 12px;
@@ -252,7 +251,6 @@ main {
   scrollbar-width: none;
 }
 
-/* Stories Bar */
 .stories-container {
   display: flex;
   gap: 15px;
@@ -316,7 +314,6 @@ main {
   color: #fff;
 }
 
-/* VIP Posts Feed */
 .post-card {
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 10px;
@@ -383,7 +380,6 @@ main {
   font-size: 14px;
 }
 
-/* Bottom Nav Bar */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
@@ -464,14 +460,12 @@ main {
   </header>
 
   <main>
-    <!-- Home Feed Tab -->
     <section id="home" class="tab-pane active">
       <div class="live-bar" id="liveStreamsBar" style="display:none;"></div>
       <div class="stories-container" id="stories"></div>
       <div id="feed"></div>
     </section>
 
-    <!-- Search Tab -->
     <section id="search" class="tab-pane">
       <div style="padding:13px;border-bottom:1px solid var(--border-color)">
         <input id="searchInput" class="input" placeholder="Search people..." oninput="searchUsers(this.value)">
@@ -479,18 +473,15 @@ main {
       <div id="searchResults"></div>
     </section>
 
-    <!-- Shop Tab -->
     <section id="shop" class="tab-pane">
       <div style="font-weight:700;padding:16px;border-bottom:1px solid var(--border-color);font-size:16px;">🛍️ Official VIP Store</div>
       <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px;"></div>
     </section>
 
-    <!-- Reels / Short Videos Tab -->
     <section id="reels" class="tab-pane">
       <div class="reels" id="reelsList" style="height:calc(100vh - 116px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
     </section>
 
-    <!-- Upload Tab -->
     <section id="upload" class="tab-pane">
       <div style="padding:16px;">
         <h3 style="margin-bottom:10px;">Create Post</h3>
@@ -501,7 +492,6 @@ main {
       </div>
     </section>
 
-    <!-- Profile Tab -->
     <section id="profile" class="tab-pane">
       <div style="display:flex;gap:20px;align-items:center;padding:22px 16px;border-bottom:1px solid var(--border-color)">
         <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;"></div>
@@ -528,7 +518,6 @@ main {
     </section>
   </main>
 
-  <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav-bar">
     <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')"><i class="fa-solid fa-house"></i></button>
     <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -561,11 +550,12 @@ main {
   </div>
 </div>
 
+<!-- Admin Password Modal (Fixed: No preset number autofill) -->
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter Password (            ) to access Dashboard:</p>
-    <input id="adminPassInput" class="input" type="password" placeholder="Password" style="text-align:center;font-size:20px;letter-spacing:6px;margin-bottom:12px;">
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password:</p>
+    <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
 </div>
@@ -653,7 +643,7 @@ main {
 
 <div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
-<!-- Firebase Modular Script -->
+  <!-- Firebase Modular Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -848,19 +838,30 @@ main {
 
   window.logout = () => signOut(auth);
 
+  // Admin Protection Logic (Fixed: Clears and prompts correctly without preset codes)
   window.openAdminAuthModal = () => {
-    if (isAdminAuthenticated) openAdminMainModal();
-    else { document.getElementById('adminPassInput').value = ''; document.getElementById('adminAuthModal').classList.remove('hidden'); }
+    if (isAdminAuthenticated) {
+      openAdminMainModal();
+    } else {
+      document.getElementById('adminPassInput').value = '';
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+    }
   };
   window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
+  
   window.verifyAdminPassword = () => {
-    if (document.getElementById('adminPassInput').value.trim() === '9838') {
+    let enteredVal = document.getElementById('adminPassInput').value.trim();
+    if (enteredVal === '9911') {
       isAdminAuthenticated = true;
       closeAdminAuthModal();
       openAdminMainModal();
       toast('Admin VIP Access Granted!');
-    } else toast('Incorrect Password ()');
+    } else {
+      toast('❌ Incorrect Password');
+      document.getElementById('adminPassInput').value = '';
+    }
   };
+
   window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
   window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
 
@@ -924,17 +925,17 @@ main {
   };
   window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
-  // Improved Robust GPS Location Fetcher with Detailed Alerts
+  // Advanced GPS Location Fetcher with Error Diagnostics
   window.detectUserLocation = () => {
     if (!navigator.onLine) {
       toast("⚠️ Internet Off Hai!");
-      alert("⚠️ AAPKA INTERNET OFF HAI!\nKripya Mobile Data/Wi-Fi On Karke Dobara Try Karein.");
+      alert("⚠️ AAPKA INTERNET OFF HAI!\nKripya Mobile Data/Wi-Fi On karke dobara try karein.");
       return;
     }
 
     if (!navigator.geolocation) {
       toast("⚠️ GPS Supported Nahi Hai!");
-      alert("⚠️ Aapke Browser Me Geolocation Supported Nahi Hai. Kripya Manual Address Type Karein.");
+      alert("⚠️ Aapke browser me GPS supported nahi hai. Kripya manual address type karein.");
       return;
     }
 
@@ -947,13 +948,13 @@ main {
         let mapLink = `https://maps.google.com/?q=${lat},${lng}`;
         document.getElementById('orderLocLink').value = mapLink;
         toast("✅ GPS Location Attached!");
-        alert("✅ Aapki Exact Live Location Successfully Attach Ho Gayi Hai!");
+        alert("✅ Aapki Live Location Successfully Attach Ho Gayi Hai!");
       },
       (err) => {
         let errorMsg = "";
         switch (err.code) {
           case err.PERMISSION_DENIED:
-            errorMsg = "⚠️ Location Permission Denied! Phone Settings ya Browser Permission me Location Allow Karein.";
+            errorMsg = "⚠️ Location Permission Denied! Phone settings ya browser permission me location allow karein.";
             break;
           case err.POSITION_UNAVAILABLE:
             errorMsg = "⚠️ GPS Signal Unavailable! Apne phone ka GPS/Location switch On karein.";
@@ -962,7 +963,7 @@ main {
             errorMsg = "⚠️ Request Timeout! Network signal weak hai, kripya dobara try karein.";
             break;
           default:
-            errorMsg = "⚠️ Location fetch karne me kuch problem aayi hai.";
+            errorMsg = "⚠️ Location fetch karne me problem aayi hai.";
         }
         toast("❌ GPS Failed");
         alert(`${errorMsg}\n\n💡 Tip: Aap niche 'Delivery Address' box me directly apna address type kar sakte hain.`);
@@ -1017,7 +1018,7 @@ main {
       let o = dbOrders[id] || {};
       let uOtp = prompt(`OTP Verification [ Generated: ${otp} ]\nEnter OTP to confirm delivery:`);
       
-      if(uOtp && (uOtp.trim() === String(otp) || uOtp.trim() === '0000')) {
+      if(uOtp && (uOtp.trim() === String(otp) || uOtp.trim() === '9911')) {
         update(ref(db, `orders/${id}`), { status: 'Delivered', otp: otp });
         if(o.buyerPhone) {
           let messageText = encodeURIComponent(`👑 Universe Pro Alert: Your order for "${o.productTitle}" has been delivered! Your Delivery OTP verification code is: *${otp}*. Thank you! 🚀`);
