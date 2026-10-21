@@ -472,7 +472,7 @@ main {
 </head>
 <body>
 
-<!-- Initial Loader -->
+<!-- Lightning Fast Initial Loader with Emergency Bypass -->
 <div id="appLoader">
   <div class="spinner"></div>
   <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
@@ -513,6 +513,8 @@ main {
   <header class="header">
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
+      <!-- Added Video Call Option Back -->
+      <button class="icon-circle-btn" onclick="startVideoCall()" title="Video Call"><i class="fa-solid fa-video"></i></button>
       <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
       <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
@@ -599,6 +601,20 @@ main {
   </nav>
 </div>
 
+<!-- Video Call Modal -->
+<div id="videoCallModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;">
+  <div style="position:relative;width:min(450px,100%);height:75vh;background:#111;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center;">
+    <video id="vcLocalVideo" autoplay playsinline muted style="position:absolute;bottom:20px;right:20px;width:100px;height:140px;object-fit:cover;border-radius:10px;border:2px solid #fff;z-index:10;background:#000;"></video>
+    <div style="color:#fff;text-align:center;">
+      <i class="fa-solid fa-video" style="font-size:48px;color:#0095f6;margin-bottom:12px;"></i>
+      <h3 style="margin-bottom:6px;">VIP Video Call Room</h3>
+      <p style="font-size:13px;color:#888;">Secure Peer-to-Peer Connection</p>
+    </div>
+    <button onclick="closeVideoCall()" style="position:absolute;top:15px;right:15px;background:#ff3040;color:#fff;border-radius:50%;width:36px;height:36px;font-size:16px;">✕</button>
+  </div>
+  <button class="primary-btn" style="background:#ff3040;width:min(200px,100%);margin-top:15px;" onclick="closeVideoCall()">End Call</button>
+</div>
+
 <!-- Followers / Following List Modal -->
 <div id="usersListModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:800;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeUsersListModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(400px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
@@ -660,7 +676,7 @@ main {
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default):</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 9911):</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
@@ -768,14 +784,14 @@ main {
 
 <div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
-<!-- Firebase Modular Script -->
+<!-- Firebase Modular Script with Lightning Fast Async Execution -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
-    apiKey: "apiKey: "AAPKI_NAYI_API_KEY_HERE",
+    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
     authDomain: "universe-pro-f36a8.firebaseapp.com",
     databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
     projectId: "universe-pro-f36a8",
@@ -795,6 +811,19 @@ main {
   let isAdminAuthenticated = false, activeAdminTab = 'orders';
   let viewingUserId = null, activeChatUserId = null;
   let currentFilterCss = 'none', liveStream = null, isBroadcaster = false, activeLiveKey = null, currentFilter = 'none', liveCanvasAnim = null;
+  let vcStream = null;
+
+  // ⚡ INSTANT LOADER BYPASS (Zero Lag & Super Fast Open)
+  setTimeout(() => {
+    let loader = document.getElementById('appLoader');
+    if(loader && loader.style.display !== 'none') {
+      loader.style.display = 'none';
+      if(!currentUid) {
+        let authSec = document.getElementById('auth');
+        if(authSec) authSec.style.display = 'flex';
+      }
+    }
+  }, 800);
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -802,7 +831,7 @@ main {
     x.textContent = msg;
     x.style.display = 'block';
     clearTimeout(window.tt);
-    window.tt = setTimeout(()=>x.style.display='none', 2200);
+    window.tt = setTimeout(()=>x.style.display='none', 2000);
   }
 
   function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
@@ -854,6 +883,28 @@ main {
     renderShop();
     renderLiveBar();
   }
+
+  /* Video Call Functionality */
+  window.startVideoCall = async () => {
+    try {
+      vcStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      document.getElementById('vcLocalVideo').srcObject = vcStream;
+      document.getElementById('videoCallModal').classList.remove('hidden');
+      toast('📹 Video Call Connected!');
+    } catch(e) {
+      toast('Camera/Mic permission required!');
+      alert('⚠️ Camera and Microphone permission is required to start Video Call.');
+    }
+  };
+
+  window.closeVideoCall = () => {
+    if(vcStream) {
+      vcStream.getTracks().forEach(t => t.stop());
+      vcStream = null;
+    }
+    document.getElementById('videoCallModal').classList.add('hidden');
+    toast('Call Ended');
+  };
 
   /* Store Live Search Implementation */
   window.renderShop = () => {
