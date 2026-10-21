@@ -513,8 +513,7 @@ main {
   <header class="header">
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
-      <!-- Added Video Call Option Back -->
-      <button class="icon-circle-btn" onclick="startVideoCall()" title="Video Call"><i class="fa-solid fa-video"></i></button>
+      <!-- Camera Button Removed from Header, Now inside Chat Room -->
       <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
       <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
@@ -601,13 +600,13 @@ main {
   </nav>
 </div>
 
-<!-- Video Call Modal -->
+<!-- Video Call Modal (Triggered directly from chat room) -->
 <div id="videoCallModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;">
   <div style="position:relative;width:min(450px,100%);height:75vh;background:#111;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center;">
     <video id="vcLocalVideo" autoplay playsinline muted style="position:absolute;bottom:20px;right:20px;width:100px;height:140px;object-fit:cover;border-radius:10px;border:2px solid #fff;z-index:10;background:#000;"></video>
     <div style="color:#fff;text-align:center;">
       <i class="fa-solid fa-video" style="font-size:48px;color:#0095f6;margin-bottom:12px;"></i>
-      <h3 style="margin-bottom:6px;">VIP Video Call Room</h3>
+      <h3 style="margin-bottom:6px;">VIP Video Call</h3>
       <p style="font-size:13px;color:#888;">Secure Peer-to-Peer Connection</p>
     </div>
     <button onclick="closeVideoCall()" style="position:absolute;top:15px;right:15px;background:#ff3040;color:#fff;border-radius:50%;width:36px;height:36px;font-size:16px;">✕</button>
@@ -640,6 +639,8 @@ main {
       <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;"><i class="fa-solid fa-arrow-left"></i></button>
       <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;"></div>
       <b id="chatTargetName" style="color:#fff;font-size:15px;flex:1;">User</b>
+      <!-- 🎥 CAMERA BUTTON DIRECTLY INSIDE CHAT ROOM HEADER -->
+      <button onclick="startVideoCall()" style="background:#181818;border:1px solid #333;color:#0095f6;border-radius:50%;width:38px;height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Start Video Call"><i class="fa-solid fa-video"></i></button>
       <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
     </div>
     <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:15px;"></div>
@@ -784,7 +785,7 @@ main {
 
 <div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
-<!-- Firebase Modular Script with Lightning Fast Async Execution -->
+<!-- Firebase Modular Script with Robust Data Loading & Zero Lag -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -813,7 +814,7 @@ main {
   let currentFilterCss = 'none', liveStream = null, isBroadcaster = false, activeLiveKey = null, currentFilter = 'none', liveCanvasAnim = null;
   let vcStream = null;
 
-  // ⚡ INSTANT LOADER BYPASS (Zero Lag & Super Fast Open)
+  // ⚡ INSTANT LOADER BYPASS
   setTimeout(() => {
     let loader = document.getElementById('appLoader');
     if(loader && loader.style.display !== 'none') {
@@ -823,7 +824,7 @@ main {
         if(authSec) authSec.style.display = 'flex';
       }
     }
-  }, 800);
+  }, 1000);
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -834,7 +835,7 @@ main {
     window.tt = setTimeout(()=>x.style.display='none', 2000);
   }
 
-  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
+  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'} [m])) }
 
   function renderAvatar(u, isSmall = false) {
     let name = u && (u.username || u.name) ? (u.username || u.name) : 'user';
@@ -856,6 +857,15 @@ main {
       viewingUserId = currentUid;
       document.getElementById('auth').style.display = 'none';
       document.getElementById('app').style.display = 'block';
+      
+      // Ensure user record exists in database
+      const userRef = ref(db, 'users/' + currentUid);
+      onValue(userRef, snapshot => {
+        if(!snapshot.exists()) {
+          set(userRef, { id: currentUid, name: user.email.split('@')[0], username: user.email.split('@')[0], email: user.email, pic: '', following: [] });
+        }
+      }, { onlyOnce: true });
+
       listenToDatabase();
     } else {
       currentUid = null;
@@ -884,11 +894,12 @@ main {
     renderLiveBar();
   }
 
-  /* Video Call Functionality */
+  /* 🎥 Video Call Functionality inside Chat Room */
   window.startVideoCall = async () => {
     try {
       vcStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      document.getElementById('vcLocalVideo').srcObject = vcStream;
+      let vEl = document.getElementById('vcLocalVideo');
+      if(vEl) vEl.srcObject = vcStream;
       document.getElementById('videoCallModal').classList.remove('hidden');
       toast('📹 Video Call Connected!');
     } catch(e) {
@@ -1121,10 +1132,10 @@ main {
         ${renderAvatar(u, true)}
         <div>
           <b style="color:#fff;font-size:14px;">${esc(u.username || u.name)}</b>
-          <div style="color:#888;font-size:12px;">Tap to open chat room</div>
+          <div style="color:#888;font-size:12px;">Tap to open chat room & video call</div>
         </div>
       </div>
-    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No users found.</div>';
+    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No other users found. Create another account to test chat!</div>';
     
     document.getElementById('privateChatRoom').classList.add('hidden');
     document.getElementById('chatModal').classList.remove('hidden');
@@ -1171,7 +1182,7 @@ main {
           <div class="chat-bubble">${esc(m.text)}</div>
         </div>
       `;
-    }).join('') || '<div style="text-align:center;color:#666;margin-top:40px;font-size:13px;">No messages yet. Say hi! 👋</div>';
+    }).join('') || '<div style="text-align:center;color:#666;margin-top:40px;font-size:13px;">No messages yet. Say hi or start a video call! 👋</div>';
 
     box.scrollTop = box.scrollHeight;
   }
@@ -1213,7 +1224,8 @@ main {
   window.startBroadcastingLive = async () => {
     try {
       liveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      document.getElementById('liveRawVideo').srcObject = liveStream;
+      let rVid = document.getElementById('liveRawVideo');
+      rVid.srcObject = liveStream;
       document.getElementById('liveCanvas').style.display = 'block';
       document.getElementById('liveRemoteVideo').style.display = 'none';
       document.getElementById('liveFilterBar').style.display = 'flex';
@@ -1234,6 +1246,7 @@ main {
   function startCanvasFilterLoop() {
     let video = document.getElementById('liveRawVideo');
     let canvas = document.getElementById('liveCanvas');
+    if(!canvas || !video) return;
     let ctx = canvas.getContext('2d');
     function draw() {
       if (!isBroadcaster) return;
@@ -1288,7 +1301,7 @@ main {
     let email = document.getElementById('email').value.trim();
     let pass = document.getElementById('password').value;
     let username = document.getElementById('username').value.trim().toLowerCase();
-    let name = document.getElementById('fullName').value.trim();
+    let name = document.getElementById('fullName').value.trim() || username;
     try {
       if (signup) {
         let res = await createUserWithEmailAndPassword(auth, email, pass);
@@ -1371,20 +1384,11 @@ main {
   window.closeUsersListModal = () => document.getElementById('usersListModal').classList.add('hidden');
 
   window.detectUserLocation = () => {
-    if (!navigator.onLine) {
-      toast("⚠️ Internet Off Hai!");
-      alert("⚠️ AAPKA INTERNET OFF HAI!\nKripya Mobile Data/Wi-Fi On karke dobara try karein.");
-      return;
-    }
-
     if (!navigator.geolocation) {
       toast("⚠️ GPS Supported Nahi Hai!");
-      alert("⚠️ Aapke browser me GPS supported nahi hai. Kripya manual address type karein.");
       return;
     }
-
     toast("📡 Fetching GPS Location...");
-
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         let lat = pos.coords.latitude;
@@ -1392,27 +1396,9 @@ main {
         let mapLink = `https://maps.google.com/?q=${lat},${lng}`;
         document.getElementById('orderLocLink').value = mapLink;
         toast("✅ GPS Location Attached!");
-        alert("✅ Aapki Live Location Successfully Attach Ho Gayi Hai!");
       },
-      (err) => {
-        let errorMsg = "";
-        switch (err.code) {
-          case err.PERMISSION_DENIED:
-            errorMsg = "⚠️ Location Permission Denied! Phone settings ya browser permission me location allow karein.";
-            break;
-          case err.POSITION_UNAVAILABLE:
-            errorMsg = "⚠️ GPS Signal Unavailable! Apne phone ka GPS/Location switch On karein.";
-            break;
-          case err.TIMEOUT:
-            errorMsg = "⚠️ Request Timeout! Network signal weak hai, kripya dobara try karein.";
-            break;
-          default:
-            errorMsg = "⚠️ Location fetch karne me problem aayi hai.";
-        }
-        toast("❌ GPS Failed");
-        alert(`${errorMsg}\n\n💡 Tip: Aap niche 'Delivery Address' box me directly apna address type kar sakte hain.`);
-      },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      () => { toast("❌ GPS Failed"); },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
@@ -1501,7 +1487,7 @@ main {
           <div style="color:var(--text-muted);font-size:13px;margin-top:6px;cursor:pointer;" onclick="openComments('${post.id}')">View comments</div>
         </div>
       </article>`;
-    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available</div>';
+    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available yet. Create one!</div>';
   }
 
   window.likePost = (id) => {
@@ -1690,7 +1676,7 @@ main {
     ab.innerHTML = '';
     if(u.pic) { ab.style.backgroundImage = `url('${u.pic}')`; ab.textContent = ''; }
     else { ab.style.backgroundImage = 'none'; ab.textContent = (u.username||'U').charAt(0).toUpperCase(); }
-    document.getElementById('myName').textContent = u.name || '';
+    document.getElementById('myName').textContent = u.name || u.username || '';
     
     let actBox = document.getElementById('profileActionsBox');
     if (viewingUserId === currentUid) {
