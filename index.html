@@ -182,7 +182,7 @@ button:active {
   display: none;
   min-height: 100vh;
   padding-top: 60px;
-  padding-bottom: calc(65px + var(--safe-bottom));
+  padding-bottom: calc(75px + var(--safe-bottom));
 }
 
 .header {
@@ -243,6 +243,7 @@ button:active {
 main {
   width: min(650px, 100%);
   margin: 0 auto;
+  padding-bottom: calc(85px + env(safe-area-inset-bottom, 15px));
 }
 
 .tab-pane {
@@ -394,14 +395,15 @@ main {
   font-size: 14px;
 }
 
+/* 🔹 FIXED: Bottom Navigation Bar with Safe Area Padding */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(56px + var(--safe-bottom));
-  padding-bottom: var(--safe-bottom);
-  background: rgba(0, 0, 0, 0.95);
+  height: calc(60px + env(safe-area-inset-bottom, 15px));
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 15px));
+  background: rgba(0, 0, 0, 0.96);
   backdrop-filter: blur(15px);
   border-top: 1px solid var(--border-color);
   display: flex;
@@ -513,7 +515,6 @@ main {
   <header class="header">
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
-      <!-- Camera Button Removed from Header, Now inside Chat Room -->
       <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
       <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
@@ -527,11 +528,12 @@ main {
       <div id="feed"></div>
     </section>
 
+    <!-- 🔹 SEARCH SECTION PROPERLY SPACED -->
     <section id="search" class="tab-pane">
-      <div style="padding:13px;border-bottom:1px solid var(--border-color)">
-        <input id="searchInput" class="input" placeholder="Search people..." oninput="searchUsers(this.value)">
+      <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border-color); background:var(--bg-primary);">
+        <input id="searchInput" class="input" placeholder="🔍 Search people..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
       </div>
-      <div id="searchResults"></div>
+      <div id="searchResults" style="padding:8px 0;"></div>
     </section>
 
     <!-- SHOP SECTION WITH LIVE SEARCH BAR -->
@@ -547,7 +549,7 @@ main {
     </section>
 
     <section id="reels" class="tab-pane">
-      <div class="reels" id="reelsList" style="height:calc(100vh - 116px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
+      <div class="reels" id="reelsList" style="height:calc(100vh - 126px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
     </section>
 
     <section id="upload" class="tab-pane">
@@ -639,7 +641,7 @@ main {
       <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;"><i class="fa-solid fa-arrow-left"></i></button>
       <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;"></div>
       <b id="chatTargetName" style="color:#fff;font-size:15px;flex:1;">User</b>
-      <!-- 🎥 CAMERA BUTTON DIRECTLY INSIDE CHAT ROOM HEADER -->
+      <!-- 🎥 CAMERA / VIDEO CALL BUTTON INSIDE CHAT ROOM -->
       <button onclick="startVideoCall()" style="background:#181818;border:1px solid #333;color:#0095f6;border-radius:50%;width:38px;height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Start Video Call"><i class="fa-solid fa-video"></i></button>
       <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
     </div>
@@ -783,9 +785,9 @@ main {
   </div>
 </div>
 
-<div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
+<div id="toast" style="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
-<!-- Firebase Modular Script with Robust Data Loading & Zero Lag -->
+<!-- Firebase Modular Script with Single Device Security & Fast Execution -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -835,7 +837,7 @@ main {
     window.tt = setTimeout(()=>x.style.display='none', 2000);
   }
 
-  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'} [m])) }
+  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
 
   function renderAvatar(u, isSmall = false) {
     let name = u && (u.username || u.name) ? (u.username || u.name) : 'user';
@@ -855,10 +857,25 @@ main {
     if (user) {
       currentUid = user.uid;
       viewingUserId = currentUid;
+      
+      // 🔒 SINGLE DEVICE SESSION ENFORCEMENT
+      let myDeviceSession = Date.now().toString() + '_' + Math.random().toString(36).substring(2, 7);
+      localStorage.setItem('current_session_id', myDeviceSession);
+
+      update(ref(db, 'users/' + currentUid), { currentSessionId: myDeviceSession });
+
+      onValue(ref(db, `users/${currentUid}/currentSessionId`), snapshot => {
+        let activeSessionInDb = snapshot.val();
+        let localSession = localStorage.getItem('current_session_id');
+        if (activeSessionInDb && localSession && activeSessionInDb !== localSession) {
+          alert("⚠️ Aapki ID kisi dusre device par login ho gayi hai! Aap yahan se logout ho rahe hain.");
+          signOut(auth);
+        }
+      });
+
       document.getElementById('auth').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       
-      // Ensure user record exists in database
       const userRef = ref(db, 'users/' + currentUid);
       onValue(userRef, snapshot => {
         if(!snapshot.exists()) {
@@ -869,6 +886,7 @@ main {
       listenToDatabase();
     } else {
       currentUid = null;
+      localStorage.removeItem('current_session_id');
       document.getElementById('auth').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
     }
@@ -921,9 +939,7 @@ main {
   window.renderShop = () => {
     let box = document.getElementById('shopGrid');
     if(!box) return;
-    
     let query = (document.getElementById('shopSearchInput')?.value || '').toLowerCase().trim();
-    
     let prods = Object.keys(dbProducts)
       .map(k => ({id: k, ...dbProducts[k]}))
       .filter(p => (p.title || '').toLowerCase().includes(query) || (p.desc || '').toLowerCase().includes(query))
@@ -953,9 +969,7 @@ main {
   function renderAdminOrders(query = '') {
     let box = document.getElementById('adminOrdersList');
     if(!box) return;
-    
     let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
-    
     let keys = Object.keys(dbOrders)
       .filter(k => {
         let o = dbOrders[k];
@@ -983,9 +997,7 @@ main {
   function renderAdminProductsEdit(query = '') {
     let box = document.getElementById('adminProductsEditList');
     if(!box) return;
-    
     let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
-
     let prods = Object.keys(dbProducts)
       .map(k => ({id: k, ...dbProducts[k]}))
       .filter(p => (p.title || '').toLowerCase().includes(q))
@@ -1006,7 +1018,6 @@ main {
     `).join('') || '<div style="color:#777;font-size:13px;">No items match search.</div>';
   }
 
-  /* Admin Auth Handling */
   window.openAdminAuthModal = () => {
     if (isAdminAuthenticated) {
       openAdminMainModal();
@@ -1047,14 +1058,12 @@ main {
     if(tab==='products') renderAdminProductsEdit(q);
   };
 
-  /* Multiple Product Photos Upload */
   window.previewMultipleProductImgs = (e) => {
     let files = Array.from(e.target.files);
     if(files.length === 0) return;
     prodImagesArray = [];
     let grid = document.getElementById('prodPreviewGrid');
     grid.innerHTML = '';
-
     files.forEach(file => {
       let r = new FileReader();
       r.onload = () => {
@@ -1093,7 +1102,6 @@ main {
     selectedBuyProduct = dbProducts[id];
     if(!selectedBuyProduct) return;
     let myObj = dbUsers[currentUid] || {};
-    
     let allImgs = selectedBuyProduct.images && selectedBuyProduct.images.length > 0 ? selectedBuyProduct.images : [selectedBuyProduct.image];
 
     document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title;
@@ -1123,7 +1131,6 @@ main {
 
   window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
-  /* Direct Private Messaging */
   window.openChatModal = () => {
     let box = document.getElementById('chatList');
     let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
@@ -1203,7 +1210,6 @@ main {
     inp.value = '';
   };
 
-  /* Live Stream Handling */
   function renderLiveBar() {
     let bar = document.getElementById('liveStreamsBar');
     if(!bar) return;
@@ -1360,7 +1366,6 @@ main {
     document.getElementById('usersListTitle').textContent = title;
     let listContent = document.getElementById('usersListContent');
     let u = dbUsers[viewingUserId] || {};
-    
     let targetUserIds = [];
     if (type === 'following') {
       targetUserIds = u.following || [];
@@ -1604,7 +1609,7 @@ main {
     let reels = Object.keys(dbPosts).filter(k => dbPosts[k].type === 'video').map(k => ({id: k, ...dbPosts[k]}));
     box.innerHTML = reels.map(r => {
       let u = dbUsers[r.userId] || {};
-      return `<div style="height:calc(100vh - 116px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
+      return `<div style="height:calc(100vh - 126px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
         <video src="${r.data}" loop playsinline style="width:100%;height:100%;object-fit:contain;filter:${r.filter||'none'}" onclick="toggleAudioPlay(this)"></video>
         <div style="position:absolute;right:16px;bottom:90px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:10;">
           <button class="action-icon-btn" onclick="likePost('${r.id}')" style="font-size:28px;">♥</button>
