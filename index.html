@@ -768,7 +768,7 @@ main {
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: admin123):</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: admin1234):</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
@@ -941,8 +941,8 @@ const COLLEGE_LAT = 27.2455;
 const COLLEGE_LON = 81.5650;
 
 let users = JSON.parse(localStorage.getItem('universe_users')) || [
-  { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '123', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
-  { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '123', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
+  { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '9838', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
+  { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '9838', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
 ];
 
 let posts = JSON.parse(localStorage.getItem('universe_posts')) || [
@@ -1789,7 +1789,7 @@ function closeAdminAuthModal() {
 
 function verifyAdminPassword() {
   const pass = document.getElementById('adminPassInput').value;
-  if (pass === 'admin123' || pass === '8882691376') {
+  if (pass === 'admin9838' || pass === '8882691376') {
     closeAdminAuthModal();
     document.getElementById('adminMainModal').classList.remove('hidden');
     renderAdminOrders();
