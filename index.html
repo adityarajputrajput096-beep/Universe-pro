@@ -774,7 +774,7 @@ main {
   </div>
 </div>
 
-<!-- Buy Product Modal (With Distance Pricing & Psychological Discount) -->
+<!-- Buy Product Modal -->
 <div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -1399,9 +1399,8 @@ function submitProductReview() {
   alert('Review submitted successfully!');
 }
 
-// Distance Calculation Formula (Haversine Formula) from R.N. Singh Inter College
 function calculateDistanceFromCollege(lat2, lon2) {
-  const R = 6371e3; // Earth radius in meters
+  const R = 6371e3;
   const φ1 = COLLEGE_LAT * Math.PI/180;
   const φ2 = lat2 * Math.PI/180;
   const Δφ = (lat2-COLLEGE_LAT) * Math.PI/180;
@@ -1412,7 +1411,7 @@ function calculateDistanceFromCollege(lat2, lon2) {
             Math.sin(Δλ/2) * Math.sin(Δλ/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-  return R * c; // Distance in meters
+  return R * c;
 }
 
 let calculatedDeliveryFee = 0;
@@ -1428,18 +1427,13 @@ function detectUserLocationAndCalculateFee() {
     const link = `https://maps.google.com/?q=${lat},${lon}`;
     document.getElementById('orderLocLink').value = link;
 
-    // Calculate distance in meters from R.N. Singh Inter College
     const distanceMeters = calculateDistanceFromCollege(lat, lon);
     const distanceRounded = Math.round(distanceMeters);
 
-    // Every 100 meters = ₹10 shipping charge (as per your logic)
     const rawFee = Math.ceil(distanceRounded / 100) * 10;
-    
-    // Psychological Discount Trick: Cut the calculated fee in half (50% discount)
     const discountedFee = Math.round(rawFee / 2);
     calculatedDeliveryFee = discountedFee;
 
-    // Show box & display psychological discount message
     const box = document.getElementById('shippingCalculationBox');
     box.style.display = 'block';
     document.getElementById('distanceText').innerText = `📍 Distance from R.N. Singh Inter College: ~${distanceRounded} meters`;
@@ -1566,10 +1560,22 @@ function requestCameraPermissions() {
     });
 }
 
+// -----------------------------------------------------------------
+// UPDATED DELETE ACCOUNT FUNCTION (Yeh ab posts aur data bhi uda dega)
+// -----------------------------------------------------------------
 function deleteMyOwnAccount() {
-  if (confirm('Are you sure you want to delete your VIP account permanently?')) {
-    users = users.filter(u => u.username !== currentUser.username);
+  if (confirm('Are you sure you want to delete your VIP account permanently? All your posts and data will be removed.')) {
+    const deletedUsername = currentUser.username;
+    
+    // 1. Remove user from registered users list
+    users = users.filter(u => u.username !== deletedUsername);
     localStorage.setItem('universe_users', JSON.stringify(users));
+
+    // 2. Remove all posts created by this user
+    posts = posts.filter(p => p.username !== deletedUsername);
+    localStorage.setItem('universe_posts', JSON.stringify(posts));
+
+    // 3. Clear logged user session and reload
     logout();
   }
 }
@@ -1903,7 +1909,7 @@ function deleteProduct(id) {
 
 function renderAdminUsers() {
   const list = document.getElementById('adminUsersList');
-  list.innerHTML = '';
+  list.innerHTML = ``;
   users.forEach(u => {
     const div = document.createElement('div');
     div.style.cssText = 'background:#1e1e1e;padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;';
