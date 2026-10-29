@@ -1727,6 +1727,7 @@ function closeChatModal() {
 function renderChatList() {
   const list = document.getElementById('chatList');
   list.innerHTML = '';
+  // Fix: Ensure all registered users appear in chat list seamlessly
   users.forEach(u => {
     if (u.username === currentUser.username) return;
     const row = document.createElement('div');
@@ -1766,6 +1767,11 @@ function renderDirectMessages() {
   box.innerHTML = '';
   const key = getChatKey(currentUser.username, currentChatUser.username);
   const history = messages[key] || [];
+
+  if (history.length === 0) {
+    box.innerHTML = `<div style="color:#777;text-align:center;padding:30px;font-size:13px;">No messages yet. Send a message to start chatting!</div>`;
+    return;
+  }
 
   history.forEach(m => {
     const row = document.createElement('div');
