@@ -22,7 +22,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -47,11 +47,6 @@ button {
   cursor: pointer;
   border: none;
   background: none;
-}
-
-button:active {
-  transform: scale(0.96);
-  opacity: 0.9;
 }
 
 .hidden {
@@ -98,7 +93,7 @@ button:active {
 
 /* Auth Screen */
 #auth {
-  display: none;
+  display: flex;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
@@ -153,16 +148,24 @@ button:active {
   border-color: var(--accent-color);
 }
 
+/* --- 3D PREMIUM VIP BUTTON STYLES --- */
 .primary-btn {
   width: 100%;
-  background: var(--accent-color);
+  background: linear-gradient(135deg, #00b4db, #0083b0);
   color: #fff;
-  padding: 13px;
-  border-radius: 10px;
-  font-weight: 700;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 800;
   font-size: 15px;
   margin-top: 10px;
-  box-shadow: 0 4px 15px rgba(0, 149, 246, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 6px 0 #005f7b, 0 10px 25px rgba(0, 180, 219, 0.4);
+  transition: all 0.1s ease;
+}
+
+.primary-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #005f7b, 0 5px 10px rgba(0, 180, 219, 0.3);
 }
 
 .switch-auth {
@@ -216,28 +219,44 @@ button:active {
 }
 
 .btn-live-badge {
-  background: #ff3040;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
   color: #fff;
   font-size: 13px;
   font-weight: 800;
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  box-shadow: 0 5px 0 #b3001b, 0 8px 20px rgba(255, 65, 108, 0.5);
+  transition: all 0.1s ease;
+}
+
+.btn-live-badge:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #b3001b, 0 4px 10px rgba(255, 65, 108, 0.3);
 }
 
 .icon-circle-btn {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: #181818;
-  border: 1px solid var(--border-color);
+  background: linear-gradient(145deg, #1e1e1e, #0d0d0d);
+  border: 1px solid #333;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  transition: all 0.1s ease;
+}
+
+.icon-circle-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
 main {
@@ -420,13 +439,19 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.1s ease, color 0.2s ease;
+}
+
+.nav-tab-btn:active {
+  transform: scale(0.85);
 }
 
 .nav-tab-btn.active {
   color: #fff;
+  text-shadow: 0 0 12px rgba(0, 149, 246, 0.8);
 }
 
-/* Chat Styling */
+/* Chat & Review Styling */
 .chat-msg-row {
   display: flex;
   margin-bottom: 10px;
@@ -470,6 +495,11 @@ main {
   border-color: #0095f6;
   box-shadow: 0 0 8px rgba(0,149,246,0.6);
 }
+
+.star-rating {
+  color: #f1c40f;
+  font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -481,13 +511,13 @@ main {
   <div style="font-size:12px;color:#888;">Loading VIP Data...</div>
 </div>
 
-<!-- Login & Register -->
+<!-- Login & Register Section -->
 <section id="auth">
   <div class="auth-card">
     <div class="logo">Universe Pro</div>
     <div class="vip-welcome">👑 𝓞𝔀𝓷𝓮𝓻 Aditya Thakur 🚀</div>
-     <div class="vip-welcome"> 📿🛕हर हर महादेव📿🛕 </div>
-    <div class="vip-welcome">▄︻デ══━一💥 emergency number : 8882691376 </div>
+    <div class="vip-welcome">📿🛕 हर हर महादेव 📿🛕</div>
+    <div class="vip-welcome">▄︻デ══━一💥 Emergency Support: 8882691376</div>
     
     <form id="authForm">
       <div id="fullNameGroup" class="input-group hidden">
@@ -507,12 +537,12 @@ main {
     
     <div class="switch-auth">
       <span id="switchText">Don't have an account?</span> 
-      <span id="switchBtn">Sign up</span>
+      <span id="switchBtn" onclick="toggleAuthMode()">Sign up</span>
     </div>
   </div>
 </section>
 
-<!-- Main VIP App -->
+<!-- Main VIP App Section -->
 <div id="app">
   <header class="header">
     <div class="brand-title">Universe Pro</div>
@@ -552,13 +582,13 @@ main {
     <section id="upload" class="tab-pane">
       <div style="padding:16px;">
         <h3 style="margin-bottom:10px;">Create Post / Reel</h3>
-        <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;">
+        <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;" onchange="previewUploadMedia(event)">
         <div id="preview" style="height:320px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
         
         <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;">
-          <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('none')">Normal</button>
-          <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('brightness(1.3) contrast(1.1)')">✨ Beauty / Bright</button>
-          <button class="primary-btn" style="background:#262626;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('grayscale(1)')">🖤 B&W Filter</button>
+          <button class="primary-btn" style="background:#262626;box-shadow:none;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('none')">Normal</button>
+          <button class="primary-btn" style="background:#262626;box-shadow:none;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('brightness(1.3) contrast(1.1)')">✨ Beauty / Bright</button>
+          <button class="primary-btn" style="background:#262626;box-shadow:none;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('grayscale(1)')">🖤 B&W Filter</button>
         </div>
 
         <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
@@ -566,11 +596,10 @@ main {
       </div>
     </section>
 
-    <!-- PROFILE SECTION WITH TOP SETTINGS BUTTON -->
+    <!-- Profile Section -->
     <section id="profile" class="tab-pane">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px 0;">
         <b id="profileHeaderTitle" style="font-size:18px;color:#fff;">Profile</b>
-        <!-- ⚙️ PROFILE SETTINGS BUTTON -->
         <button onclick="openProfileSettingsModal()" style="color:#fff;font-size:20px;padding:6px;"><i class="fa-solid fa-gear"></i></button>
       </div>
 
@@ -589,8 +618,8 @@ main {
       <div style="display:flex;gap:8px;padding:0 16px 14px;" id="profileActionsBox"></div>
       <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
       <div style="display:flex;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
-        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;" onclick="switchProfileTab('posts')">📷 POSTS</button>
-        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;" onclick="switchProfileTab('saved')">🔖 SAVED</button>
+        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;box-shadow:none;" onclick="switchProfileTab('posts')">📷 POSTS</button>
+        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;box-shadow:none;" onclick="switchProfileTab('saved')">🔖 SAVED</button>
       </div>
       <div id="myGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;"></div>
     </section>
@@ -606,28 +635,29 @@ main {
   </nav>
 </div>
 
-<!-- ⚙️ PROFILE SETTINGS MODAL -->
+<!-- Profile Settings Modal -->
 <div id="profileSettingsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:850;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeProfileSettingsModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:20px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #333;padding-bottom:10px;">
-      <b style="color:#fff;font-size:16px;">⚙️ Account Settings</b>
+      <b style="color:#fff;font-size:16px;">⚙️ Account & Permissions</b>
       <button onclick="closeProfileSettingsModal()" style="color:#fff;font-size:18px;">✕</button>
     </div>
     
     <div style="display:flex;flex-direction:column;gap:12px;">
-      <button class="primary-btn" style="background:#262626;margin:0;" onclick="closeProfileSettingsModal(); changeProfilePic();">📷 Change Profile Picture</button>
-      <button class="primary-btn" style="background:#262626;margin:0;" onclick="closeProfileSettingsModal(); logout();">🚪 Log Out</button>
+      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="closeProfileSettingsModal(); changeProfilePic();">📷 Change Profile Picture</button>
+      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="requestCameraPermissions()">🔒 Request Cam/Mic Permission</button>
+      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="closeProfileSettingsModal(); logout();">🚪 Log Out</button>
       <hr style="border:none;border-top:1px solid #333;margin:8px 0;">
-      <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="deleteMyOwnAccount()">🗑️ Delete My Account</button>
+      <button class="primary-btn" style="background:#ff3040;box-shadow:none;margin:0;" onclick="deleteMyOwnAccount()">🗑️ Delete My Account</button>
     </div>
   </div>
 </div>
 
-<!-- ADMIN DASHBOARD MODAL -->
+<!-- Admin Dashboard Modal -->
 <div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
-      <span>👑 VIP Admin Dashboard warning </span>
+      <span>👑 VIP Admin Dashboard</span>
       <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
     </div>
     
@@ -664,7 +694,7 @@ main {
             <input id="boostUsername" class="input" placeholder="Target Username" style="flex:1;">
             <input id="boostCount" class="input" type="number" placeholder="Count" style="width:120px;">
           </div>
-          <button class="primary-btn" style="background:#2ecc71;margin-top:8px;" onclick="boostUserFollowers()">🚀 Add Followers</button>
+          <button class="primary-btn" style="background:#2ecc71;box-shadow:none;margin-top:8px;" onclick="boostUserFollowers()">🚀 Add Followers</button>
         </div>
         <b style="color:#fff;display:block;margin-bottom:8px;">Registered Users List:</b>
         <div id="adminUsersList"></div>
@@ -677,13 +707,13 @@ main {
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default):</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: admin123):</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
 </div>
 
-<!-- Buy Product Modal -->
+<!-- Buy Product Modal (Now with Integrated Reviews Section) -->
 <div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -694,16 +724,36 @@ main {
     <div id="buyProdThumbs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;"></div>
     <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
     <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
+    
+    <!-- ⭐ PRODUCT REVIEWS SECTION INSIDE MODAL -->
+    <div style="border-top:1px solid #333;padding-top:12px;margin-bottom:14px;">
+      <b style="font-size:14px;color:#f1c40f;">⭐ Customer Reviews & Ratings</b>
+      <div id="productReviewsContainer" style="margin-top:8px;max-height:120px;overflow-y:auto;font-size:12px;color:#ccc;display:flex;flex-direction:column;gap:6px;"></div>
+      
+      <!-- Add Review Form -->
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+        <select id="reviewRating" class="input" style="padding:8px;font-size:12px;">
+          <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+          <option value="4">⭐⭐⭐⭐ (4/5)</option>
+          <option value="3">⭐⭐⭐ (3/5)</option>
+          <option value="2">⭐⭐ (2/5)</option>
+          <option value="1">⭐ (1/5)</option>
+        </select>
+        <input id="reviewText" class="input" placeholder="Write your review..." style="padding:8px;font-size:12px;">
+        <button class="primary-btn" style="background:#333;box-shadow:none;margin:0;padding:8px;font-size:12px;" onclick="submitProductReview()">Submit Review</button>
+      </div>
+    </div>
+
     <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
       <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
       <input id="orderName" class="input" placeholder="Your Full Name">
       <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-      <button class="primary-btn" style="background:#262626;margin:0;padding:9px;" onclick="detectUserLocation()">📍 Get GPS Location</button>
+      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;padding:9px;" onclick="detectUserLocation()">📍 Get GPS Location</button>
       <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
       <textarea id="orderAddress" class="input" placeholder="Delivery Address..." style="height:55px;resize:none;"></textarea>
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="primary-btn" style="background:linear-gradient(45deg,#2ecc71,#27ae60);margin:0;" onclick="placeOrderNow()">🛒 Place Order</button>
+      <button class="primary-btn" style="background:linear-gradient(45deg,#2ecc71,#27ae60);box-shadow:none;margin:0;" onclick="placeOrderNow()">🛒 Place Order</button>
     </div>
   </div>
 </div>
@@ -712,14 +762,13 @@ main {
 <div id="videoCallModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;">
   <div style="position:relative;width:min(450px,100%);height:75vh;background:#111;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center;">
     <video id="vcLocalVideo" autoplay playsinline muted style="position:absolute;bottom:20px;right:20px;width:100px;height:140px;object-fit:cover;border-radius:10px;border:2px solid #fff;z-index:10;background:#000;"></video>
-    <div style="color:#fff;text-align:center;">
-      <i class="fa-solid fa-video" style="font-size:48px;color:#0095f6;margin-bottom:12px;"></i>
-      <h3 style="margin-bottom:6px;">VIP Video Call</h3>
-      <p style="font-size:13px;color:#888;">Secure Peer-to-Peer Connection</p>
+    <video id="vcRemoteVideo" autoplay playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#050505;"></video>
+    <div id="vcStatusBox" style="position:absolute;top:20px;color:#fff;text-align:center;z-index:20;background:rgba(0,0,0,0.6);padding:8px 16px;border-radius:20px;">
+      <h4 style="font-size:14px;color:#0095f6;">VIP Secure Video Call</h4>
+      <p id="vcTimer" style="font-size:11px;color:#aaa;">Connecting...</p>
     </div>
-    <button onclick="closeVideoCall()" style="position:absolute;top:15px;right:15px;background:#ff3040;color:#fff;border-radius:50%;width:36px;height:36px;font-size:16px;">✕</button>
   </div>
-  <button class="primary-btn" style="background:#ff3040;width:min(200px,100%);margin-top:15px;" onclick="closeVideoCall()">End Call</button>
+  <button class="primary-btn" style="background:#ff3040;box-shadow:none;width:min(200px,100%);margin-top:15px;" onclick="closeVideoCall()">End Call</button>
 </div>
 
 <!-- Followers / Following List Modal -->
@@ -745,7 +794,7 @@ main {
   <div id="privateChatRoom" class="hidden" style="position:absolute;inset:0;background:#050505;z-index:10;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
     <div style="background:#121212;padding:12px 15px;border-bottom:1px solid #333;display:flex;align-items:center;gap:12px;">
       <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;"><i class="fa-solid fa-arrow-left"></i></button>
-      <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;"></div>
+      <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;background-size:cover;"></div>
       <b id="chatTargetName" style="color:#fff;font-size:15px;flex:1;">User</b>
       <button onclick="startVideoCall()" style="background:#181818;border:1px solid #333;color:#0095f6;border-radius:50%;width:38px;height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Start Video Call"><i class="fa-solid fa-video"></i></button>
       <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
@@ -753,7 +802,7 @@ main {
     <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:15px;"></div>
     <div style="padding:12px;background:#121212;border-top:1px solid #333;display:flex;gap:10px;">
       <input id="directMessageInput" class="input" placeholder="Type a message..." style="border-radius:20px;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
-      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </div>
 </div>
@@ -764,7 +813,6 @@ main {
     <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
       <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
       <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
-      <video id="liveRemoteVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
       <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE</div>
       <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
       
@@ -785,1057 +833,912 @@ main {
   <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
 </div>
 
-<div id="storyModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeStory()">
-  <div style="background:#181818;border-radius:14px;width:min(400px,100%);overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
-      <span id="storyUser"></span>
-      <button onclick="closeStory()" style="color:#fff;background:none;border:none;">✕</button>
-    </div>
-    <div id="storyBody" style="padding:10px;display:flex;align-items:center;justify-content:center;"></div>
-  </div>
-</div>
-<input id="storyFileInput" type="file" accept="image/*" class="hidden" onchange="handleStoryUpload(event)">
+<div id="storyModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;"></div>
 
-<div id="commentModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeComments()">
-  <div style="background:#181818;border:1px solid #333;border-radius:14px;width:min(450px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:14px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
-      <span>Comments</span>
-      <button onclick="closeComments()" style="color:#fff;background:none;border:none;">✕</button>
+<!-- Comments Modal -->
+<div id="commentsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:750;display:flex;align-items:flex-end;" onclick="closeCommentsModal()">
+  <div style="background:#181818;border-top:1px solid #333;border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-height:70vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
+      <b style="color:#fff;font-size:16px;">💬 Comments</b>
+      <button onclick="closeCommentsModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
     </div>
-    <div id="commentsList" style="padding:14px;overflow-y:auto;flex:1;"></div>
-    <div style="display:flex;padding:10px;border-top:1px solid #333;background:#000;gap:8px;">
-      <input id="commentInput" class="input" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()">
-      <button class="primary-btn" style="width:80px;margin:0;" onclick="submitComment()">Post</button>
+    <div id="commentsList" style="padding:15px;overflow-y:auto;flex:1;"></div>
+    <div style="padding:12px;background:#121212;border-top:1px solid #333;display:flex;gap:10px;">
+      <input id="commentInput" class="input" placeholder="Add a comment..." style="border-radius:20px;">
+      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="postComment()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </div>
 </div>
 
-<div id="toast" style="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
+<!-- COMPLETE ADVANCED JAVASCRIPT LOGIC WITH REVIEWS MODULE -->
+<script>
+let currentUser = JSON.parse(localStorage.getItem('universe_logged_user')) || null;
+let isSignUp = false;
+let activeProfileTab = 'posts';
+let currentFilter = 'none';
+let previewMediaData = null;
+let currentChatUser = null;
+let localStream = null;
+let videoCallStream = null;
+let currentActiveProduct = null;
+let multipleProductFiles = [];
+let activeCommentPostId = null;
 
-<!-- Firebase Modular Script -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+let users = JSON.parse(localStorage.getItem('universe_users')) || [
+  { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '123', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
+  { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '123', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
+];
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
-    authDomain: "universe-pro-f36a8.firebaseapp.com",
-    databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
-    projectId: "universe-pro-f36a8",
-    storageBucket: "universe-pro-f36a8.firebasestorage.app",
-    messagingSenderId: "1051673611050",
-    appId: "1:1051673611050:web:24d6db4c72628131d42c53"
-  };
+let posts = JSON.parse(localStorage.getItem('universe_posts')) || [
+  { id: 1, username: 'aditya_thakur', type: 'image', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe', caption: 'Universe Pro VIP Platform 👑🚀', likes: ['vansh_singh'], comments: [{user: 'vansh_singh', text: 'Amazing platform Adit bhai! 🔥'}] }
+];
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getDatabase(app);
+let products = JSON.parse(localStorage.getItem('universe_products')) || [
+  { id: 1, title: 'VIP Gaming Headset Pro', price: 1499, desc: 'High quality RGB surround sound gaming headphones with deep bass.', images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e'], reviews: [{user: 'vansh_singh', rating: 5, text: 'Awesome headset! Super clear sound.'}] }
+];
 
-  let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {}, dbSaved = {}, dbChats = {};
-  let signup = false, previewUrl = '', previewType = '';
-  let activeCommentPostId = null, profileTab = 'posts', prodImagesArray = [], selectedBuyProduct = null;
-  let isAdminAuthenticated = false, activeAdminTab = 'orders';
-  let viewingUserId = null, activeChatUserId = null;
-  let currentFilterCss = 'none', liveStream = null, isBroadcaster = false, activeLiveKey = null, currentFilter = 'none', liveCanvasAnim = null;
-  let vcStream = null;
+let orders = JSON.parse(localStorage.getItem('universe_orders')) || [];
+let messages = JSON.parse(localStorage.getItem('universe_messages')) || {};
 
-  // ⚡ INSTANT LOADER BYPASS
+window.onload = function() {
   setTimeout(() => {
-    let loader = document.getElementById('appLoader');
-    if(loader && loader.style.display !== 'none') {
-      loader.style.display = 'none';
-      if(!currentUid) {
-        let authSec = document.getElementById('auth');
-        if(authSec) authSec.style.display = 'flex';
-      }
-    }
-  }, 1000);
-
-  function toast(msg){
-    let x = document.getElementById('toast');
-    if(!x) return;
-    x.textContent = msg;
-    x.style.display = 'block';
-    clearTimeout(window.tt);
-    window.tt = setTimeout(()=>x.style.display='none', 2000);
-  }
-
-  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])) }
-
-  function renderAvatar(u, isSmall = false) {
-    let name = u && (u.username || u.name) ? (u.username || u.name) : 'user';
-    let initial = name.charAt(0).toUpperCase();
-    let cls = isSmall ? 'avatar-sm' : 'avatar-img';
-    if (u && u.pic) {
-      return `<div class="${cls}" style="background-image:url('${u.pic}')"></div>`;
-    } else {
-      return `<div class="${cls}">${initial}</div>`;
-    }
-  }
-
-  onAuthStateChanged(auth, user => {
-    let loader = document.getElementById('appLoader');
-    if(loader) loader.style.display = 'none';
-
-    if (user) {
-      currentUid = user.uid;
-      viewingUserId = currentUid;
-      
-      // 🔒 SINGLE DEVICE SESSION ENFORCEMENT
-      let myDeviceSession = Date.now().toString() + '_' + Math.random().toString(36).substring(2, 7);
-      localStorage.setItem('current_session_id', myDeviceSession);
-
-      update(ref(db, 'users/' + currentUid), { currentSessionId: myDeviceSession });
-
-      onValue(ref(db, `users/${currentUid}/currentSessionId`), snapshot => {
-        let activeSessionInDb = snapshot.val();
-        let localSession = localStorage.getItem('current_session_id');
-        if (activeSessionInDb && localSession && activeSessionInDb !== localSession) {
-          alert("⚠️ Aapki ID kisi dusre device par login ho gayi hai! Aap yahan se logout ho rahe hain.");
-          signOut(auth);
-        }
-      });
-
+    document.getElementById('appLoader').style.display = 'none';
+    if (currentUser) {
       document.getElementById('auth').style.display = 'none';
       document.getElementById('app').style.display = 'block';
-      
-      const userRef = ref(db, 'users/' + currentUid);
-      onValue(userRef, snapshot => {
-        if(!snapshot.exists()) {
-          set(userRef, { id: currentUid, name: user.email.split('@')[0], username: user.email.split('@')[0], email: user.email, pic: '', following: [], fakeFollowersCount: 0 });
-        }
-      }, { onlyOnce: true });
-
-      listenToDatabase();
+      initApp();
     } else {
-      currentUid = null;
-      localStorage.removeItem('current_session_id');
       document.getElementById('auth').style.display = 'flex';
-      document.getElementById('app').style.display = 'none';
     }
-  });
-
-  function listenToDatabase() {
-    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); if(isAdminAuthenticated) renderAdminUsersList(); });
-    onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
-    onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
-    onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); if(isAdminAuthenticated) renderAdminProductsEdit(); });
-    onValue(ref(db, 'orders'), snapshot => { dbOrders = snapshot.val() || {}; if(isAdminAuthenticated) renderAdminOrders(); });
-    onValue(ref(db, 'lives'), snapshot => { dbLives = snapshot.val() || {}; renderLiveBar(); });
-    onValue(ref(db, 'saved'), snapshot => { dbSaved = snapshot.val() || {}; renderProfile(); });
-    onValue(ref(db, 'direct_chats'), snapshot => { dbChats = snapshot.val() || {}; if(activeChatUserId) renderDirectMessages(); });
-  }
-
-  function renderAll() {
-    renderStories();
-    renderFeed();
-    renderReels();
-    renderProfile();
-    renderShop();
-    renderLiveBar();
-  }
-
-  /* ⚙️ Profile Settings Functions */
-  window.openProfileSettingsModal = () => document.getElementById('profileSettingsModal').classList.remove('hidden');
-  window.closeProfileSettingsModal = () => document.getElementById('profileSettingsModal').classList.add('hidden');
-
-  /* Delete Current User's Own Account (Completely from Auth & Database) */
-  window.deleteMyOwnAccount = async () => {
-    if (confirm("⚠️ Kya aap sach me apna account permanently delete karna chahte hain? Yeh vaapas nahi aayega!")) {
-      try {
-        let user = auth.currentUser;
-        if (user) {
-          await remove(ref(db, `users/${currentUid}`));
-          await deleteUser(user);
-          toast("Account Permanently Deleted!");
-          closeProfileSettingsModal();
-        }
-      } catch (err) {
-        alert("Account delete karne ke liye kripya dobara Login karke turant Delete dabayein (Security requirement). Error: " + err.message);
-        signOut(auth);
-      }
-    }
-  };
-
-  /* 🎥 Video Call Functionality */
-  window.startVideoCall = async () => {
-    try {
-      vcStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      let vEl = document.getElementById('vcLocalVideo');
-      if(vEl) vEl.srcObject = vcStream;
-      document.getElementById('videoCallModal').classList.remove('hidden');
-      toast('🎥 Video Call Connected!');
-    } catch(e) {
-      toast('Camera/Mic permission required!');
-    }
-  };
-
-  window.closeVideoCall = () => {
-    if(vcStream) {
-      vcStream.getTracks().forEach(t => t.stop());
-      vcStream = null;
-    }
-    document.getElementById('videoCallModal').classList.add('hidden');
-    toast('Call Ended');
-  };
-
-  /* 👑 Admin Dashboard Functions */
-  window.filterAdminContent = (q) => {
-    if(activeAdminTab === 'orders') renderAdminOrders(q);
-    if(activeAdminTab === 'products') renderAdminProductsEdit(q);
-    if(activeAdminTab === 'users') renderAdminUsersList(q);
-  };
-
-  function renderAdminUsersList(query = '') {
-    let box = document.getElementById('adminUsersList');
-    if(!box) return;
-    let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
-    let users = Object.keys(dbUsers)
-      .map(k => ({id: k, ...dbUsers[k]}))
-      .filter(u => (u.username||'').toLowerCase().includes(q) || (u.name||'').toLowerCase().includes(q));
-
-    box.innerHTML = users.map(u => `
-      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          ${renderAvatar(u, true)}
-          <div>
-            <b style="color:#fff;">${esc(u.username||u.name)}</b>
-            <div style="color:#aaa;font-size:11px;">ID: ${u.id}</div>
-          </div>
-        </div>
-        <button class="primary-btn" style="background:#ff3040;padding:6px 10px;font-size:11px;margin:0;width:auto;" onclick="adminDeleteAnyUser('${u.id}')">Delete User</button>
-      </div>
-    `).join('') || '<div style="color:#777;font-size:13px;">No users found.</div>';
-  }
-
-  window.boostUserFollowers = () => {
-    let uname = document.getElementById('boostUsername').value.trim().toLowerCase();
-    let count = parseInt(document.getElementById('boostCount').value.trim());
-
-    if (!uname || isNaN(count) || count <= 0) return toast('Valid Username & Count enter karein!');
-
-    let targetUid = Object.keys(dbUsers).find(k => (dbUsers[k].username || '').toLowerCase() === uname);
-    if (!targetUid) return toast('User nahi mila!');
-
-    let currentFake = dbUsers[targetUid].fakeFollowersCount || 0;
-    let newTotal = currentFake + count;
-
-    update(ref(db, `users/${targetUid}`), { fakeFollowersCount: newTotal });
-    toast(`🚀 Added ${count} followers to @${uname}`);
-    document.getElementById('boostUsername').value = '';
-    document.getElementById('boostCount').value = '';
-  };
-
-  window.adminDeleteAnyUser = (userId) => {
-    if (confirm("⚠️ Warn: Kya aap is user ko database se permanently DELETE karna chahte hain?")) {
-      remove(ref(db, `users/${userId}`));
-      toast("User Deleted by Admin!");
-    }
-  };
-
-  function renderAdminOrders(query = '') {
-    let box = document.getElementById('adminOrdersList');
-    if(!box) return;
-    let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
-    let keys = Object.keys(dbOrders)
-      .filter(k => {
-        let o = dbOrders[k];
-        return (o.productTitle || '').toLowerCase().includes(q) ||
-               (o.buyerName || '').toLowerCase().includes(q) ||
-               (o.buyerPhone || '').toLowerCase().includes(q);
-      })
-      .sort((a,b) => dbOrders[b].time - dbOrders[a].time);
-
-    box.innerHTML = keys.map(k => {
-      let o = dbOrders[k];
-      return `<div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:10px;font-size:13px;">
-        <b style="color:#fff;">${esc(o.productTitle)} (₹${esc(o.productPrice)})</b>
-        <div style="color:#aaa;margin-top:4px;">Buyer: ${esc(o.buyerName)} (${esc(o.buyerPhone)})</div>
-        <div style="color:#aaa;">Address: ${esc(o.buyerAddress)}</div>
-        ${o.buyerLocation !== 'N/A' ? `<div style="margin-top:4px;"><a href="${o.buyerLocation}" target="_blank" style="color:#0095f6;font-size:12px;">📍 Open GPS Map Location</a></div>` : ''}
-        <div style="display:flex;gap:6px;margin-top:8px;">
-          <button class="primary-btn" style="background:#2ecc71;padding:6px;font-size:11px;margin:0;" onclick="updateOrderStatus('${k}', 'Delivered')">✅ Deliver & Send OTP</button>
-          <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteOrder('${k}')">Delete</button>
-        </div>
-      </div>`;
-    }).join('') || '<div style="color:#777;font-size:13px;">No matching orders.</div>';
-  }
-
-  function renderAdminProductsEdit(query = '') {
-    let box = document.getElementById('adminProductsEditList');
-    if(!box) return;
-    let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
-    let prods = Object.keys(dbProducts)
-      .map(k => ({id: k, ...dbProducts[k]}))
-      .filter(p => (p.title || '').toLowerCase().includes(q))
-      .sort((a,b) => b.time - a.time);
-
-    box.innerHTML = prods.map(p => `
-      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">
-        <div style="width:45px;height:45px;background-image:url('${p.image}');background-size:cover;border-radius:6px;"></div>
-        <div style="flex:1;">
-          <b style="color:#fff;">${esc(p.title)}</b>
-          <div style="display:flex;gap:6px;margin-top:4px;">
-            <input id="ep_${p.id}" class="input" value="${esc(p.price)}" style="width:75px;padding:4px;font-size:12px;">
-            <button class="primary-btn" style="padding:4px 8px;font-size:11px;margin:0;" onclick="updateProductPrice('${p.id}')">Save</button>
-          </div>
-        </div>
-        <button class="primary-btn" style="background:#ff3040;padding:6px;font-size:11px;margin:0;" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>
-    `).join('') || '<div style="color:#777;font-size:13px;">No items match search.</div>';
-  }
-
-  window.openAdminAuthModal = () => {
-    if (isAdminAuthenticated) {
-      openAdminMainModal();
-    } else {
-      document.getElementById('adminPassInput').value = '';
-      document.getElementById('adminAuthModal').classList.remove('hidden');
-    }
-  };
-  
-  window.closeAdminAuthModal = () => document.getElementById('adminAuthModal').classList.add('hidden');
-
-  window.verifyAdminPassword = () => {
-    let enteredVal = document.getElementById('adminPassInput').value.trim();
-    if (enteredVal === '9911') {
-      isAdminAuthenticated = true;
-      closeAdminAuthModal();
-      openAdminMainModal();
-      toast('Admin VIP Access Granted!');
-    } else {
-      toast('❌ Incorrect Password');
-      document.getElementById('adminPassInput').value = '';
-    }
-  };
-
-  window.openAdminMainModal = () => { switchAdminSubTab('orders'); document.getElementById('adminMainModal').classList.remove('hidden'); };
-  window.closeAdminMainModal = () => document.getElementById('adminMainModal').classList.add('hidden');
-
-  window.switchAdminSubTab = (tab) => {
-    activeAdminTab = tab;
-    document.getElementById('adminTabOrdersBtn').style.color = tab==='orders'?'#0095f6':'#888';
-    document.getElementById('adminTabOrdersBtn').style.borderColor = tab==='orders'?'#0095f6':'transparent';
-    document.getElementById('adminTabProductsBtn').style.color = tab==='products'?'#0095f6':'#888';
-    document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
-    document.getElementById('adminTabUsersBtn').style.color = tab==='users'?'#0095f6':'#888';
-    document.getElementById('adminTabUsersBtn').style.borderColor = tab==='users'?'#0095f6':'transparent';
-
-    document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
-    document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
-    document.getElementById('adminSubPanelUsers').classList.toggle('hidden', tab !== 'users');
-
-    let q = document.getElementById('adminSearchInput')?.value || '';
-    if(tab==='orders') renderAdminOrders(q);
-    if(tab==='products') renderAdminProductsEdit(q);
-    if(tab==='users') renderAdminUsersList(q);
-  };
-
-  window.renderShop = () => {
-    let box = document.getElementById('shopGrid');
-    if(!box) return;
-    let query = (document.getElementById('shopSearchInput')?.value || '').toLowerCase().trim();
-    let prods = Object.keys(dbProducts)
-      .map(k => ({id: k, ...dbProducts[k]}))
-      .filter(p => (p.title || '').toLowerCase().includes(query) || (p.desc || '').toLowerCase().includes(query))
-      .sort((a,b) => b.time - a.time);
-
-    box.innerHTML = prods.map(p => {
-      let mainImg = (p.images && p.images.length > 0) ? p.images[0] : p.image;
-      return `
-        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
-          <div style="width:100%;aspect-ratio:1;background-image:url('${mainImg}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
-          <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
-            <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
-            <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
-            <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
-          </div>
-        </div>
-      `;
-    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items match search.</div>';
-  };
-
-  window.previewMultipleProductImgs = (e) => {
-    let files = Array.from(e.target.files);
-    if(files.length === 0) return;
-    prodImagesArray = [];
-    let grid = document.getElementById('prodPreviewGrid');
-    grid.innerHTML = '';
-    files.forEach(file => {
-      let r = new FileReader();
-      r.onload = () => {
-        prodImagesArray.push(r.result);
-        grid.innerHTML += `<div style="width:60px;height:60px;border-radius:6px;background-image:url('${r.result}');background-size:cover;flex-shrink:0;"></div>`;
-      };
-      r.readAsDataURL(file);
-    });
-  };
-
-  window.publishProduct = () => {
-    let title = document.getElementById('prodTitle').value.trim();
-    let price = document.getElementById('prodPrice').value.trim();
-    let desc = document.getElementById('prodDesc').value.trim();
-    if(!title || !price || prodImagesArray.length === 0) return toast('Fill all fields & select photos');
-    
-    push(ref(db, 'products'), {
-      sellerId: currentUid,
-      title: title,
-      price: price,
-      desc: desc,
-      image: prodImagesArray[0],
-      images: prodImagesArray,
-      time: Date.now()
-    });
-
-    document.getElementById('prodTitle').value = '';
-    document.getElementById('prodPrice').value = '';
-    document.getElementById('prodDesc').value = '';
-    document.getElementById('prodPreviewGrid').innerHTML = '';
-    prodImagesArray = [];
-    toast('Product Published!');
-  };
-
-  window.openBuyModal = (id) => {
-    selectedBuyProduct = dbProducts[id];
-    if(!selectedBuyProduct) return;
-    let myObj = dbUsers[currentUid] || {};
-    let allImgs = selectedBuyProduct.images && selectedBuyProduct.images.length > 0 ? selectedBuyProduct.images : [selectedBuyProduct.image];
-
-    document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title;
-    document.getElementById('buyProdPrice').textContent = `₹${selectedBuyProduct.price}`;
-    document.getElementById('buyProdDesc').textContent = selectedBuyProduct.desc || 'No description.';
-    
-    let mainView = document.getElementById('buyProdImg');
-    mainView.style.backgroundImage = `url('${allImgs[0]}')`;
-
-    let thumbsBox = document.getElementById('buyProdThumbs');
-    thumbsBox.innerHTML = allImgs.map((img, idx) => `
-      <div class="thumb-img-box ${idx===0?'active':''}" style="background-image:url('${img}');" onclick="switchProductMainImg('${img}', this)"></div>
-    `).join('');
-
-    document.getElementById('orderName').value = myObj.name || '';
-    document.getElementById('orderPhone').value = '';
-    document.getElementById('orderLocLink').value = '';
-    document.getElementById('orderAddress').value = '';
-    document.getElementById('buyProductModal').classList.remove('hidden');
-  };
-
-  window.switchProductMainImg = (imgUrl, el) => {
-    document.getElementById('buyProdImg').style.backgroundImage = `url('${imgUrl}')`;
-    document.querySelectorAll('.thumb-img-box').forEach(b => b.classList.remove('active'));
-    if(el) el.classList.add('active');
-  };
-
-  window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
-
-  window.openChatModal = () => {
-    let box = document.getElementById('chatList');
-    let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
-    box.innerHTML = users.map(u => `
-      <div style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #222;cursor:pointer;" onclick="openPrivateChat('${u.id}')">
-        ${renderAvatar(u, true)}
-        <div>
-          <b style="color:#fff;font-size:14px;">${esc(u.username || u.name)}</b>
-          <div style="color:#888;font-size:12px;">Tap to open chat room & video call</div>
-        </div>
-      </div>
-    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No other users found.</div>';
-    
-    document.getElementById('privateChatRoom').classList.add('hidden');
-    document.getElementById('chatModal').classList.remove('hidden');
-  };
-
-  window.closeChatModal = () => {
-    document.getElementById('chatModal').classList.add('hidden');
-    activeChatUserId = null;
-  };
-
-  window.openPrivateChat = (targetUserId) => {
-    activeChatUserId = targetUserId;
-    let targetUser = dbUsers[targetUserId] || { username: 'User' };
-    
-    document.getElementById('chatTargetName').textContent = targetUser.username || targetUser.name || 'User';
-    let avBox = document.getElementById('chatTargetAvatar');
-    avBox.innerHTML = renderAvatar(targetUser, true);
-
-    document.getElementById('privateChatRoom').classList.remove('hidden');
-    document.getElementById('chatModal').classList.remove('hidden');
-    renderDirectMessages();
-  };
-
-  window.backToChatList = () => {
-    activeChatUserId = null;
-    document.getElementById('privateChatRoom').classList.add('hidden');
-  };
-
-  function getChatRoomKey(id1, id2) {
-    return id1 < id2 ? `${id1}_${id2}` : `${id2}_${id1}`;
-  }
-
-  function renderDirectMessages() {
-    if (!activeChatUserId || !currentUid) return;
-    let roomKey = getChatRoomKey(currentUid, activeChatUserId);
-    let msgsObj = dbChats[roomKey] || {};
-    let msgList = Object.keys(msgsObj).map(k => msgsObj[k]).sort((a,b) => a.time - b.time);
-    
-    let box = document.getElementById('chatMessagesBox');
-    box.innerHTML = msgList.map(m => {
-      let isMe = m.senderId === currentUid;
-      return `
-        <div class="chat-msg-row ${isMe ? 'sent' : 'received'}">
-          <div class="chat-bubble">${esc(m.text)}</div>
-        </div>
-      `;
-    }).join('') || '<div style="text-align:center;color:#666;margin-top:40px;font-size:13px;">No messages yet. Say hi! 👋</div>';
-
-    box.scrollTop = box.scrollHeight;
-  }
-
-  window.sendDirectMessage = () => {
-    let inp = document.getElementById('directMessageInput');
-    let text = inp.value.trim();
-    if (!text || !activeChatUserId || !currentUid) return;
-
-    let roomKey = getChatRoomKey(currentUid, activeChatUserId);
-    push(ref(db, `direct_chats/${roomKey}`), {
-      senderId: currentUid,
-      receiverId: activeChatUserId,
-      text: text,
-      time: Date.now()
-    });
-
-    inp.value = '';
-  };
-
-  function renderLiveBar() {
-    let bar = document.getElementById('liveStreamsBar');
-    if(!bar) return;
-    let liveKeys = Object.keys(dbLives);
-    if(liveKeys.length === 0) { bar.style.display = 'none'; return; }
-    bar.style.display = 'flex';
-    bar.innerHTML = liveKeys.map(k => {
-      let l = dbLives[k];
-      let u = dbUsers[l.hostId] || {};
-      return `<div class="live-card-sm" onclick="watchLiveStream('${k}')" style="min-width:110px;height:150px;border-radius:14px;background:#181818;position:relative;overflow:hidden;border:1px solid #333;cursor:pointer;">
-        ${u.pic ? `<img src="${u.pic}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="padding:20px;text-align:center;font-weight:bold;color:#fff;">${(u.username||'Live').charAt(0).toUpperCase()}</div>`}
-        <div style="position:absolute;top:8px;left:8px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:4px;">🔴 LIVE</div>
-        <div style="position:absolute;bottom:8px;left:8px;right:8px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 4px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.username || 'User')}</div>
-      </div>`;
-    }).join('');
-  }
-
-  window.startBroadcastingLive = async () => {
-    try {
-      liveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      let rVid = document.getElementById('liveRawVideo');
-      rVid.srcObject = liveStream;
-      document.getElementById('liveCanvas').style.display = 'block';
-      document.getElementById('liveRemoteVideo').style.display = 'none';
-      document.getElementById('liveFilterBar').style.display = 'flex';
-      let myObj = dbUsers[currentUid] || {};
-      document.getElementById('liveHostName').textContent = (myObj.username || myObj.name || 'Your Stream');
-      document.getElementById('liveModal').classList.remove('hidden');
-      isBroadcaster = true;
-      activeLiveKey = currentUid;
-      set(ref(db, `lives/${activeLiveKey}`), { hostId: currentUid, time: Date.now() });
-      startCanvasFilterLoop();
-      toast('🔴 You are now Live!');
-    } catch(e) {
-      toast('Camera/Mic permission required!');
-    }
-  };
-
-  function startCanvasFilterLoop() {
-    let video = document.getElementById('liveRawVideo');
-    let canvas = document.getElementById('liveCanvas');
-    if(!canvas || !video) return;
-    let ctx = canvas.getContext('2d');
-    function draw() {
-      if (!isBroadcaster) return;
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
-      ctx.filter = currentFilter === 'fair' ? 'brightness(1.25) contrast(1.05)' : 'none';
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      liveCanvasAnim = requestAnimationFrame(draw);
-    }
-    draw();
-  }
-
-  window.applyBeautyFilter = (f, btn) => {
-    currentFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.style.borderColor='rgba(255,255,255,0.2)');
-    if(btn) btn.style.borderColor='#0095f6';
-    toast(`Filter: ${f.toUpperCase()}`);
-  };
-
-  window.watchLiveStream = (key) => {
-    let l = dbLives[key];
-    if(!l) return;
-    let u = dbUsers[l.hostId] || {};
-    document.getElementById('liveCanvas').style.display = 'none';
-    document.getElementById('liveRemoteVideo').style.display = 'block';
-    document.getElementById('liveFilterBar').style.display = 'none';
-    document.getElementById('liveHostName').textContent = u.username || 'Live';
-    document.getElementById('liveModal').classList.remove('hidden');
-    isBroadcaster = false;
-  };
-
-  window.stopLiveStream = () => {
-    if (isBroadcaster && liveStream) {
-      liveStream.getTracks().forEach(t => t.stop());
-      if(liveCanvasAnim) cancelAnimationFrame(liveCanvasAnim);
-      if(activeLiveKey) remove(ref(db, `lives/${activeLiveKey}`));
-    }
-    document.getElementById('liveModal').classList.add('hidden');
-    isBroadcaster = false;
-  };
-
-  document.getElementById('switchBtn').onclick = () => {
-    signup = !signup;
-    document.getElementById('fullNameGroup').classList.toggle('hidden', !signup);
-    document.getElementById('authBtn').textContent = signup ? 'Sign Up' : 'Log In';
-    document.getElementById('switchText').textContent = signup ? 'Already have an account?' : "Don't have an account?";
-    document.getElementById('switchBtn').textContent = signup ? 'Log in' : 'Sign up';
-  };
-
-  document.getElementById('authForm').onsubmit = async (e) => {
-    e.preventDefault();
-    let email = document.getElementById('email').value.trim();
-    let pass = document.getElementById('password').value;
-    let username = document.getElementById('username').value.trim().toLowerCase();
-    let name = document.getElementById('fullName').value.trim() || username;
-    try {
-      if (signup) {
-        let res = await createUserWithEmailAndPassword(auth, email, pass);
-        await set(ref(db, 'users/' + res.user.uid), { id: res.user.uid, name, username, email, pic: '', following: [], fakeFollowersCount: 0 });
-        toast('Account Created!');
-      } else {
-        await signInWithEmailAndPassword(auth, email, pass);
-        toast('Logged In!');
-      }
-    } catch (err) {
-      toast(err.message.replace('Firebase: ', ''));
-    }
-  };
-
-  window.logout = () => signOut(auth);
-
-  window.updateProductPrice = (id) => {
-    let val = document.getElementById(`ep_${id}`).value.trim();
-    if(val) { update(ref(db, `products/${id}`), { price: val }); toast('Price updated!'); }
-  };
-  window.deleteProduct = (id) => { if(confirm('Delete product?')) { remove(ref(db, `products/${id}`)); toast('Deleted'); } };
-
-  window.openMediaModal = (data, type) => {
-    let body = document.getElementById('mediaModalBody');
-    body.innerHTML = type === 'video' ? `<video src="${data}" controls autoplay style="max-width:100%;max-height:100%;"></video>` : `<img src="${data}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
-    document.getElementById('mediaModal').classList.remove('hidden');
-  };
-  window.closeMediaModal = () => document.getElementById('mediaModal').classList.add('hidden');
-
-  window.openUserProfile = (userId) => {
-    viewingUserId = userId;
-    showTab('profile');
-  };
-
-  window.openMyProfile = () => {
-    viewingUserId = currentUid;
-    showTab('profile');
-  };
-
-  window.toggleFollowUser = (targetId) => {
-    let myObj = dbUsers[currentUid] || {};
-    let myFollowing = myObj.following || [];
-    let idx = myFollowing.indexOf(targetId);
-    if (idx >= 0) {
-      myFollowing.splice(idx, 1);
-      toast('Unfollowed');
-    } else {
-      myFollowing.push(targetId);
-      toast('Following!');
-    }
-    set(ref(db, `users/${currentUid}/following`), myFollowing);
-  };
-
-  window.showUsersListModal = (type) => {
-    let title = type === 'followers' ? 'Followers' : 'Following';
-    document.getElementById('usersListTitle').textContent = title;
-    let listContent = document.getElementById('usersListContent');
-    let u = dbUsers[viewingUserId] || {};
-    let targetUserIds = [];
-    if (type === 'following') {
-      targetUserIds = u.following || [];
-    } else {
-      targetUserIds = Object.keys(dbUsers).filter(id => (dbUsers[id].following || []).includes(viewingUserId));
-    }
-
-    listContent.innerHTML = targetUserIds.map(id => {
-      let usr = dbUsers[id] || {};
-      return `
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #222;cursor:pointer;" onclick="closeUsersListModal(); openUserProfile('${id}');">
-          ${renderAvatar(usr, true)}
-          <b style="color:#fff;">${esc(usr.username || usr.name || 'user')}</b>
-        </div>
-      `;
-    }).join('') || `<div style="color:#777;text-align:center;padding:20px;">No ${type} yet.</div>`;
-
-    document.getElementById('usersListModal').classList.remove('hidden');
-  };
-
-  window.closeUsersListModal = () => document.getElementById('usersListModal').classList.add('hidden');
-
-  window.detectUserLocation = () => {
-    if (!navigator.geolocation) {
-      toast("⚠️ GPS Supported Nahi Hai!");
+  }, 600);
+};
+
+function toggleAuthMode() {
+  isSignUp = !isSignUp;
+  document.getElementById('fullNameGroup').classList.toggle('hidden', !isSignUp);
+  document.getElementById('authBtn').innerText = isSignUp ? 'Sign Up' : 'Log In';
+  document.getElementById('switchText').innerText = isSignUp ? 'Already have an account?' : "Don't have an account?";
+  document.getElementById('switchBtn').innerText = isSignUp ? 'Log In' : 'Sign up';
+}
+
+document.getElementById('authForm').onsubmit = function(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const username = document.getElementById('username').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+  const fullName = document.getElementById('fullName').value.trim();
+
+  if (isSignUp) {
+    if (users.some(u => u.username === username)) {
+      alert('Username already exists!');
       return;
     }
-    toast("📡 Fetching GPS Location...");
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        let lat = pos.coords.latitude;
-        let lng = pos.coords.longitude;
-        let mapLink = `https://maps.google.com/?q=${lat},${lng}`;
-        document.getElementById('orderLocLink').value = mapLink;
-        toast("✅ GPS Location Attached!");
-      },
-      () => { toast("❌ GPS Failed"); },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  };
-
-  window.placeOrderNow = () => {
-    if (!selectedBuyProduct) return;
-    let name = document.getElementById('orderName').value.trim();
-    let phone = document.getElementById('orderPhone').value.trim();
-    let locLink = document.getElementById('orderLocLink').value.trim();
-    let address = document.getElementById('orderAddress').value.trim();
-
-    if (!name || !phone) return toast("Name & Phone required!");
-
-    push(ref(db, 'orders'), {
-      buyerId: currentUid, buyerName: name, buyerPhone: phone,
-      buyerLocation: locLink || 'N/A', buyerAddress: address || 'N/A',
-      productId: selectedBuyProduct.id || '', productTitle: selectedBuyProduct.title,
-      productPrice: selectedBuyProduct.price, productImage: selectedBuyProduct.image,
-      status: 'Pending', time: Date.now()
-    });
-
-    closeBuyModal();
-    toast("🎉 Order Placed Successfully!");
-    toast("🎉 please resaved a calle !");
-  };
-
-  window.updateOrderStatus = (id, st) => {
-    if(st === 'Delivered') {
-      let otp = Math.floor(1000 + Math.random()*9000);
-      let o = dbOrders[id] || {};
-      let uOtp = prompt(`OTP Verification [ Generated: ${otp} ]\nEnter OTP to confirm delivery:`);
-      
-      if(uOtp && (uOtp.trim() === String(otp) || uOtp.trim() === '9911')) {
-        update(ref(db, `orders/${id}`), { status: 'Delivered', otp: otp });
-        if(o.buyerPhone) {
-          let messageText = encodeURIComponent(`👑 Universe Pro Alert: Your order for "${o.productTitle}" has been delivered! Your Delivery OTP verification code is: *${otp}*. Thank you! 🚀`);
-          window.open(`https://api.whatsapp.com/send?phone=${o.buyerPhone}&text=${messageText}`, '_blank');
-        }
-        toast('✅ Delivered & WhatsApp OTP sent!');
-      } else toast('❌ Incorrect OTP');
+    const newUser = { username, name: fullName || username, email, password, avatar: '', followers: [], following: [], saved: [] };
+    users.push(newUser);
+    localStorage.setItem('universe_users', JSON.stringify(users));
+    currentUser = newUser;
+  } else {
+    const found = users.find(u => u.email === email && u.password === password);
+    if (!found) {
+      alert('Invalid email or password!');
+      return;
     }
-  };
-
-  window.deleteOrder = (id) => { if(confirm('Delete order?')) remove(ref(db, `orders/${id}`)); };
-
-  window.toggleAudioPlay = (vEl) => {
-    if (vEl.paused) {
-      vEl.play();
-      vEl.muted = false;
-    } else {
-      vEl.muted = !vEl.muted;
-      if (vEl.muted) toast('🔇 Muted'); else toast('🔊 Sound On');
-    }
-  };
-
-  function renderFeed() {
-    let f = document.getElementById('feed');
-    if(!f) return;
-    let posts = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).sort((a,b) => b.time - a.time);
-    let mySavedKeys = dbSaved[currentUid] ? Object.values(dbSaved[currentUid]) : [];
-
-    f.innerHTML = posts.map(post => {
-      let u = dbUsers[post.userId] || { username: 'user', name: 'User', pic: '' };
-      let liked = (post.likes || []).includes(currentUid);
-      let saved = mySavedKeys.includes(post.id);
-
-      return `<article class="post-card">
-        <div class="post-header">
-          <div class="user-info-row" onclick="openUserProfile('${post.userId}')">
-            ${renderAvatar(u, true)}
-            <b style="color:#fff;">${esc(u.username || u.name || 'user')}</b>
-          </div>
-        </div>
-        <div class="post-media-box">
-          ${post.type === 'video' ? `<video src="${post.data}" controls style="filter:${post.filter||'none'};width:100%;max-height:600px;" onclick="toggleAudioPlay(this)"></video>` : `<img src="${post.data}" style="filter:${post.filter||'none'}" onclick="openMediaModal('${post.data}', '${post.type}')">`}
-        </div>
-        <div class="post-actions-bar">
-          <div class="left-actions">
-            <button class="action-icon-btn ${liked?'liked':''}" onclick="likePost('${post.id}')">${liked?'♥':'♡'}</button>
-            <button class="action-icon-btn" onclick="openComments('${post.id}')"><i class="fa-regular fa-comment"></i></button>
-            <button class="action-icon-btn ${saved?'saved':''}" onclick="toggleSavePost('${post.id}')"><i class="fa-solid fa-bookmark"></i></button>
-            ${post.userId === currentUid ? `<button class="action-icon-btn" onclick="deletePost('${post.id}')" style="font-size:18px;"><i class="fa-solid fa-trash"></i></button>` : ''}
-          </div>
-        </div>
-        <div class="post-meta-details">
-          <div style="font-weight:700;margin-bottom:6px;color:#fff;">${(post.likes||[]).length} likes</div>
-          <div style="color:#fff;"><b style="color:#fff;" onclick="openUserProfile('${post.userId}')">${esc(u.username || u.name || 'user')}</b> ${esc(post.caption||'')}</div>
-          <div style="color:var(--text-muted);font-size:13px;margin-top:6px;cursor:pointer;" onclick="openComments('${post.id}')">View comments</div>
-        </div>
-      </article>`;
-    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available yet. Create one!</div>';
+    currentUser = found;
   }
+  localStorage.setItem('universe_logged_user', JSON.stringify(currentUser));
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+};
 
-  window.likePost = (id) => {
-    let p = dbPosts[id];
-    if(!p) return;
-    let l = p.likes || [];
-    let idx = l.indexOf(currentUid);
-    if(idx >= 0) l.splice(idx, 1); else l.push(currentUid);
-    set(ref(db, `posts/${id}/likes`), l);
-  };
+function logout() {
+  localStorage.removeItem('universe_logged_user');
+  location.reload();
+}
 
-  window.toggleSavePost = (postId) => {
-    let userSavedRef = ref(db, `saved/${currentUid}`);
-    let mySaved = dbSaved[currentUid] || {};
-    let existingKey = Object.keys(mySaved).find(k => mySaved[k] === postId);
+function initApp() {
+  renderFeed();
+  renderStories();
+  renderShop();
+  renderReels();
+  updateProfileUI();
+}
 
-    if (existingKey) {
-      remove(ref(db, `saved/${currentUid}/${existingKey}`));
-      toast('Post Unsaved');
-    } else {
-      push(userSavedRef, postId);
-      toast('Post Saved! 🔖');
-    }
-  };
+function showTab(tabId) {
+  document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  const navBtn = document.getElementById('nav-' + tabId);
+  if (navBtn) navBtn.classList.add('active');
+  if (tabId === 'shop') renderShop();
+  if (tabId === 'reels') renderReels();
+}
 
-  window.deletePost = (id) => { if(confirm('Delete post?')) remove(ref(db, `posts/${id}`)); };
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  feed.innerHTML = '';
+  posts.forEach(post => {
+    const isLiked = post.likes.includes(currentUser.username);
+    const isSaved = currentUser.saved && currentUser.saved.includes(post.id);
+    const userObj = users.find(u => u.username === post.username) || { name: post.username };
 
-  window.openUpload = () => window.showTab('upload');
-  document.getElementById('fileInput').onchange = e => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => {
-      previewUrl = r.result;
-      previewType = f.type.startsWith('video') ? 'video' : 'image';
-      renderUploadPreview();
-    };
-    r.readAsDataURL(f);
-  };
-
-  window.setMediaFilter = (filterVal) => {
-    currentFilterCss = filterVal;
-    renderUploadPreview();
-    toast('Filter applied!');
-  };
-
-  function renderUploadPreview() {
-    let prev = document.getElementById('preview');
-    if (!previewUrl) return;
-    if (previewType === 'video') {
-      prev.innerHTML = `<video src="${previewUrl}" controls style="filter:${currentFilterCss};width:100%;height:100%;object-fit:contain;"></video>`;
-    } else {
-      prev.innerHTML = `<img src="${previewUrl}" style="filter:${currentFilterCss};width:100%;height:100%;object-fit:contain;">`;
-    }
-  }
-
-  window.publish = () => {
-    if(!previewUrl) return toast('Select a file');
-    push(ref(db, 'posts'), {
-      userId: currentUid,
-      data: previewUrl,
-      type: previewType,
-      caption: document.getElementById('caption').value,
-      filter: currentFilterCss,
-      time: Date.now(),
-      likes: []
-    });
-    document.getElementById('caption').value = '';
-    document.getElementById('preview').innerHTML = 'Select photo or video';
-    previewUrl = '';
-    currentFilterCss = 'none';
-    window.showTab('home');
-    toast('Published!');
-  };
-
-  function renderStories() {
-    let box = document.getElementById('stories');
-    if(!box) return;
-    let h = `<div class="story-item" onclick="document.getElementById('storyFileInput').click()">
-      <div class="story-ring add-story"><div class="avatar-img" style="font-size:22px;">+</div></div>
-      <div style="color:#fff;">Your story</div>
-    </div>`;
-    Object.keys(dbStories).forEach(k => {
-      let s = dbStories[k];
-      let u = dbUsers[s.userId] || { username: 'user', name: 'User' };
-      h += `<div class="story-item" onclick="viewStory('${k}')">
-        <div class="story-ring">${renderAvatar(u, false)}</div>
-        <div style="color:#fff;">${esc(u.username || u.name || 'user')}</div>
-      </div>`;
-    });
-    box.innerHTML = h;
-  }
-
-  window.handleStoryUpload = (e) => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => { push(ref(db, 'stories'), { userId: currentUid, data: r.result, time: Date.now() }); toast('Story uploaded'); };
-    r.readAsDataURL(f);
-  };
-  window.viewStory = (id) => {
-    let s = dbStories[id];
-    if(!s) return;
-    let u = dbUsers[s.userId] || {};
-    document.getElementById('storyUser').textContent = u.username || 'Story';
-    document.getElementById('storyBody').innerHTML = `<img src="${s.data}" style="width:100%;max-height:60vh;object-fit:contain;">`;
-    document.getElementById('storyModal').classList.remove('hidden');
-  };
-  window.closeStory = () => document.getElementById('storyModal').classList.add('hidden');
-
-  function renderReels() {
-    let box = document.getElementById('reelsList');
-    if(!box) return;
-    let reels = Object.keys(dbPosts).filter(k => dbPosts[k].type === 'video').map(k => ({id: k, ...dbPosts[k]}));
-    box.innerHTML = reels.map(r => {
-      let u = dbUsers[r.userId] || {};
-      return `<div style="height:calc(100vh - 126px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
-        <video src="${r.data}" loop playsinline style="width:100%;height:100%;object-fit:contain;filter:${r.filter||'none'}" onclick="toggleAudioPlay(this)"></video>
-        <div style="position:absolute;right:16px;bottom:90px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:10;">
-          <button class="action-icon-btn" onclick="likePost('${r.id}')" style="font-size:28px;">♥</button>
-          <button class="action-icon-btn" onclick="openComments('${r.id}')" style="font-size:24px;"><i class="fa-regular fa-comment"></i></button>
+    const div = document.createElement('div');
+    div.className = 'post-card';
+    div.innerHTML = `
+      <div class="post-header">
+        <div class="user-info-row" onclick="viewUserProfile('${post.username}')">
+          <div class="avatar-sm" style="background-image:url('${userObj.avatar || ''}')">${userObj.avatar ? '' : post.username[0].toUpperCase()}</div>
+          <b>${userObj.name}</b>
         </div>
-        <div style="position:absolute;left:16px;bottom:24px;text-shadow:0 2px 5px #000;color:#fff;cursor:pointer;z-index:10;" onclick="openUserProfile('${r.userId}')">
-          <b style="color:#fff;font-size:15px;">@${esc(u.username||'user')}</b>
-          <p style="margin-top:4px;font-size:13px;color:#fff;">${esc(r.caption||'')}</p>
-        </div>
-      </div>`;
-    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No reels available</div>';
-  }
-
-  window.openComments = (id) => { activeCommentPostId = id; renderCommentsList(); document.getElementById('commentModal').classList.remove('hidden'); };
-  window.closeComments = () => { document.getElementById('commentModal').classList.add('hidden'); activeCommentPostId = null; };
-  function renderCommentsList() {
-    let p = dbPosts[activeCommentPostId];
-    if(!p) return;
-    let c = p.comments || {};
-    document.getElementById('commentsList').innerHTML = Object.keys(c).map(k => {
-      let cm = c[k];
-      let u = dbUsers[cm.userId] || {};
-      return `<div style="display:flex;gap:10px;margin-bottom:12px;font-size:13px;color:#fff;" onclick="openUserProfile('${cm.userId}')">${renderAvatar(u, true)}<div><b style="color:#fff;">${esc(u.username)}:</b> ${esc(cm.text)}</div></div>`;
-    }).join('') || '<p style="color:#777;text-align:center;">No comments yet.</p>';
-  }
-  window.submitComment = () => {
-    let inp = document.getElementById('commentInput');
-    let t = inp.value.trim();
-    if(!t || !activeCommentPostId) return;
-    push(ref(db, `posts/${activeCommentPostId}/comments`), { userId: currentUid, text: t, time: Date.now() });
-    inp.value = '';
-    renderCommentsList();
-  };
-
-  window.searchUsers = (q) => {
-    q = q.toLowerCase().trim();
-    let box = document.getElementById('searchResults');
-    if(!q) { box.innerHTML = ''; return; }
-    let matches = Object.keys(dbUsers).filter(id => id !== currentUid && (dbUsers[id].username||'').includes(q)).map(id => dbUsers[id]);
-    box.innerHTML = matches.map(u => `
-      <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #1a1a1a;cursor:pointer;" onclick="openUserProfile('${u.id}')">
-        ${renderAvatar(u, true)}
-        <div><b style="color:#fff;">${esc(u.username)}</b></div>
+        <button style="color:#aaa;" onclick="openPostOptions(${post.id})"><i class="fa-solid fa-ellipsis"></i></button>
       </div>
-    `).join('') || '<div style="padding:15px;color:#777;">No users found</div>';
-  };
-
-  window.showTab = (id) => {
-    document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
-    let b = document.getElementById('nav-' + id);
-    if(b) b.classList.add('active');
-    if(id === 'profile') renderProfile();
-  };
-
-  window.switchProfileTab = (tab) => {
-    profileTab = tab;
-    document.getElementById('btnMyPosts').style.color = tab==='posts'?'#fff':'#a8a8a8';
-    document.getElementById('btnMyPosts').style.borderBottomColor = tab==='posts'?'#fff':'transparent';
-    document.getElementById('btnSavedPosts').style.color = tab==='saved'?'#fff':'#a8a8a8';
-    document.getElementById('btnSavedPosts').style.borderBottomColor = tab==='saved'?'#fff':'transparent';
-    renderProfile();
-  };
-
-  function renderProfile() {
-    let u = dbUsers[viewingUserId] || {};
-    let ab = document.getElementById('myAvatar');
-    ab.innerHTML = '';
-    if(u.pic) { ab.style.backgroundImage = `url('${u.pic}')`; ab.textContent = ''; }
-    else { ab.style.backgroundImage = 'none'; ab.textContent = (u.username||'U').charAt(0).toUpperCase(); }
-    document.getElementById('myName').textContent = u.name || u.username || '';
-    document.getElementById('profileHeaderTitle').textContent = u.username ? `@${u.username}` : 'Profile';
-    
-    let actBox = document.getElementById('profileActionsBox');
-    if (viewingUserId === currentUid) {
-      actBox.style.display = 'flex';
-      actBox.innerHTML = `
-        <button class="primary-btn" style="background:#262626;margin:0;" onclick="openProfileSettingsModal()">⚙️ Account Settings</button>
-      `;
-    } else {
-      let myObj = dbUsers[currentUid] || {};
-      let isFollowing = (myObj.following || []).includes(viewingUserId);
-      actBox.style.display = 'flex';
-      actBox.innerHTML = `
-        <button class="primary-btn" style="background:${isFollowing?'#262626':'var(--accent-color)'};margin:0;" onclick="toggleFollowUser('${viewingUserId}')">${isFollowing?'Unfollow':'Follow'}</button>
-        <button class="primary-btn" style="background:#262626;margin:0;" onclick="openPrivateChat('${viewingUserId}')">💬 Chat</button>
-      `;
-    }
-
-    let posts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === viewingUserId);
-    document.getElementById('postCount').textContent = posts.length;
-    
-    let realFollowersCount = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(viewingUserId)).length;
-    let fakeCount = u.fakeFollowersCount || 0;
-    document.getElementById('followerCount').textContent = realFollowersCount + fakeCount;
-
-    document.getElementById('followingCount').textContent = (u.following||[]).length;
-
-    let gridBox = document.getElementById('myGrid');
-    if (profileTab === 'posts') {
-      gridBox.innerHTML = posts.map(k => {
-        let p = dbPosts[k];
-        return `<div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}</div>`;
-      }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No posts</div>';
-    } else {
-      let savedPostIds = dbSaved[viewingUserId] ? Object.values(dbSaved[viewingUserId]) : [];
-      let savedPosts = savedPostIds.map(id => ({ id, ...dbPosts[id] })).filter(p => p.data);
-
-      gridBox.innerHTML = savedPosts.map(p => `
-        <div style="aspect-ratio:1;background:#111;overflow:hidden;cursor:pointer;" onclick="openMediaModal('${p.data}', '${p.type}')">
-          ${p.type==='video'?`<video src="${p.data}"></video>`:`<img src="${p.data}" style="width:100%;height:100%;object-fit:cover;">`}
+      <div class="post-media-box">
+        ${post.type === 'video' ? `<video src="${post.url}" controls autoplay muted loop></video>` : `<img src="${post.url}" alt="Post">`}
+      </div>
+      <div class="post-actions-bar">
+        <div class="left-actions">
+          <button class="action-icon-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+            <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+          </button>
+          <button class="action-icon-btn" onclick="openCommentsModal(${post.id})"><i class="fa-regular fa-comment"></i></button>
+          <button class="action-icon-btn" onclick="sharePost(${post.id})"><i class="fa-regular fa-paper-plane"></i></button>
         </div>
-      `).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No saved posts</div>';
-    }
+        <button class="action-icon-btn ${isSaved ? 'saved' : ''}" onclick="toggleSavePost(${post.id})">
+          <i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-bookmark"></i>
+        </button>
+      </div>
+      <div class="post-meta-details">
+        <b>${post.likes.length} likes</b>
+        <div style="margin-top:4px;"><b>${post.username}</b> ${post.caption}</div>
+        <div style="color:#777;font-size:12px;margin-top:6px;cursor:pointer;" onclick="openCommentsModal(${post.id})">View all ${post.comments.length} comments</div>
+      </div>
+    `;
+    feed.appendChild(div);
+  });
+}
+
+function toggleLike(postId) {
+  const p = posts.find(x => x.id === postId);
+  if (!p) return;
+  const idx = p.likes.indexOf(currentUser.username);
+  if (idx > -1) p.likes.splice(idx, 1);
+  else p.likes.push(currentUser.username);
+  localStorage.setItem('universe_posts', JSON.stringify(posts));
+  renderFeed();
+}
+
+function toggleSavePost(postId) {
+  if (!currentUser.saved) currentUser.saved = [];
+  const idx = currentUser.saved.indexOf(postId);
+  if (idx > -1) currentUser.saved.splice(idx, 1);
+  else currentUser.saved.push(postId);
+  localStorage.setItem('universe_logged_user', JSON.stringify(currentUser));
+  updateUserInStorage();
+  renderFeed();
+}
+
+function updateUserInStorage() {
+  const idx = users.findIndex(u => u.username === currentUser.username);
+  if (idx > -1) {
+    users[idx] = currentUser;
+    localStorage.setItem('universe_users', JSON.stringify(users));
+  }
+}
+
+function sharePost(postId) {
+  if (navigator.share) {
+    navigator.share({ title: 'Universe Post', url: window.location.href }).catch(() => {});
+  } else {
+    alert('Post link copied to clipboard!');
+  }
+}
+
+function openPostOptions(postId) {
+  if (confirm('Delete this post?')) {
+    posts = posts.filter(p => p.id !== postId);
+    localStorage.setItem('universe_posts', JSON.stringify(posts));
+    renderFeed();
+  }
+}
+
+function openCommentsModal(postId) {
+  activeCommentPostId = postId;
+  document.getElementById('commentsModal').classList.remove('hidden');
+  renderCommentsList();
+}
+
+function closeCommentsModal() {
+  document.getElementById('commentsModal').classList.add('hidden');
+  activeCommentPostId = null;
+}
+
+function renderCommentsList() {
+  const list = document.getElementById('commentsList');
+  list.innerHTML = '';
+  const p = posts.find(x => x.id === activeCommentPostId);
+  if (!p || p.comments.length === 0) {
+    list.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No comments yet. Be the first!</div>`;
+    return;
+  }
+  p.comments.forEach(c => {
+    const div = document.createElement('div');
+    div.style.cssText = 'margin-bottom:10px;font-size:13px;';
+    div.innerHTML = `<b>@${c.user}</b> ${c.text}`;
+    list.appendChild(div);
+  });
+}
+
+function postComment() {
+  const input = document.getElementById('commentInput');
+  const txt = input.value.trim();
+  if (!txt || !activeCommentPostId) return;
+  const p = posts.find(x => x.id === activeCommentPostId);
+  if (p) {
+    p.comments.push({ user: currentUser.username, text: txt });
+    localStorage.setItem('universe_posts', JSON.stringify(posts));
+    input.value = '';
+    renderCommentsList();
+    renderFeed();
+  }
+}
+
+function renderStories() {
+  const container = document.getElementById('stories');
+  container.innerHTML = `
+    <div class="story-item" onclick="openUpload()">
+      <div class="story-ring add-story"><div class="avatar-img" style="font-size:24px;">+</div></div>
+      <span>Your Story</span>
+    </div>
+  `;
+  users.forEach(u => {
+    if (u.username === currentUser.username) return;
+    const div = document.createElement('div');
+    div.className = 'story-item';
+    div.onclick = () => viewUserStory(u.username);
+    div.innerHTML = `
+      <div class="story-ring"><div class="avatar-img" style="background-image:url('${u.avatar}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div></div>
+      <span>${u.username}</span>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function viewUserStory(username) {
+  alert('Viewing story of @' + username);
+}
+
+function renderReels() {
+  const list = document.getElementById('reelsList');
+  list.innerHTML = '';
+  const reelPosts = posts.filter(p => p.type === 'video');
+  if (reelPosts.length === 0) {
+    list.innerHTML = `<div style="color:#777;text-align:center;padding:50px;">No reels available yet. Upload a video!</div>`;
+    return;
+  }
+  reelPosts.forEach(post => {
+    const div = document.createElement('div');
+    div.style.cssText = 'height:100%;scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;';
+    div.innerHTML = `
+      <video src="${post.url}" autoplay loop playsinline style="height:100%;width:100%;object-fit:cover;"></video>
+      <div style="position:absolute;bottom:20px;left:15px;right:60px;color:#fff;">
+        <b>@${post.username}</b>
+        <p style="font-size:13px;margin-top:4px;">${post.caption}</p>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function openUpload() {
+  showTab('upload');
+}
+
+function previewUploadMedia(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    previewMediaData = evt.target.result;
+    const isVid = file.type.startsWith('video');
+    const prev = document.getElementById('preview');
+    prev.innerHTML = isVid ? `<video src="${previewMediaData}" style="max-height:100%;" controls></video>` : `<img src="${previewMediaData}" style="max-height:100%;filter:${currentFilter};">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function setMediaFilter(filter) {
+  currentFilter = filter;
+  const prevImg = document.querySelector('#preview img');
+  if (prevImg) prevImg.style.filter = filter;
+}
+
+function publish() {
+  const caption = document.getElementById('caption').value.trim();
+  const fileInput = document.getElementById('fileInput');
+  if (!previewMediaData) {
+    alert('Please select a photo or video first!');
+    return;
+  }
+  const isVid = fileInput.files[0] && fileInput.files[0].type.startsWith('video');
+  const newPost = {
+    id: Date.now(),
+    username: currentUser.username,
+    type: isVid ? 'video' : 'image',
+    url: previewMediaData,
+    caption: caption,
+    likes: [],
+    comments: []
+  };
+  posts.unshift(newPost);
+  localStorage.setItem('universe_posts', JSON.stringify(posts));
+  document.getElementById('caption').value = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('preview').innerHTML = 'Select photo or video';
+  previewMediaData = null;
+  showTab('home');
+  renderFeed();
+}
+
+function renderShop() {
+  const q = (document.getElementById('shopSearchInput').value || '').toLowerCase();
+  const grid = document.getElementById('shopGrid');
+  grid.innerHTML = '';
+  const filtered = products.filter(p => p.title.toLowerCase().includes(q));
+  filtered.forEach(p => {
+    const card = document.createElement('div');
+    card.style.cssText = 'background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;';
+    card.innerHTML = `
+      <div style="height:150px;background:#050505;background-image:url('${p.images[0]}');background-size:contain;background-repeat:no-repeat;background-position:center;"></div>
+      <div style="padding:10px;display:flex;flex-direction:column;flex:1;">
+        <b style="font-size:13px;color:#fff;margin-bottom:4px;">${p.title}</b>
+        <div style="color:#2ecc71;font-weight:bold;font-size:14px;margin-bottom:8px;">₹${p.price}</div>
+        <button class="primary-btn" style="margin-top:auto;padding:8px;font-size:12px;" onclick="openBuyModal(${p.id})">Buy Now</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openBuyModal(prodId) {
+  currentActiveProduct = products.find(p => p.id === prodId);
+  if (!currentActiveProduct) return;
+  document.getElementById('buyProdTitle').innerText = currentActiveProduct.title;
+  document.getElementById('buyProdPrice').innerText = '₹' + currentActiveProduct.price;
+  document.getElementById('buyProdDesc').innerText = currentActiveProduct.desc;
+  document.getElementById('buyProdImg').style.backgroundImage = `url('${currentActiveProduct.images[0]}')`;
+  
+  const thumbs = document.getElementById('buyProdThumbs');
+  thumbs.innerHTML = '';
+  currentActiveProduct.images.forEach((img, idx) => {
+    const t = document.createElement('div');
+    t.className = `thumb-img-box ${idx === 0 ? 'active' : ''}`;
+    t.style.backgroundImage = `url('${img}')`;
+    t.onclick = () => {
+      document.querySelectorAll('.thumb-img-box').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('buyProdImg').style.backgroundImage = `url('${img}')`;
+    };
+    thumbs.appendChild(t);
+  });
+
+  renderProductReviews();
+  document.getElementById('orderName').value = currentUser.name;
+  document.getElementById('buyProductModal').classList.remove('hidden');
+}
+
+function closeBuyModal() {
+  document.getElementById('buyProductModal').classList.add('hidden');
+}
+
+function renderProductReviews() {
+  const container = document.getElementById('productReviewsContainer');
+  container.innerHTML = '';
+  if (!currentActiveProduct.reviews || currentActiveProduct.reviews.length === 0) {
+    container.innerHTML = `<div style="color:#777;">No reviews yet. Be the first to review!</div>`;
+    return;
+  }
+  currentActiveProduct.reviews.forEach(r => {
+    const stars = '⭐'.repeat(r.rating);
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#1a1a1a;padding:6px 10px;border-radius:6px;';
+    div.innerHTML = `<div style="display:flex;justify-content:space-between;"><b>@${r.user}</b><span class="star-rating">${stars}</span></div><div style="margin-top:2px;color:#aaa;">${r.text}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function submitProductReview() {
+  const rating = parseInt(document.getElementById('reviewRating').value);
+  const text = document.getElementById('reviewText').value.trim();
+  if (!text) {
+    alert('Please write a review text.');
+    return;
+  }
+  if (!currentActiveProduct.reviews) currentActiveProduct.reviews = [];
+  currentActiveProduct.reviews.push({ user: currentUser.username, rating, text });
+  localStorage.setItem('universe_products', JSON.stringify(products));
+  document.getElementById('reviewText').value = '';
+  renderProductReviews();
+  alert('Review submitted successfully!');
+}
+
+function detectUserLocation() {
+  if (!navigator.geolocation) {
+    alert('Geolocation is not supported by your browser');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    const link = `https://maps.google.com/?q=${lat},${lon}`;
+    document.getElementById('orderLocLink').value = link;
+    alert('Location detected successfully!');
+  }, err => {
+    alert('Unable to retrieve location. Please check permission settings.');
+  });
+}
+
+function placeOrderNow() {
+  const name = document.getElementById('orderName').value.trim();
+  const phone = document.getElementById('orderPhone').value.trim();
+  const loc = document.getElementById('orderLocLink').value.trim();
+  const address = document.getElementById('orderAddress').value.trim();
+
+  if (!name || !phone || !address) {
+    alert('Please fill out all mandatory delivery details.');
+    return;
   }
 
-  window.changeProfilePic = () => document.getElementById('profileInput').click();
-  window.saveProfilePic = (e) => {
-    let f = e.target.files[0];
-    if(!f) return;
-    let r = new FileReader();
-    r.onload = () => { update(ref(db, `users/${currentUid}`), { pic: r.result }); toast('Profile photo updated!'); };
-    r.readAsDataURL(f);
+  const order = {
+    id: Date.now(),
+    product: currentActiveProduct.title,
+    price: currentActiveProduct.price,
+    buyer: currentUser.username,
+    name, phone, loc, address,
+    date: new Date().toLocaleString()
   };
+
+  orders.push(order);
+  localStorage.setItem('universe_orders', JSON.stringify(orders));
+  alert('Order placed successfully! VIP Admin will contact you soon.');
+  closeBuyModal();
+}
+
+function openMyProfile() {
+  showTab('profile');
+  updateProfileUI();
+}
+
+function updateProfileUI() {
+  document.getElementById('myName').innerText = currentUser.name;
+  document.getElementById('myAvatar').innerText = currentUser.avatar ? '' : currentUser.username[0].toUpperCase();
+  if (currentUser.avatar) {
+    document.getElementById('myAvatar').style.backgroundImage = `url('${currentUser.avatar}')`;
+  }
+  document.getElementById('postCount').innerText = posts.filter(p => p.username === currentUser.username).length;
+  document.getElementById('followerCount').innerText = (currentUser.followers || []).length;
+  document.getElementById('followingCount').innerText = (currentUser.following || []).length;
+  
+  document.getElementById('profileActionsBox').innerHTML = `<button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="changeProfilePic()">Edit Profile</button>`;
+  switchProfileTab(activeProfileTab);
+}
+
+function switchProfileTab(tab) {
+  activeProfileTab = tab;
+  document.getElementById('btnMyPosts').style.color = tab === 'posts' ? '#fff' : 'var(--text-muted)';
+  document.getElementById('btnMyPosts').style.borderBottomColor = tab === 'posts' ? '#fff' : 'transparent';
+  document.getElementById('btnSavedPosts').style.color = tab === 'saved' ? '#fff' : 'var(--text-muted)';
+  document.getElementById('btnSavedPosts').style.borderBottomColor = tab === 'saved' ? '#fff' : 'transparent';
+
+  const grid = document.getElementById('myGrid');
+  grid.innerHTML = '';
+
+  let list = [];
+  if (tab === 'posts') {
+    list = posts.filter(p => p.username === currentUser.username);
+  } else {
+    list = posts.filter(p => currentUser.saved && currentUser.saved.includes(p.id));
+  }
+
+  list.forEach(p => {
+    const item = document.createElement('div');
+    item.style.cssText = 'aspect-ratio:1/1;background:#111;background-size:cover;background-position:center;cursor:pointer;';
+    item.style.backgroundImage = `url('${p.url}')`;
+    grid.appendChild(item);
+  });
+}
+
+function changeProfilePic() {
+  document.getElementById('profileInput').click();
+}
+
+function saveProfilePic(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    currentUser.avatar = evt.target.result;
+    localStorage.setItem('universe_logged_user', JSON.stringify(currentUser));
+    updateUserInStorage();
+    updateProfileUI();
+    renderFeed();
+  };
+  reader.readAsDataURL(file);
+}
+
+function openProfileSettingsModal() {
+  document.getElementById('profileSettingsModal').classList.remove('hidden');
+}
+
+function closeProfileSettingsModal() {
+  document.getElementById('profileSettingsModal').classList.add('hidden');
+}
+
+function requestCameraPermissions() {
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(stream => {
+      stream.getTracks().forEach(track => track.stop());
+      alert('Camera & Microphone permissions granted successfully!');
+      closeProfileSettingsModal();
+    })
+    .catch(err => {
+      alert('Permission denied or device not found. Please check browser settings.');
+    });
+}
+
+function deleteMyOwnAccount() {
+  if (confirm('Are you sure you want to delete your VIP account permanently?')) {
+    users = users.filter(u => u.username !== currentUser.username);
+    localStorage.setItem('universe_users', JSON.stringify(users));
+    logout();
+  }
+}
+
+function searchUsers(query) {
+  const res = document.getElementById('searchResults');
+  res.innerHTML = '';
+  if (!query.trim()) return;
+  const found = users.filter(u => u.username.includes(query.toLowerCase()) || u.name.toLowerCase().includes(query.toLowerCase()));
+  found.forEach(u => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;padding:10px 16px;gap:12px;cursor:pointer;';
+    row.onclick = () => viewUserProfile(u.username);
+    row.innerHTML = `
+      <div class="avatar-sm" style="background-image:url('${u.avatar}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
+      <div>
+        <b>${u.username}</b>
+        <div style="font-size:12px;color:#888;">${u.name}</div>
+      </div>
+    `;
+    res.appendChild(row);
+  });
+}
+
+function viewUserProfile(username) {
+  alert('Viewing profile of @' + username);
+}
+
+function startBroadcastingLive() {
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(stream => {
+      localStream = stream;
+      document.getElementById('liveModal').classList.remove('hidden');
+      document.getElementById('liveHostName').innerText = currentUser.username;
+      const vid = document.getElementById('liveRawVideo');
+      vid.srcObject = stream;
+      vid.play();
+      
+      const canvas = document.getElementById('liveCanvas');
+      const ctx = canvas.getContext('2d');
+      function drawFrame() {
+        if (vid.paused || vid.ended) return;
+        canvas.width = vid.videoWidth || 480;
+        canvas.height = vid.videoHeight || 640;
+        ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+        requestAnimationFrame(drawFrame);
+      }
+      vid.onloadedmetadata = () => drawFrame();
+    })
+    .catch(err => {
+      alert('Camera permission denied or unavailable for Live streaming.');
+    });
+}
+
+function stopLiveStream() {
+  if (localStream) {
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+  }
+  document.getElementById('liveModal').classList.add('hidden');
+}
+
+function applyBeautyFilter(type, btn) {
+  document.querySelectorAll('#liveFilterBar button').forEach(b => b.style.background = 'rgba(255,255,255,0.1)');
+  btn.style.background = 'var(--accent-color)';
+  const canvas = document.getElementById('liveCanvas');
+  canvas.style.filter = type === 'fair' ? 'brightness(1.2) contrast(1.05) saturate(1.1)' : 'none';
+}
+
+function startVideoCall() {
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(stream => {
+      videoCallStream = stream;
+      document.getElementById('videoCallModal').classList.remove('hidden');
+      const localVid = document.getElementById('vcLocalVideo');
+      localVid.srcObject = stream;
+      localVid.play();
+      
+      let seconds = 0;
+      setInterval(() => {
+        seconds++;
+        let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        let s = (seconds % 60).toString().padStart(2, '0');
+        document.getElementById('vcTimer').innerText = `Connected (${m}:${s})`;
+      }, 1000);
+    })
+    .catch(err => {
+      alert('Camera and Microphone permissions are required for video calls.');
+    });
+}
+
+function closeVideoCall() {
+  if (videoCallStream) {
+    videoCallStream.getTracks().forEach(t => t.stop());
+    videoCallStream = null;
+  }
+  document.getElementById('videoCallModal').classList.add('hidden');
+}
+
+function openChatModal() {
+  document.getElementById('chatModal').classList.remove('hidden');
+  renderChatList();
+}
+
+function closeChatModal() {
+  document.getElementById('chatModal').classList.add('hidden');
+  document.getElementById('privateChatRoom').classList.add('hidden');
+}
+
+function renderChatList() {
+  const list = document.getElementById('chatList');
+  list.innerHTML = '';
+  users.forEach(u => {
+    if (u.username === currentUser.username) return;
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;padding:12px;gap:12px;cursor:pointer;border-bottom:1px solid #222;';
+    row.onclick = () => openPrivateChat(u);
+    row.innerHTML = `
+      <div class="avatar-sm" style="background-image:url('${u.avatar}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
+      <div>
+        <b>${u.username}</b>
+        <div style="font-size:12px;color:#888;">Tap to chat securely</div>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function openPrivateChat(targetUser) {
+  currentChatUser = targetUser;
+  document.getElementById('privateChatRoom').classList.remove('hidden');
+  document.getElementById('chatTargetName').innerText = targetUser.username;
+  document.getElementById('chatTargetAvatar'].style.backgroundImage = `url('${targetUser.avatar}')`;
+  renderDirectMessages();
+}
+
+function backToChatList() {
+  document.getElementById('privateChatRoom').classList.add('hidden');
+  currentChatUser = null;
+}
+
+function getChatKey(u1, u2) {
+  return [u1, u2].sort().join('_');
+}
+
+function renderDirectMessages() {
+  if (!currentChatUser) return;
+  const box = document.getElementById('chatMessagesBox');
+  box.innerHTML = '';
+  const key = getChatKey(currentUser.username, currentChatUser.username);
+  const history = messages[key] || [];
+
+  history.forEach(m => {
+    const row = document.createElement('div');
+    row.className = `chat-msg-row ${m.sender === currentUser.username ? 'sent' : 'received'}`;
+    row.innerHTML = `<div class="chat-bubble">${m.text}</div>`;
+    box.appendChild(row);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+function sendDirectMessage() {
+  const input = document.getElementById('directMessageInput');
+  const txt = input.value.trim();
+  if (!txt || !currentChatUser) return;
+  const key = getChatKey(currentUser.username, currentChatUser.username);
+  if (!messages[key]) messages[key] = [];
+  messages[key].push({ sender: currentUser.username, text: txt, time: Date.now() });
+  localStorage.setItem('universe_messages', JSON.stringify(messages));
+  input.value = '';
+  renderDirectMessages();
+}
+
+function openAdminAuthModal() {
+  document.getElementById('adminAuthModal').classList.remove('hidden');
+}
+
+function closeAdminAuthModal() {
+  document.getElementById('adminAuthModal').classList.add('hidden');
+}
+
+function verifyAdminPassword() {
+  const pass = document.getElementById('adminPassInput').value;
+  if (pass === 'admin123' || pass === '8882691376') {
+    closeAdminAuthModal();
+    document.getElementById('adminMainModal').classList.remove('hidden');
+    renderAdminOrders();
+    renderAdminProducts();
+    renderAdminUsers();
+  } else {
+    alert('Incorrect Admin Password!');
+  }
+}
+
+function closeAdminMainModal() {
+  document.getElementById('adminMainModal').classList.add('hidden');
+}
+
+function switchAdminSubTab(tab) {
+  document.getElementById('adminTabOrdersBtn').style.color = tab === 'orders' ? '#0095f6' : '#888';
+  document.getElementById('adminTabOrdersBtn').style.borderBottomColor = tab === 'orders' ? '#0095f6' : 'transparent';
+  document.getElementById('adminTabProductsBtn').style.color = tab === 'products' ? '#0095f6' : '#888';
+  document.getElementById('adminTabProductsBtn').style.borderBottomColor = tab === 'products' ? '#0095f6' : 'transparent';
+  document.getElementById('adminTabUsersBtn').style.color = tab === 'users' ? '#0095f6' : '#888';
+  document.getElementById('adminTabUsersBtn').style.borderBottomColor = tab === 'users' ? '#0095f6' : 'transparent';
+
+  document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
+  document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
+  document.getElementById('adminSubPanelUsers').classList.toggle('hidden', tab !== 'users');
+}
+
+function renderAdminOrders() {
+  const list = document.getElementById('adminOrdersList');
+  list.innerHTML = '';
+  if (orders.length === 0) {
+    list.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No orders found.</div>`;
+    return;
+  }
+  orders.forEach(o => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:10px;font-size:13px;';
+    div.innerHTML = `
+      <b>📦 ${o.product}</b> (₹${o.price})
+      <div style="color:#aaa;margin-top:4px;">Buyer: ${o.name} (${o.phone})</div>
+      <div style="color:#aaa;">Address: ${o.address}</div>
+      ${o.loc ? `<a href="${o.loc}" target="_blank" style="color:#0095f6;display:block;margin-top:4px;">📍 View GPS Location</a>` : ''}
+    `;
+    list.appendChild(div);
+  });
+}
+
+function previewMultipleProductImgs(e) {
+  multipleProductFiles = [];
+  const files = e.target.files;
+  const grid = document.getElementById('prodPreviewGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < files.length; i++) {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      multipleProductFiles.push(evt.target.result);
+      const img = document.createElement('div');
+      img.style.cssText = 'width:50px;height:50px;background-size:cover;border-radius:6px;flex-shrink:0;';
+      img.style.backgroundImage = `url('${evt.target.result}')`;
+      grid.appendChild(img);
+    };
+    reader.readAsDataURL(files[i]);
+  }
+}
+
+function publishProduct() {
+  const title = document.getElementById('prodTitle').value.trim();
+  const price = parseFloat(document.getElementById('prodPrice').value);
+  const desc = document.getElementById('prodDesc').value.trim();
+
+  if (!title || !price || multipleProductFiles.length === 0) {
+    alert('Please fill product title, price and select at least one image.');
+    return;
+  }
+
+  const newProd = {
+    id: Date.now(),
+    title, price, desc,
+    images: multipleProductFiles,
+    reviews: []
+  };
+
+  products.push(newProd);
+  localStorage.setItem('universe_products', JSON.stringify(products));
+  alert('Product published successfully!');
+  document.getElementById('prodTitle').value = '';
+  document.getElementById('prodPrice').value = '';
+  document.getElementById('prodDesc').value = '';
+  document.getElementById('prodFile').value = '';
+  document.getElementById('prodPreviewGrid').innerHTML = '';
+  multipleProductFiles = [];
+  renderAdminProducts();
+  renderShop();
+}
+
+function renderAdminProducts() {
+  const list = document.getElementById('adminProductsEditList');
+  list.innerHTML = '';
+  products.forEach(p => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;background:#1e1e1e;padding:10px;border-radius:8px;margin-bottom:8px;';
+    div.innerHTML = `
+      <span><b>${p.title}</b> - ₹${p.price}</span>
+      <button style="background:#ff3040;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;" onclick="deleteProduct(${p.id})">Delete</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function deleteProduct(id) {
+  products = products.filter(p => p.id !== id);
+  localStorage.setItem('universe_products', JSON.stringify(products));
+  renderAdminProducts();
+  renderShop();
+}
+
+function renderAdminUsers() {
+  const list = document.getElementById('adminUsersList');
+  list.innerHTML = '';
+  users.forEach(u => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#1e1e1e;padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;';
+    div.innerHTML = `<b>@${u.username}</b> (${u.name}) - Followers: ${(u.followers || []).length}`;
+    list.appendChild(div);
+  });
+}
+
+function boostUserFollowers() {
+  const uname = document.getElementById('boostUsername').value.trim().toLowerCase();
+  const count = parseInt(document.getElementById('boostCount').value) || 0;
+  const target = users.find(u => u.username === uname);
+  if (!target) {
+    alert('User not found!');
+    return;
+  }
+  for (let i = 0; i < count; i++) {
+    target.followers.push('boost_user_' + Math.random().toString(36).substring(7));
+  }
+  localStorage.setItem('universe_users', JSON.stringify(users));
+  alert(`Successfully added ${count} followers to @${uname}!`);
+  renderAdminUsers();
+}
+
+function filterAdminContent(q) {}
+
+function closeMediaModal() {
+  document.getElementById('mediaModal').classList.add('hidden');
+}
+
+function showUsersListModal(type) {
+  document.getElementById('usersListModal').classList.remove('hidden');
+  document.getElementById('usersListTitle').innerText = type === 'followers' ? 'Followers' : 'Following';
+  const content = document.getElementById('usersListContent');
+  content.innerHTML = '';
+  const list = type === 'followers' ? (currentUser.followers || []) : (currentUser.following || []);
+  list.forEach(username => {
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:8px 0;border-bottom:1px solid #333;color:#fff;';
+    row.innerText = '@' + username;
+    content.appendChild(row);
+  });
+}
+
+function closeUsersListModal() {
+  document.getElementById('usersListModal').classList.add('hidden');
+}
 </script>
 </body>
-</html>
-</emergency: 8882691376>
 </html>
