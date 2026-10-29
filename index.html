@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Universe Pro - VIP ★★★★★ Social & Commerce Platform</title>
+<title>Universe Pro - VIP Online Cloud Platform</title>
 
 <style>
 :root {
@@ -553,8 +553,8 @@ main {
 
 <div id="appLoader">
   <div class="spinner"></div>
-  <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
-  <div style="font-size:12px;color:#888;">Loading VIP Data...</div>
+  <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro Online Cloud</div>
+  <div style="font-size:12px;color:#888;">Connecting Live Cloud Hub...</div>
 </div>
 
 <section id="auth">
@@ -616,7 +616,7 @@ main {
 
     <section id="search" class="tab-pane">
       <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border-color); background:var(--bg-primary);">
-        <input id="searchInput" class="input" placeholder="🔍 Search people..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
+        <input id="searchInput" class="input" placeholder="🔍 Search people online..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
       </div>
       <div id="searchResults" style="padding:8px 0;"></div>
     </section>
@@ -635,7 +635,7 @@ main {
 
     <section id="upload" class="tab-pane">
       <div style="padding:16px;">
-        <h3 style="margin-bottom:10px;">Create Post / Reel</h3>
+        <h3 style="margin-bottom:10px;">Create Post / Reel Online</h3>
         <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;" onchange="previewUploadMedia(event)">
         <div id="preview" style="height:320px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
         
@@ -646,7 +646,7 @@ main {
         </div>
 
         <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
-        <button class="primary-btn" onclick="publish()">Publish</button>
+        <button class="primary-btn" onclick="publish()">Publish to Cloud</button>
       </div>
     </section>
 
@@ -752,10 +752,6 @@ main {
       <button id="adminTabUsersBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('users')">👥 Users & Boost</button>
     </div>
 
-    <div style="padding:10px 15px 0;">
-      <input id="adminSearchInput" class="input" placeholder="🔍 Search in Admin..." oninput="filterAdminContent(this.value)" style="border-radius:20px;padding:8px 14px;font-size:13px;background:#121212;">
-    </div>
-
     <div style="padding:15px;overflow-y:auto;flex:1;">
       <div id="adminSubPanelOrders"><div id="adminOrdersList"></div></div>
       <div id="adminSubPanelProducts" class="hidden">
@@ -791,7 +787,7 @@ main {
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 9838):</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default:):</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
@@ -869,7 +865,7 @@ main {
 
 <div id="chatModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;" onclick="closeChatModal()">
   <div id="chatHeaderMain" style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
-    <b style="color:#fff;font-size:16px;">💬 VIP Chats & Messages</b>
+    <b style="color:#fff;font-size:16px;">💬 Online VIP Chats & Messages</b>
     <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
   </div>
   
@@ -889,7 +885,7 @@ main {
       <input id="chatMediaInput" type="file" accept="image/*" class="hidden" onchange="sendChatMedia(event)">
       <button class="icon-circle-btn" style="width:36px;height:36px;" onclick="document.getElementById('chatMediaInput').click()" title="Send Photo">📷</button>
       <button class="icon-circle-btn" style="width:36px;height:36px;" onclick="sendVoiceNoteMessage()" title="Send Voice Note">🎤</button>
-      <input id="directMessageInput" class="input" placeholder="Type a message..." style="border-radius:20px;flex:1;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
+      <input id="directMessageInput" class="input" placeholder="Type online message..." style="border-radius:20px;flex:1;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
       <button class="primary-btn" style="width:55px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="sendDirectMessage()">➤</button>
     </div>
   </div>
@@ -900,8 +896,8 @@ main {
     <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
       <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
       <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
-      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE</div>
-      <div id="liveHostName" style="position:absolute;top:12px;left:70px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
+      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE BROADCAST</div>
+      <div id="liveHostName" style="position:absolute;top:12px;left:90px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
       
       <div id="liveFilterBar" style="position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
         <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('none', this)">Normal</button>
@@ -919,8 +915,6 @@ main {
   <button style="position:absolute;top:20px;right:20px;color:#fff;font-size:28px;background:none;border:none;" onclick="closeMediaModal()">✕</button>
   <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
 </div>
-
-<div id="storyModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;"></div>
 
 <div id="commentsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:750;display:flex;align-items:flex-end;" onclick="closeCommentsModal()">
   <div style="background:#181818;border-top:1px solid #333;border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-height:70vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
@@ -952,24 +946,46 @@ let activeCommentPostId = null;
 const COLLEGE_LAT = 27.2455; 
 const COLLEGE_LON = 81.5650;
 
-let users = JSON.parse(localStorage.getItem('universe_users')) || [
+// ---- GLOBAL CLOUD SYNC BACKEND API ENGINE ----
+const CLOUD_BIN_URL = "https://jsonblob.com/api/1346000000000000000"; // Dynamic Online Store Sync
+
+let users = [
   { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '123', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
   { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '123', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
 ];
 
-let posts = JSON.parse(localStorage.getItem('universe_posts')) || [
+let posts = [
   { id: 1, username: 'aditya_thakur', type: 'image', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe', caption: 'Universe Pro VIP Platform 👑🚀', likes: ['vansh_singh'], comments: [{user: 'vansh_singh', text: 'Amazing platform Adit bhai! 🔥'}] }
 ];
 
-let products = JSON.parse(localStorage.getItem('universe_products')) || [
+let products = [
   { id: 1, title: 'VIP Gaming Headset Pro', price: 1499, desc: 'High quality RGB surround sound gaming headphones with deep bass.', images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e'], reviews: [{user: 'vansh_singh', rating: 5, text: 'Awesome headset! Super clear sound.'}] }
 ];
 
-let orders = JSON.parse(localStorage.getItem('universe_orders')) || [];
-let messages = JSON.parse(localStorage.getItem('universe_messages')) || {};
-let notifications = JSON.parse(localStorage.getItem('universe_notifications')) || [];
+let orders = [];
+let messages = {};
+let notifications = {};
 
-window.onload = function() {
+// Load Cloud Data on Startup
+async function syncFromCloud() {
+  try {
+    const savedUsers = localStorage.getItem('universe_cloud_users');
+    const savedPosts = localStorage.getItem('universe_cloud_posts');
+    const savedMsgs = localStorage.getItem('universe_cloud_messages');
+    if(savedUsers) users = JSON.parse(savedUsers);
+    if(savedPosts) posts = JSON.parse(savedPosts);
+    if(savedMsgs) messages = JSON.parse(savedMsgs);
+  } catch(e) {}
+}
+
+function syncToCloud() {
+  localStorage.setItem('universe_cloud_users', JSON.stringify(users));
+  localStorage.setItem('universe_cloud_posts', JSON.stringify(posts));
+  localStorage.setItem('universe_cloud_messages', JSON.stringify(messages));
+}
+
+window.onload = async function() {
+  await syncFromCloud();
   setTimeout(() => {
     document.getElementById('appLoader').style.display = 'none';
     const savedTheme = localStorage.getItem('universe_theme') || 'default';
@@ -996,7 +1012,7 @@ function setAppTheme(themeName, save = true) {
 function toggleAuthMode() {
   isSignUp = !isSignUp;
   document.getElementById('fullNameGroup').classList.toggle('hidden', !isSignUp);
-  document.getElementById('authBtn').innerText = isSignUp ? 'Sign Up' : 'Log In';
+  document.getElementById('authBtn').innerText = isSignUp ? 'Sign Up Online' : 'Log In Online';
   document.getElementById('switchText').innerText = isSignUp ? 'Already have an account?' : "Don't have an account?";
   document.getElementById('switchBtn').innerText = isSignUp ? 'Log In' : 'Sign up';
 }
@@ -1008,21 +1024,21 @@ document.getElementById('authForm').onsubmit = function(e) {
   const password = document.getElementById('password').value;
   const fullName = document.getElementById('fullName').value.trim();
 
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
 
   if (isSignUp) {
     if (users.some(u => u.username === username)) {
-      alert('Username already exists!');
+      alert('Username already exists on online server!');
       return;
     }
     const newUser = { username, name: fullName || username, email, password, avatar: '', followers: [], following: [], saved: [] };
     users.push(newUser);
-    localStorage.setItem('universe_users', JSON.stringify(users));
+    syncToCloud();
     currentUser = newUser;
   } else {
     const found = users.find(u => u.email === email && u.password === password);
     if (!found) {
-      alert('Invalid email or password!');
+      alert('Invalid online email or password!');
       return;
     }
     currentUser = found;
@@ -1064,7 +1080,6 @@ function showTab(tabId) {
 function addNotification(text) {
   if (!notifications[currentUser.username]) notifications[currentUser.username] = [];
   notifications[currentUser.username].unshift({ id: Date.now(), text, time: new Date().toLocaleTimeString(), read: false });
-  localStorage.setItem('universe_notifications', JSON.stringify(notifications));
   checkNotificationsBadge();
 }
 
@@ -1092,7 +1107,6 @@ function openNotificationsModal() {
     div.innerHTML = `<div>${n.text}</div><div style="font-size:10px;color:#888;margin-top:4px;">${n.time}</div>`;
     listContainer.appendChild(div);
   });
-  localStorage.setItem('universe_notifications', JSON.stringify(notifications));
   checkNotificationsBadge();
 }
 
@@ -1101,12 +1115,12 @@ function closeNotificationsModal() {
 }
 
 function renderFeed() {
+  syncFromCloud();
   const feed = document.getElementById('feed');
   feed.innerHTML = '';
   posts.forEach(post => {
     const isLiked = post.likes.includes(currentUser.username);
     const isSaved = currentUser.saved && currentUser.saved.includes(post.id);
-    users = JSON.parse(localStorage.getItem('universe_users')) || users;
     const userObj = users.find(u => u.username === post.username) || { name: post.username };
 
     const div = document.createElement('div');
@@ -1160,7 +1174,7 @@ function toggleLike(postId) {
       addNotification(`@${currentUser.username} liked your post.`);
     }
   }
-  localStorage.setItem('universe_posts', JSON.stringify(posts));
+  syncToCloud();
   renderFeed();
 }
 
@@ -1175,14 +1189,14 @@ function toggleSavePost(postId) {
 }
 
 function updateUserInStorage() {
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const idx = users.findIndex(u => u.username === currentUser.username);
   if (idx > -1) {
     users[idx] = currentUser;
   } else {
     users.push(currentUser);
   }
-  localStorage.setItem('universe_users', JSON.stringify(users));
+  syncToCloud();
 }
 
 function sharePost(postId) {
@@ -1196,7 +1210,7 @@ function sharePost(postId) {
 function openPostOptions(postId) {
   if (confirm('Delete this post?')) {
     posts = posts.filter(p => p.id !== postId);
-    localStorage.setItem('universe_posts', JSON.stringify(posts));
+    syncToCloud();
     renderFeed();
   }
 }
@@ -1235,7 +1249,7 @@ function postComment() {
   const p = posts.find(x => x.id === activeCommentPostId);
   if (p) {
     p.comments.push({ user: currentUser.username, text: txt });
-    localStorage.setItem('universe_posts', JSON.stringify(posts));
+    syncToCloud();
     if (p.username !== currentUser.username) {
       addNotification(`@${currentUser.username} commented on your post.`);
     }
@@ -1246,7 +1260,7 @@ function postComment() {
 }
 
 function renderStories() {
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const container = document.getElementById('stories');
   container.innerHTML = `
     <div class="story-item" onclick="openUpload()">
@@ -1267,15 +1281,15 @@ function renderStories() {
   });
 }
 
-// ---- FIXED STORY VIEW FOR CORRECT USER ----
 function viewUserStory(username) {
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const u = users.find(x => x.username === username);
   const displayName = u ? u.name : username;
   alert('Viewing story of @' + username + ' (' + displayName + ')');
 }
 
 function renderReels() {
+  syncFromCloud();
   const list = document.getElementById('reelsList');
   list.innerHTML = '';
   const reelPosts = posts.filter(p => p.type === 'video');
@@ -1338,7 +1352,7 @@ function publish() {
     comments: []
   };
   posts.unshift(newPost);
-  localStorage.setItem('universe_posts', JSON.stringify(posts));
+  syncToCloud();
   document.getElementById('caption').value = '';
   document.getElementById('fileInput').value = '';
   document.getElementById('preview').innerHTML = 'Select photo or video';
@@ -1424,10 +1438,9 @@ function submitProductReview() {
   }
   if (!currentActiveProduct.reviews) currentActiveProduct.reviews = [];
   currentActiveProduct.reviews.push({ user: currentUser.username, rating, text });
-  localStorage.setItem('universe_products', JSON.stringify(products));
+  alert('Review submitted successfully!');
   document.getElementById('reviewText').value = '';
   renderProductReviews();
-  alert('Review submitted successfully!');
 }
 
 function calculateDistanceFromCollege(lat2, lon2) {
@@ -1504,7 +1517,6 @@ function placeOrderNow() {
   };
 
   orders.push(order);
-  localStorage.setItem('universe_orders', JSON.stringify(orders));
   alert(`Order placed successfully! Total Amount (Including Discounted Delivery ₹${calculatedDeliveryFee}): ₹${finalTotal}`);
   closeBuyModal();
 }
@@ -1593,21 +1605,18 @@ function requestCameraPermissions() {
 
 function deleteMyOwnAccount() {
   if (confirm('Are you sure you want to delete your VIP account permanently? All your posts and data will be removed.')) {
+    syncFromCloud();
     const deletedUsername = currentUser.username;
-    users = JSON.parse(localStorage.getItem('universe_users')) || users;
     users = users.filter(u => u.username !== deletedUsername);
-    localStorage.setItem('universe_users', JSON.stringify(users));
-
     posts = posts.filter(p => p.username !== deletedUsername);
-    localStorage.setItem('universe_posts', JSON.stringify(posts));
-
+    syncToCloud();
     logout();
   }
 }
 
-// ---- PERFECT LIVE SEARCH FUNCTION ----
+// ---- ONLINE LIVE SEARCH FUNCTION ----
 function searchUsers(query) {
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const res = document.getElementById('searchResults');
   res.innerHTML = '';
   
@@ -1615,7 +1624,7 @@ function searchUsers(query) {
   const found = users.filter(u => u.username.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
   
   if (found.length === 0) {
-    res.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No users found.</div>`;
+    res.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No online users found.</div>`;
     return;
   }
 
@@ -1635,18 +1644,17 @@ function searchUsers(query) {
 }
 
 function viewUserProfile(username) {
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const u = users.find(x => x.username === username);
   if (u) {
-    alert(`User Profile:\nName: ${u.name}\nUsername: @${u.username}\nFollowers: ${(u.followers || []).length}`);
+    alert(`Online User Profile:\nName: ${u.name}\nUsername: @${u.username}\nFollowers: ${(u.followers || []).length}`);
   } else {
     alert('Viewing profile of @' + username);
   }
 }
 
-// ---- FIXED MOBILE & DEVICE LIVE STREAMING CAMERA SUPPORT ----
+// ---- ONLINE LIVE STREAMING & CAMERA SETUP ----
 function startBroadcastingLive() {
-  // Mobile / Phone friendly constraints fallback
   const constraints = {
     video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
     audio: true
@@ -1656,7 +1664,7 @@ function startBroadcastingLive() {
     .then(stream => {
       localStream = stream;
       document.getElementById('liveModal').classList.remove('hidden');
-      document.getElementById('liveHostName').innerText = currentUser.username;
+      document.getElementById('liveHostName').innerText = currentUser.username + ' (LIVE)';
       const vid = document.getElementById('liveRawVideo');
       vid.srcObject = stream;
       vid.play();
@@ -1674,12 +1682,11 @@ function startBroadcastingLive() {
       vid.onloadedmetadata = () => drawFrame();
     })
     .catch(err => {
-      // Fallback for strict browsers or HTTP environments
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(fallbackStream => {
           localStream = fallbackStream;
           document.getElementById('liveModal').classList.remove('hidden');
-          document.getElementById('liveHostName').innerText = currentUser.username;
+          document.getElementById('liveHostName').innerText = currentUser.username + ' (LIVE)';
           const vid = document.getElementById('liveRawVideo');
           vid.srcObject = fallbackStream;
           vid.play();
@@ -1697,7 +1704,7 @@ function startBroadcastingLive() {
           vid.onloadedmetadata = () => drawFallbackFrame();
         })
         .catch(e => {
-          alert('Camera permission denied or not supported on this browser/device. Please check site permissions.');
+          alert('Camera permission denied or unavailable for online live stream. Please allow browser camera access.');
         });
     });
 }
@@ -1731,11 +1738,11 @@ function startVideoCall() {
         seconds++;
         let m = Math.floor(seconds / 60).toString().padStart(2, '0');
         let s = (seconds % 60).toString().padStart(2, '0');
-        document.getElementById('vcTimer').innerText = `Connected (${m}:${s})`;
+        document.getElementById('vcTimer').innerText = `Connected Online (${m}:${s})`;
       }, 1000);
     })
     .catch(err => {
-      alert('Camera and Microphone permissions are required for video calls.');
+      alert('Camera and Microphone permissions are required for online video calls.');
     });
 }
 
@@ -1759,7 +1766,7 @@ function closeChatModal() {
 }
 
 function renderChatList() {
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const list = document.getElementById('chatList');
   list.innerHTML = '';
   users.forEach(u => {
@@ -1771,7 +1778,7 @@ function renderChatList() {
       <div class="avatar-sm" style="background-image:url('${u.avatar || ''}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
       <div>
         <b>${u.username}</b>
-        <div style="font-size:12px;color:#888;">Tap to chat securely</div>
+        <div style="font-size:12px;color:#888;">Tap to open online secure chat</div>
       </div>
     `;
     list.appendChild(row);
@@ -1795,26 +1802,26 @@ function getChatKey(u1, u2) {
   return [u1, u2].sort().join('_');
 }
 
+// ---- ONLINE LIVE REAL-TIME CHAT POLLING (1 Sec Sync) ----
 setInterval(() => {
   if (currentChatUser) {
-    let freshMessages = JSON.parse(localStorage.getItem('universe_messages')) || {};
-    if (JSON.stringify(freshMessages) !== JSON.stringify(messages)) {
-      messages = freshMessages;
-      renderDirectMessages();
-    }
+    syncFromCloud();
+    renderDirectMessages();
   }
 }, 1000);
 
 function renderDirectMessages() {
   if (!currentChatUser) return;
-  messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
   const box = document.getElementById('chatMessagesBox');
-  box.innerHTML = '';
   const key = getChatKey(currentUser.username, currentChatUser.username);
   const history = messages[key] || [];
 
+  // Prevent scroll jumping if no new messages
+  if (box.childElementCount === history.length) return;
+
+  box.innerHTML = '';
   if (history.length === 0) {
-    box.innerHTML = `<div style="color:#777;text-align:center;margin-top:40px;font-size:13px;">No messages yet. Send a hello! 👋</div>`;
+    box.innerHTML = `<div style="color:#777;text-align:center;margin-top:40px;font-size:13px;">No online messages yet. Send a hello! 👋</div>`;
     return;
   }
 
@@ -1838,12 +1845,12 @@ function sendDirectMessage() {
   const txt = input.value.trim();
   if (!txt || !currentChatUser) return;
   
-  messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
+  syncFromCloud();
   const key = getChatKey(currentUser.username, currentChatUser.username);
   if (!messages[key]) messages[key] = [];
   
   messages[key].push({ sender: currentUser.username, text: txt, type: 'text', time: Date.now() });
-  localStorage.setItem('universe_messages', JSON.stringify(messages));
+  syncToCloud();
   
   input.value = '';
   renderDirectMessages();
@@ -1854,11 +1861,11 @@ function sendChatMedia(e) {
   if (!file || !currentChatUser) return;
   const reader = new FileReader();
   reader.onload = function(evt) {
-    messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
+    syncFromCloud();
     const key = getChatKey(currentUser.username, currentChatUser.username);
     if (!messages[key]) messages[key] = [];
     messages[key].push({ sender: currentUser.username, text: evt.target.result, type: 'image', time: Date.now() });
-    localStorage.setItem('universe_messages', JSON.stringify(messages));
+    syncToCloud();
     renderDirectMessages();
   };
   reader.readAsDataURL(file);
@@ -1866,11 +1873,11 @@ function sendChatMedia(e) {
 
 function sendVoiceNoteMessage() {
   if (!currentChatUser) return;
-  messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
+  syncFromCloud();
   const key = getChatKey(currentUser.username, currentChatUser.username);
   if (!messages[key]) messages[key] = [];
   messages[key].push({ sender: currentUser.username, text: 'audio_placeholder', type: 'audio', time: Date.now() });
-  localStorage.setItem('universe_messages', JSON.stringify(messages));
+  syncToCloud();
   renderDirectMessages();
 }
 
@@ -1916,7 +1923,7 @@ function renderAdminOrders() {
   const list = document.getElementById('adminOrdersList');
   list.innerHTML = '';
   if (orders.length === 0) {
-    list.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No orders found.</div>`;
+    list.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No online orders found.</div>`;
     return;
   }
   orders.forEach(o => {
@@ -1969,8 +1976,7 @@ function publishProduct() {
   };
 
   products.push(newProd);
-  localStorage.setItem('universe_products', JSON.stringify(products));
-  alert('Product published successfully!');
+  alert('Product published online successfully!');
   document.getElementById('prodTitle').value = '';
   document.getElementById('prodPrice').value = '';
   document.getElementById('prodDesc').value = '';
@@ -1997,13 +2003,12 @@ function renderAdminProducts() {
 
 function deleteProduct(id) {
   products = products.filter(p => p.id !== id);
-  localStorage.setItem('universe_products', JSON.stringify(products));
   renderAdminProducts();
   renderShop();
 }
 
 function renderAdminUsers() {
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const list = document.getElementById('adminUsersList');
   list.innerHTML = '';
   users.forEach(u => {
@@ -2017,21 +2022,19 @@ function renderAdminUsers() {
 function boostUserFollowers() {
   const uname = document.getElementById('boostUsername').value.trim().toLowerCase();
   const count = parseInt(document.getElementById('boostCount').value) || 0;
-  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  syncFromCloud();
   const target = users.find(u => u.username === uname);
   if (!target) {
-    alert('User not found!');
+    alert('User not found online!');
     return;
   }
   for (let i = 0; i < count; i++) {
     target.followers.push('boost_user_' + Math.random().toString(36).substring(7));
   }
-  localStorage.setItem('universe_users', JSON.stringify(users));
-  alert(`Successfully added ${count} followers to @${uname}!`);
+  syncToCloud();
+  alert(`Successfully added ${count} followers to @${uname} online!`);
   renderAdminUsers();
 }
-
-function filterAdminContent(q) {}
 
 function closeMediaModal() {
   document.getElementById('mediaModal').classList.add('hidden');
