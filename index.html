@@ -19,7 +19,6 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Dynamic Themes */
 body.theme-cyberpunk {
   --bg-primary: #0d0221;
   --bg-card: #190933;
@@ -86,7 +85,6 @@ button {
   scrollbar-width: none !important;
 }
 
-/* App Loader */
 #appLoader {
   position: fixed;
   inset: 0;
@@ -112,7 +110,6 @@ button {
   to { transform: rotate(360deg); }
 }
 
-/* Auth Screen */
 #auth {
   display: flex;
   min-height: 100vh;
@@ -169,7 +166,6 @@ button {
   border-color: var(--accent-color);
 }
 
-/* --- 3D PREMIUM VIP BUTTON STYLES --- */
 .primary-btn {
   width: 100%;
   background: linear-gradient(135deg, #00b4db, #0083b0);
@@ -201,7 +197,6 @@ button {
   cursor: pointer;
 }
 
-/* App Layout */
 #app {
   display: none;
   min-height: 100vh;
@@ -239,7 +234,6 @@ button {
   gap: 8px;
 }
 
-/* 3D Modern Header Buttons */
 .btn-live-badge {
   background: linear-gradient(135deg, #ff416c, #ff4b2b);
   color: #fff;
@@ -460,7 +454,6 @@ main {
   font-size: 14px;
 }
 
-/* Bottom Navigation Bar with 3D Modern Look */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
@@ -506,7 +499,6 @@ main {
   fill: var(--accent-color);
 }
 
-/* Chat Styling */
 .chat-msg-row {
   display: flex;
   margin-bottom: 10px;
@@ -559,14 +551,12 @@ main {
 </head>
 <body>
 
-<!-- Lightning Fast Initial Loader -->
 <div id="appLoader">
   <div class="spinner"></div>
   <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
   <div style="font-size:12px;color:#888;">Loading VIP Data...</div>
 </div>
 
-<!-- Login & Register Section -->
 <section id="auth">
   <div class="auth-card">
     <div class="logo">Universe Pro</div>
@@ -597,25 +587,20 @@ main {
   </div>
 </section>
 
-<!-- Main VIP App Section -->
 <div id="app">
   <header class="header">
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
-      <!-- 3D LIVE Button -->
       <button class="btn-live-badge" onclick="startBroadcastingLive()">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg> 🔴 LIVE
       </button>
-      <!-- 3D Notification Button -->
       <button class="icon-circle-btn" onclick="openNotificationsModal()" title="Notifications">
         <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         <span id="notifBadgeDot" class="badge-dot hidden"></span>
       </button>
-      <!-- 3D Chat Button -->
       <button class="icon-circle-btn" onclick="openChatModal()" title="Chats">
         <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </button>
-      <!-- 3D Admin Button -->
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
       </button>
@@ -665,7 +650,6 @@ main {
       </div>
     </section>
 
-    <!-- Profile Section -->
     <section id="profile" class="tab-pane">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px 0;">
         <b id="profileHeaderTitle" style="font-size:18px;color:#fff;">Profile</b>
@@ -696,7 +680,6 @@ main {
     </section>
   </main>
 
-  <!-- 3D Modern Bottom Navigation Bar -->
   <nav class="bottom-nav-bar">
     <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')" title="Home">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -719,7 +702,6 @@ main {
   </nav>
 </div>
 
-<!-- Profile Settings Modal -->
 <div id="profileSettingsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:850;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeProfileSettingsModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:20px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #333;padding-bottom:10px;">
@@ -747,7 +729,6 @@ main {
   </div>
 </div>
 
-<!-- Notifications Modal -->
 <div id="notificationsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:750;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeNotificationsModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(400px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
@@ -758,7 +739,6 @@ main {
   </div>
 </div>
 
-<!-- Admin Dashboard Modal -->
 <div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
@@ -808,7 +788,6 @@ main {
   </div>
 </div>
 
-<!-- Admin Protection Auth Modal -->
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
@@ -818,7 +797,6 @@ main {
   </div>
 </div>
 
-<!-- Buy Product Modal -->
 <div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -830,7 +808,6 @@ main {
     <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
     <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
     
-    <!-- Product Reviews Section -->
     <div style="border-top:1px solid #333;padding-top:12px;margin-bottom:14px;">
       <b style="font-size:14px;color:#f1c40f;">⭐ Customer Reviews & Ratings</b>
       <div id="productReviewsContainer" style="margin-top:8px;max-height:120px;overflow-y:auto;font-size:12px;color:#ccc;display:flex;flex-direction:column;gap:6px;"></div>
@@ -848,7 +825,6 @@ main {
       </div>
     </div>
 
-    <!-- GPS & Distance Pricing Section -->
     <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
       <b style="font-size:14px;color:#0095f6;">📦 Delivery Details (R.N. Singh Inter College Hub):</b>
       <input id="orderName" class="input" placeholder="Your Full Name">
@@ -869,7 +845,6 @@ main {
   </div>
 </div>
 
-<!-- Video Call Modal -->
 <div id="videoCallModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;">
   <div style="position:relative;width:min(450px,100%);height:75vh;background:#111;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center;">
     <video id="vcLocalVideo" autoplay playsinline muted style="position:absolute;bottom:20px;right:20px;width:100px;height:140px;object-fit:cover;border-radius:10px;border:2px solid #fff;z-index:10;background:#000;"></video>
@@ -882,7 +857,6 @@ main {
   <button class="primary-btn" style="background:#ff3040;box-shadow:none;width:min(200px,100%);margin-top:15px;" onclick="closeVideoCall()">End Call</button>
 </div>
 
-<!-- Followers / Following List Modal -->
 <div id="usersListModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:800;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeUsersListModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(400px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
@@ -893,7 +867,6 @@ main {
   </div>
 </div>
 
-<!-- Chat Main Modal -->
 <div id="chatModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;" onclick="closeChatModal()">
   <div id="chatHeaderMain" style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
     <b style="color:#fff;font-size:16px;">💬 VIP Chats & Messages</b>
@@ -922,7 +895,6 @@ main {
   </div>
 </div>
 
-<!-- Live Stream Modal -->
 <div id="liveModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:flex;align-items:center;justify-content:center;padding:10px;">
   <div style="position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column;">
     <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
@@ -950,7 +922,6 @@ main {
 
 <div id="storyModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:flex;align-items:center;justify-content:center;"></div>
 
-<!-- Comments Modal -->
 <div id="commentsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:750;display:flex;align-items:flex-end;" onclick="closeCommentsModal()">
   <div style="background:#181818;border-top:1px solid #333;border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-height:70vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
@@ -965,7 +936,6 @@ main {
   </div>
 </div>
 
-<!-- FULL ADVANCED JAVASCRIPT LOGIC -->
 <script>
 let currentUser = JSON.parse(localStorage.getItem('universe_logged_user')) || null;
 let isSignUp = false;
@@ -1038,6 +1008,8 @@ document.getElementById('authForm').onsubmit = function(e) {
   const password = document.getElementById('password').value;
   const fullName = document.getElementById('fullName').value.trim();
 
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+
   if (isSignUp) {
     if (users.some(u => u.username === username)) {
       alert('Username already exists!');
@@ -1083,6 +1055,10 @@ function showTab(tabId) {
   if (navBtn) navBtn.classList.add('active');
   if (tabId === 'shop') renderShop();
   if (tabId === 'reels') renderReels();
+  if (tabId === 'search') {
+    document.getElementById('searchInput').value = '';
+    searchUsers('');
+  }
 }
 
 function addNotification(text) {
@@ -1130,6 +1106,7 @@ function renderFeed() {
   posts.forEach(post => {
     const isLiked = post.likes.includes(currentUser.username);
     const isSaved = currentUser.saved && currentUser.saved.includes(post.id);
+    users = JSON.parse(localStorage.getItem('universe_users')) || users;
     const userObj = users.find(u => u.username === post.username) || { name: post.username };
 
     const div = document.createElement('div');
@@ -1198,11 +1175,14 @@ function toggleSavePost(postId) {
 }
 
 function updateUserInStorage() {
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
   const idx = users.findIndex(u => u.username === currentUser.username);
   if (idx > -1) {
     users[idx] = currentUser;
-    localStorage.setItem('universe_users', JSON.stringify(users));
+  } else {
+    users.push(currentUser);
   }
+  localStorage.setItem('universe_users', JSON.stringify(users));
 }
 
 function sharePost(postId) {
@@ -1266,6 +1246,7 @@ function postComment() {
 }
 
 function renderStories() {
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
   const container = document.getElementById('stories');
   container.innerHTML = `
     <div class="story-item" onclick="openUpload()">
@@ -1279,15 +1260,19 @@ function renderStories() {
     div.className = 'story-item';
     div.onclick = () => viewUserStory(u.username);
     div.innerHTML = `
-      <div class="story-ring"><div class="avatar-img" style="background-image:url('${u.avatar}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div></div>
+      <div class="story-ring"><div class="avatar-img" style="background-image:url('${u.avatar || ''}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div></div>
       <span>${u.username}</span>
     `;
     container.appendChild(div);
   });
 }
 
+// ---- FIXED STORY VIEW FOR CORRECT USER ----
 function viewUserStory(username) {
-  alert('Viewing story of @' + username);
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  const u = users.find(x => x.username === username);
+  const displayName = u ? u.name : username;
+  alert('Viewing story of @' + username + ' (' + displayName + ')');
 }
 
 function renderReels() {
@@ -1609,6 +1594,7 @@ function requestCameraPermissions() {
 function deleteMyOwnAccount() {
   if (confirm('Are you sure you want to delete your VIP account permanently? All your posts and data will be removed.')) {
     const deletedUsername = currentUser.username;
+    users = JSON.parse(localStorage.getItem('universe_users')) || users;
     users = users.filter(u => u.username !== deletedUsername);
     localStorage.setItem('universe_users', JSON.stringify(users));
 
@@ -1619,19 +1605,28 @@ function deleteMyOwnAccount() {
   }
 }
 
+// ---- PERFECT LIVE SEARCH FUNCTION ----
 function searchUsers(query) {
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
   const res = document.getElementById('searchResults');
   res.innerHTML = '';
-  if (!query.trim()) return;
-  const found = users.filter(u => u.username.includes(query.toLowerCase()) || u.name.toLowerCase().includes(query.toLowerCase()));
+  
+  const q = (query || '').trim().toLowerCase();
+  const found = users.filter(u => u.username.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
+  
+  if (found.length === 0) {
+    res.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No users found.</div>`;
+    return;
+  }
+
   found.forEach(u => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;padding:10px 16px;gap:12px;cursor:pointer;';
+    row.style.cssText = 'display:flex;align-items:center;padding:10px 16px;gap:12px;cursor:pointer;border-bottom:1px solid #1a1a1a;';
     row.onclick = () => viewUserProfile(u.username);
     row.innerHTML = `
-      <div class="avatar-sm" style="background-image:url('${u.avatar}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
+      <div class="avatar-sm" style="background-image:url('${u.avatar || ''}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
       <div>
-        <b>${u.username}</b>
+        <b>@${u.username}</b>
         <div style="font-size:12px;color:#888;">${u.name}</div>
       </div>
     `;
@@ -1640,11 +1635,24 @@ function searchUsers(query) {
 }
 
 function viewUserProfile(username) {
-  alert('Viewing profile of @' + username);
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
+  const u = users.find(x => x.username === username);
+  if (u) {
+    alert(`User Profile:\nName: ${u.name}\nUsername: @${u.username}\nFollowers: ${(u.followers || []).length}`);
+  } else {
+    alert('Viewing profile of @' + username);
+  }
 }
 
+// ---- FIXED MOBILE & DEVICE LIVE STREAMING CAMERA SUPPORT ----
 function startBroadcastingLive() {
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  // Mobile / Phone friendly constraints fallback
+  const constraints = {
+    video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+    audio: true
+  };
+
+  navigator.mediaDevices.getUserMedia(constraints)
     .then(stream => {
       localStream = stream;
       document.getElementById('liveModal').classList.remove('hidden');
@@ -1656,6 +1664,7 @@ function startBroadcastingLive() {
       const canvas = document.getElementById('liveCanvas');
       const ctx = canvas.getContext('2d');
       function drawFrame() {
+        if (!localStream) return;
         if (vid.paused || vid.ended) return;
         canvas.width = vid.videoWidth || 480;
         canvas.height = vid.videoHeight || 640;
@@ -1665,7 +1674,31 @@ function startBroadcastingLive() {
       vid.onloadedmetadata = () => drawFrame();
     })
     .catch(err => {
-      alert('Camera permission denied or unavailable for Live streaming.');
+      // Fallback for strict browsers or HTTP environments
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(fallbackStream => {
+          localStream = fallbackStream;
+          document.getElementById('liveModal').classList.remove('hidden');
+          document.getElementById('liveHostName').innerText = currentUser.username;
+          const vid = document.getElementById('liveRawVideo');
+          vid.srcObject = fallbackStream;
+          vid.play();
+          
+          const canvas = document.getElementById('liveCanvas');
+          const ctx = canvas.getContext('2d');
+          function drawFallbackFrame() {
+            if (!localStream) return;
+            if (vid.paused || vid.ended) return;
+            canvas.width = vid.videoWidth || 480;
+            canvas.height = vid.videoHeight || 640;
+            ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+            requestAnimationFrame(drawFallbackFrame);
+          }
+          vid.onloadedmetadata = () => drawFallbackFrame();
+        })
+        .catch(e => {
+          alert('Camera permission denied or not supported on this browser/device. Please check site permissions.');
+        });
     });
 }
 
@@ -1722,19 +1755,20 @@ function openChatModal() {
 function closeChatModal() {
   document.getElementById('chatModal').classList.add('hidden');
   document.getElementById('privateChatRoom').classList.add('hidden');
+  currentChatUser = null;
 }
 
 function renderChatList() {
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
   const list = document.getElementById('chatList');
   list.innerHTML = '';
-  // Fix: Ensure all registered users appear in chat list seamlessly
   users.forEach(u => {
     if (u.username === currentUser.username) return;
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;padding:12px;gap:12px;cursor:pointer;border-bottom:1px solid #222;';
     row.onclick = () => openPrivateChat(u);
     row.innerHTML = `
-      <div class="avatar-sm" style="background-image:url('${u.avatar}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
+      <div class="avatar-sm" style="background-image:url('${u.avatar || ''}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
       <div>
         <b>${u.username}</b>
         <div style="font-size:12px;color:#888;">Tap to chat securely</div>
@@ -1748,7 +1782,7 @@ function openPrivateChat(targetUser) {
   currentChatUser = targetUser;
   document.getElementById('privateChatRoom').classList.remove('hidden');
   document.getElementById('chatTargetName').innerText = targetUser.username;
-  document.getElementById('chatTargetAvatar').style.backgroundImage = `url('${targetUser.avatar}')`;
+  document.getElementById('chatTargetAvatar').style.backgroundImage = `url('${targetUser.avatar || ''}')`;
   renderDirectMessages();
 }
 
@@ -1761,15 +1795,26 @@ function getChatKey(u1, u2) {
   return [u1, u2].sort().join('_');
 }
 
+setInterval(() => {
+  if (currentChatUser) {
+    let freshMessages = JSON.parse(localStorage.getItem('universe_messages')) || {};
+    if (JSON.stringify(freshMessages) !== JSON.stringify(messages)) {
+      messages = freshMessages;
+      renderDirectMessages();
+    }
+  }
+}, 1000);
+
 function renderDirectMessages() {
   if (!currentChatUser) return;
+  messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
   const box = document.getElementById('chatMessagesBox');
   box.innerHTML = '';
   const key = getChatKey(currentUser.username, currentChatUser.username);
   const history = messages[key] || [];
 
   if (history.length === 0) {
-    box.innerHTML = `<div style="color:#777;text-align:center;padding:30px;font-size:13px;">No messages yet. Send a message to start chatting!</div>`;
+    box.innerHTML = `<div style="color:#777;text-align:center;margin-top:40px;font-size:13px;">No messages yet. Send a hello! 👋</div>`;
     return;
   }
 
@@ -1792,10 +1837,14 @@ function sendDirectMessage() {
   const input = document.getElementById('directMessageInput');
   const txt = input.value.trim();
   if (!txt || !currentChatUser) return;
+  
+  messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
   const key = getChatKey(currentUser.username, currentChatUser.username);
   if (!messages[key]) messages[key] = [];
+  
   messages[key].push({ sender: currentUser.username, text: txt, type: 'text', time: Date.now() });
   localStorage.setItem('universe_messages', JSON.stringify(messages));
+  
   input.value = '';
   renderDirectMessages();
 }
@@ -1805,6 +1854,7 @@ function sendChatMedia(e) {
   if (!file || !currentChatUser) return;
   const reader = new FileReader();
   reader.onload = function(evt) {
+    messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
     const key = getChatKey(currentUser.username, currentChatUser.username);
     if (!messages[key]) messages[key] = [];
     messages[key].push({ sender: currentUser.username, text: evt.target.result, type: 'image', time: Date.now() });
@@ -1816,12 +1866,12 @@ function sendChatMedia(e) {
 
 function sendVoiceNoteMessage() {
   if (!currentChatUser) return;
+  messages = JSON.parse(localStorage.getItem('universe_messages')) || messages;
   const key = getChatKey(currentUser.username, currentChatUser.username);
   if (!messages[key]) messages[key] = [];
   messages[key].push({ sender: currentUser.username, text: 'audio_placeholder', type: 'audio', time: Date.now() });
   localStorage.setItem('universe_messages', JSON.stringify(messages));
   renderDirectMessages();
-  alert('Voice note sent successfully!');
 }
 
 function openAdminAuthModal() {
@@ -1953,6 +2003,7 @@ function deleteProduct(id) {
 }
 
 function renderAdminUsers() {
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
   const list = document.getElementById('adminUsersList');
   list.innerHTML = '';
   users.forEach(u => {
@@ -1966,6 +2017,7 @@ function renderAdminUsers() {
 function boostUserFollowers() {
   const uname = document.getElementById('boostUsername').value.trim().toLowerCase();
   const count = parseInt(document.getElementById('boostCount').value) || 0;
+  users = JSON.parse(localStorage.getItem('universe_users')) || users;
   const target = users.find(u => u.username === uname);
   if (!target) {
     alert('User not found!');
