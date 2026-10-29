@@ -22,6 +22,31 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* Dynamic Themes */
+body.theme-cyberpunk {
+  --bg-primary: #0d0221;
+  --bg-card: #190933;
+  --bg-input: #291152;
+  --accent-color: #ff007f;
+  --border-color: #4a154b;
+}
+
+body.theme-gold {
+  --bg-primary: #0a0a0a;
+  --bg-card: #141414;
+  --bg-input: #1f1f1f;
+  --accent-color: #f1c40f;
+  --border-color: #332b00;
+}
+
+body.theme-matrix {
+  --bg-primary: #020d05;
+  --bg-card: #051c0a;
+  --bg-input: #0a2e11;
+  --accent-color: #2ecc71;
+  --border-color: #0d3b17;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -215,7 +240,7 @@ button {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .btn-live-badge {
@@ -223,12 +248,12 @@ button {
   color: #fff;
   font-size: 13px;
   font-weight: 800;
-  padding: 7px 14px;
+  padding: 7px 12px;
   border-radius: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   box-shadow: 0 5px 0 #b3001b, 0 8px 20px rgba(255, 65, 108, 0.5);
   transition: all 0.1s ease;
 }
@@ -239,8 +264,8 @@ button {
 }
 
 .icon-circle-btn {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: linear-gradient(145deg, #1e1e1e, #0d0d0d);
   border: 1px solid #333;
@@ -249,14 +274,25 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.1);
   transition: all 0.1s ease;
+  position: relative;
 }
 
 .icon-circle-btn:active {
   transform: translateY(2px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.badge-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: #ff3040;
+  border-radius: 50%;
 }
 
 main {
@@ -448,10 +484,10 @@ main {
 
 .nav-tab-btn.active {
   color: #fff;
-  text-shadow: 0 0 12px rgba(0, 149, 246, 0.8);
+  text-shadow: 0 0 12px var(--accent-color);
 }
 
-/* Chat & Review Styling */
+/* Chat Styling */
 .chat-msg-row {
   display: flex;
   margin-bottom: 10px;
@@ -492,8 +528,8 @@ main {
   flex-shrink: 0;
 }
 .thumb-img-box.active {
-  border-color: #0095f6;
-  box-shadow: 0 0 8px rgba(0,149,246,0.6);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px var(--accent-color);
 }
 
 .star-rating {
@@ -548,6 +584,10 @@ main {
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
       <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
+      <button class="icon-circle-btn" onclick="openNotificationsModal()" title="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span id="notifBadgeDot" class="badge-dot hidden"></span>
+      </button>
       <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
     </div>
@@ -568,7 +608,7 @@ main {
     </section>
 
     <section id="shop" class="tab-pane">
-      <div style="font-weight:700;padding:16px 16px 8px;font-size:16px;">🛍️ Official VIP Store</div>
+      <div style="font-weight:700;padding:16px 16px 8px;font-size:16px;">🛍️ Official VIP Store (R.N. Singh Inter College Hub)</div>
       <div style="padding:0 14px 10px;">
         <input id="shopSearchInput" class="input" placeholder="🔍 Search products in store..." oninput="renderShop()" style="border-radius:20px;padding:10px 16px;background:#181818;">
       </div>
@@ -639,10 +679,20 @@ main {
 <div id="profileSettingsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:850;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeProfileSettingsModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:20px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #333;padding-bottom:10px;">
-      <b style="color:#fff;font-size:16px;">⚙️ Account & Permissions</b>
+      <b style="color:#fff;font-size:16px;">⚙️ Account & Themes</b>
       <button onclick="closeProfileSettingsModal()" style="color:#fff;font-size:18px;">✕</button>
     </div>
     
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;color:#aaa;display:block;margin-bottom:6px;">🎨 Choose App Theme:</label>
+      <div style="display:flex;gap:8px;">
+        <button class="primary-btn" style="background:#1e1e1e;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('default')">Default</button>
+        <button class="primary-btn" style="background:#ff007f;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('cyberpunk')">Cyberpunk</button>
+        <button class="primary-btn" style="background:#f1c40f;color:#000;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('gold')">Royal Gold</button>
+        <button class="primary-btn" style="background:#2ecc71;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('matrix')">Matrix</button>
+      </div>
+    </div>
+
     <div style="display:flex;flex-direction:column;gap:12px;">
       <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="closeProfileSettingsModal(); changeProfilePic();">📷 Change Profile Picture</button>
       <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="requestCameraPermissions()">🔒 Request Cam/Mic Permission</button>
@@ -650,6 +700,17 @@ main {
       <hr style="border:none;border-top:1px solid #333;margin:8px 0;">
       <button class="primary-btn" style="background:#ff3040;box-shadow:none;margin:0;" onclick="deleteMyOwnAccount()">🗑️ Delete My Account</button>
     </div>
+  </div>
+</div>
+
+<!-- Notifications Modal -->
+<div id="notificationsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:750;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeNotificationsModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(400px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
+    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
+      <b style="color:#fff;font-size:16px;">🔔 Notifications</b>
+      <button onclick="closeNotificationsModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
+    </div>
+    <div id="notificationsList" style="padding:12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px;"></div>
   </div>
 </div>
 
@@ -713,7 +774,7 @@ main {
   </div>
 </div>
 
-<!-- Buy Product Modal (Now with Integrated Reviews Section) -->
+<!-- Buy Product Modal (With Distance Pricing & Psychological Discount) -->
 <div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -725,12 +786,11 @@ main {
     <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
     <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
     
-    <!-- ⭐ PRODUCT REVIEWS SECTION INSIDE MODAL -->
+    <!-- Product Reviews Section -->
     <div style="border-top:1px solid #333;padding-top:12px;margin-bottom:14px;">
       <b style="font-size:14px;color:#f1c40f;">⭐ Customer Reviews & Ratings</b>
       <div id="productReviewsContainer" style="margin-top:8px;max-height:120px;overflow-y:auto;font-size:12px;color:#ccc;display:flex;flex-direction:column;gap:6px;"></div>
       
-      <!-- Add Review Form -->
       <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
         <select id="reviewRating" class="input" style="padding:8px;font-size:12px;">
           <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
@@ -744,12 +804,20 @@ main {
       </div>
     </div>
 
+    <!-- GPS & Distance Pricing Section -->
     <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
-      <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
+      <b style="font-size:14px;color:#0095f6;">📦 Delivery Details (R.N. Singh Inter College Hub):</b>
       <input id="orderName" class="input" placeholder="Your Full Name">
       <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;padding:9px;" onclick="detectUserLocation()">📍 Get GPS Location</button>
+      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;padding:9px;" onclick="detectUserLocationAndCalculateFee()">📍 Get GPS Location & Calculate Delivery</button>
       <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
+      
+      <!-- Distance & Discount Dynamic Box -->
+      <div id="shippingCalculationBox" style="background:#111;padding:10px;border-radius:8px;border:1px dashed #444;font-size:12px;display:none;">
+        <div id="distanceText" style="color:#aaa;">📍 Distance from College: Calculating...</div>
+        <div id="deliveryFeeDisplay" style="margin-top:4px;"></div>
+      </div>
+
       <textarea id="orderAddress" class="input" placeholder="Delivery Address..." style="height:55px;resize:none;"></textarea>
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;">
@@ -800,9 +868,13 @@ main {
       <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
     </div>
     <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:15px;"></div>
-    <div style="padding:12px;background:#121212;border-top:1px solid #333;display:flex;gap:10px;">
-      <input id="directMessageInput" class="input" placeholder="Type a message..." style="border-radius:20px;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
-      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+    
+    <div style="padding:10px 12px;background:#121212;border-top:1px solid #333;display:flex;gap:8px;align-items:center;">
+      <input id="chatMediaInput" type="file" accept="image/*" class="hidden" onchange="sendChatMedia(event)">
+      <button class="icon-circle-btn" style="width:36px;height:36px;font-size:14px;" onclick="document.getElementById('chatMediaInput').click()" title="Send Photo"><i class="fa-solid fa-image"></i></button>
+      <button class="icon-circle-btn" style="width:36px;height:36px;font-size:14px;" onclick="sendVoiceNoteMessage()" title="Send Voice Note"><i class="fa-solid fa-microphone"></i></button>
+      <input id="directMessageInput" class="input" placeholder="Type a message..." style="border-radius:20px;flex:1;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
+      <button class="primary-btn" style="width:55px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </div>
 </div>
@@ -850,7 +922,7 @@ main {
   </div>
 </div>
 
-<!-- COMPLETE ADVANCED JAVASCRIPT LOGIC WITH REVIEWS MODULE -->
+<!-- FULL ADVANCED JAVASCRIPT LOGIC -->
 <script>
 let currentUser = JSON.parse(localStorage.getItem('universe_logged_user')) || null;
 let isSignUp = false;
@@ -863,6 +935,10 @@ let videoCallStream = null;
 let currentActiveProduct = null;
 let multipleProductFiles = [];
 let activeCommentPostId = null;
+
+// R.N. Singh Inter College Fixed GPS Coordinates (Anchor Hub)
+const COLLEGE_LAT = 27.2455; 
+const COLLEGE_LON = 81.5650;
 
 let users = JSON.parse(localStorage.getItem('universe_users')) || [
   { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '123', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
@@ -879,10 +955,14 @@ let products = JSON.parse(localStorage.getItem('universe_products')) || [
 
 let orders = JSON.parse(localStorage.getItem('universe_orders')) || [];
 let messages = JSON.parse(localStorage.getItem('universe_messages')) || {};
+let notifications = JSON.parse(localStorage.getItem('universe_notifications')) || [];
 
 window.onload = function() {
   setTimeout(() => {
     document.getElementById('appLoader').style.display = 'none';
+    const savedTheme = localStorage.getItem('universe_theme') || 'default';
+    setAppTheme(savedTheme, false);
+
     if (currentUser) {
       document.getElementById('auth').style.display = 'none';
       document.getElementById('app').style.display = 'block';
@@ -892,6 +972,14 @@ window.onload = function() {
     }
   }, 600);
 };
+
+function setAppTheme(themeName, save = true) {
+  document.body.className = '';
+  if (themeName !== 'default') {
+    document.body.classList.add('theme-' + themeName);
+  }
+  if (save) localStorage.setItem('universe_theme', themeName);
+}
 
 function toggleAuthMode() {
   isSignUp = !isSignUp;
@@ -942,6 +1030,7 @@ function initApp() {
   renderShop();
   renderReels();
   updateProfileUI();
+  checkNotificationsBadge();
 }
 
 function showTab(tabId) {
@@ -952,6 +1041,45 @@ function showTab(tabId) {
   if (navBtn) navBtn.classList.add('active');
   if (tabId === 'shop') renderShop();
   if (tabId === 'reels') renderReels();
+}
+
+function addNotification(text) {
+  if (!notifications[currentUser.username]) notifications[currentUser.username] = [];
+  notifications[currentUser.username].unshift({ id: Date.now(), text, time: new Date().toLocaleTimeString(), read: false });
+  localStorage.setItem('universe_notifications', JSON.stringify(notifications));
+  checkNotificationsBadge();
+}
+
+function checkNotificationsBadge() {
+  if (!currentUser) return;
+  const list = notifications[currentUser.username] || [];
+  const unread = list.some(n => !n.read);
+  document.getElementById('notifBadgeDot').classList.toggle('hidden', !unread);
+}
+
+function openNotificationsModal() {
+  document.getElementById('notificationsModal').classList.remove('hidden');
+  const listContainer = document.getElementById('notificationsList');
+  listContainer.innerHTML = '';
+  const list = notifications[currentUser.username] || [];
+  
+  if (list.length === 0) {
+    listContainer.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No notifications yet.</div>`;
+    return;
+  }
+  list.forEach(n => {
+    n.read = true;
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#1e1e1e;padding:10px;border-radius:8px;font-size:13px;';
+    div.innerHTML = `<div>${n.text}</div><div style="font-size:10px;color:#888;margin-top:4px;">${n.time}</div>`;
+    listContainer.appendChild(div);
+  });
+  localStorage.setItem('universe_notifications', JSON.stringify(notifications));
+  checkNotificationsBadge();
+}
+
+function closeNotificationsModal() {
+  document.getElementById('notificationsModal').classList.add('hidden');
 }
 
 function renderFeed() {
@@ -1001,8 +1129,14 @@ function toggleLike(postId) {
   const p = posts.find(x => x.id === postId);
   if (!p) return;
   const idx = p.likes.indexOf(currentUser.username);
-  if (idx > -1) p.likes.splice(idx, 1);
-  else p.likes.push(currentUser.username);
+  if (idx > -1) {
+    p.likes.splice(idx, 1);
+  } else {
+    p.likes.push(currentUser.username);
+    if (p.username !== currentUser.username) {
+      addNotification(`@${currentUser.username} liked your post.`);
+    }
+  }
   localStorage.setItem('universe_posts', JSON.stringify(posts));
   renderFeed();
 }
@@ -1076,6 +1210,9 @@ function postComment() {
   if (p) {
     p.comments.push({ user: currentUser.username, text: txt });
     localStorage.setItem('universe_posts', JSON.stringify(posts));
+    if (p.username !== currentUser.username) {
+      addNotification(`@${currentUser.username} commented on your post.`);
+    }
     input.value = '';
     renderCommentsList();
     renderFeed();
@@ -1223,6 +1360,7 @@ function openBuyModal(prodId) {
 
   renderProductReviews();
   document.getElementById('orderName').value = currentUser.name;
+  document.getElementById('shippingCalculationBox').style.display = 'none';
   document.getElementById('buyProductModal').classList.remove('hidden');
 }
 
@@ -1261,7 +1399,25 @@ function submitProductReview() {
   alert('Review submitted successfully!');
 }
 
-function detectUserLocation() {
+// Distance Calculation Formula (Haversine Formula) from R.N. Singh Inter College
+function calculateDistanceFromCollege(lat2, lon2) {
+  const R = 6371e3; // Earth radius in meters
+  const φ1 = COLLEGE_LAT * Math.PI/180;
+  const φ2 = lat2 * Math.PI/180;
+  const Δφ = (lat2-COLLEGE_LAT) * Math.PI/180;
+  const Δλ = (lon2-COLLEGE_LON) * Math.PI/180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return R * c; // Distance in meters
+}
+
+let calculatedDeliveryFee = 0;
+
+function detectUserLocationAndCalculateFee() {
   if (!navigator.geolocation) {
     alert('Geolocation is not supported by your browser');
     return;
@@ -1271,7 +1427,28 @@ function detectUserLocation() {
     const lon = pos.coords.longitude;
     const link = `https://maps.google.com/?q=${lat},${lon}`;
     document.getElementById('orderLocLink').value = link;
-    alert('Location detected successfully!');
+
+    // Calculate distance in meters from R.N. Singh Inter College
+    const distanceMeters = calculateDistanceFromCollege(lat, lon);
+    const distanceRounded = Math.round(distanceMeters);
+
+    // Every 100 meters = ₹10 shipping charge (as per your logic)
+    const rawFee = Math.ceil(distanceRounded / 100) * 10;
+    
+    // Psychological Discount Trick: Cut the calculated fee in half (50% discount)
+    const discountedFee = Math.round(rawFee / 2);
+    calculatedDeliveryFee = discountedFee;
+
+    // Show box & display psychological discount message
+    const box = document.getElementById('shippingCalculationBox');
+    box.style.display = 'block';
+    document.getElementById('distanceText').innerText = `📍 Distance from R.N. Singh Inter College: ~${distanceRounded} meters`;
+    document.getElementById('deliveryFeeDisplay').innerHTML = `
+      <span style="text-decoration:line-through;color:#ff3040;">Original Delivery: ₹${rawFee}</span><br>
+      <span style="color:#2ecc71;font-weight:bold;font-size:13px;">🎉 College Distance Special Discount (50% OFF): <span style="font-size:15px;">₹${discountedFee}</span></span>
+    `;
+
+    alert('GPS Located & Distance Discount Applied Successfully!');
   }, err => {
     alert('Unable to retrieve location. Please check permission settings.');
   });
@@ -1283,15 +1460,19 @@ function placeOrderNow() {
   const loc = document.getElementById('orderLocLink').value.trim();
   const address = document.getElementById('orderAddress').value.trim();
 
-  if (!name || !phone || !address) {
-    alert('Please fill out all mandatory delivery details.');
+  if (!name || !phone || !address || !loc) {
+    alert('Please fill out all mandatory details and get your GPS location first!');
     return;
   }
+
+  const finalTotal = currentActiveProduct.price + calculatedDeliveryFee;
 
   const order = {
     id: Date.now(),
     product: currentActiveProduct.title,
-    price: currentActiveProduct.price,
+    price: finalTotal,
+    basePrice: currentActiveProduct.price,
+    deliveryFee: calculatedDeliveryFee,
     buyer: currentUser.username,
     name, phone, loc, address,
     date: new Date().toLocaleString()
@@ -1299,7 +1480,7 @@ function placeOrderNow() {
 
   orders.push(order);
   localStorage.setItem('universe_orders', JSON.stringify(orders));
-  alert('Order placed successfully! VIP Admin will contact you soon.');
+  alert(`Order placed successfully! Total Amount (Including Discounted Delivery ₹${calculatedDeliveryFee}): ₹${finalTotal}`);
   closeBuyModal();
 }
 
@@ -1521,7 +1702,7 @@ function openPrivateChat(targetUser) {
   currentChatUser = targetUser;
   document.getElementById('privateChatRoom').classList.remove('hidden');
   document.getElementById('chatTargetName').innerText = targetUser.username;
-  document.getElementById('chatTargetAvatar'].style.backgroundImage = `url('${targetUser.avatar}')`;
+  document.getElementById('chatTargetAvatar').style.backgroundImage = `url('${targetUser.avatar}')`;
   renderDirectMessages();
 }
 
@@ -1544,7 +1725,13 @@ function renderDirectMessages() {
   history.forEach(m => {
     const row = document.createElement('div');
     row.className = `chat-msg-row ${m.sender === currentUser.username ? 'sent' : 'received'}`;
-    row.innerHTML = `<div class="chat-bubble">${m.text}</div>`;
+    if (m.type === 'image') {
+      row.innerHTML = `<div class="chat-bubble" style="padding:4px;"><img src="${m.text}" style="max-width:180px;border-radius:12px;display:block;"></div>`;
+    } else if (m.type === 'audio') {
+      row.innerHTML = `<div class="chat-bubble">🎤 <i>[Voice Note - 00:04s]</i></div>`;
+    } else {
+      row.innerHTML = `<div class="chat-bubble">${m.text}</div>`;
+    }
     box.appendChild(row);
   });
   box.scrollTop = box.scrollHeight;
@@ -1556,10 +1743,34 @@ function sendDirectMessage() {
   if (!txt || !currentChatUser) return;
   const key = getChatKey(currentUser.username, currentChatUser.username);
   if (!messages[key]) messages[key] = [];
-  messages[key].push({ sender: currentUser.username, text: txt, time: Date.now() });
+  messages[key].push({ sender: currentUser.username, text: txt, type: 'text', time: Date.now() });
   localStorage.setItem('universe_messages', JSON.stringify(messages));
   input.value = '';
   renderDirectMessages();
+}
+
+function sendChatMedia(e) {
+  const file = e.target.files[0];
+  if (!file || !currentChatUser) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const key = getChatKey(currentUser.username, currentChatUser.username);
+    if (!messages[key]) messages[key] = [];
+    messages[key].push({ sender: currentUser.username, text: evt.target.result, type: 'image', time: Date.now() });
+    localStorage.setItem('universe_messages', JSON.stringify(messages));
+    renderDirectMessages();
+  };
+  reader.readAsDataURL(file);
+}
+
+function sendVoiceNoteMessage() {
+  if (!currentChatUser) return;
+  const key = getChatKey(currentUser.username, currentChatUser.username);
+  if (!messages[key]) messages[key] = [];
+  messages[key].push({ sender: currentUser.username, text: 'audio_placeholder', type: 'audio', time: Date.now() });
+  localStorage.setItem('universe_messages', JSON.stringify(messages));
+  renderDirectMessages();
+  alert('Voice note sent successfully!');
 }
 
 function openAdminAuthModal() {
@@ -1611,8 +1822,9 @@ function renderAdminOrders() {
     const div = document.createElement('div');
     div.style.cssText = 'background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:10px;font-size:13px;';
     div.innerHTML = `
-      <b>📦 ${o.product}</b> (₹${o.price})
+      <b>📦 ${o.product}</b> (Final Paid: ₹${o.price})
       <div style="color:#aaa;margin-top:4px;">Buyer: ${o.name} (${o.phone})</div>
+      <div style="color:#aaa;">Delivery Fee charged: ₹${o.deliveryFee}</div>
       <div style="color:#aaa;">Address: ${o.address}</div>
       ${o.loc ? `<a href="${o.loc}" target="_blank" style="color:#0095f6;display:block;margin-top:4px;">📍 View GPS Location</a>` : ''}
     `;
