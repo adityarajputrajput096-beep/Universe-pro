@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Universe Pro - VIP ★★★★★ Social & Commerce Platform</title>
 
-<!-- Font Awesome VIP Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
 :root {
   --bg-primary: #050505;
@@ -78,7 +75,6 @@ button {
   display: none !important;
 }
 
-/* Hide Scrollbars Cleanly Across All Browsers */
 ::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
@@ -243,17 +239,18 @@ button {
   gap: 8px;
 }
 
+/* 3D Modern Header Buttons */
 .btn-live-badge {
   background: linear-gradient(135deg, #ff416c, #ff4b2b);
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
-  padding: 7px 12px;
-  border-radius: 20px;
+  padding: 8px 12px;
+  border-radius: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   box-shadow: 0 5px 0 #b3001b, 0 8px 20px rgba(255, 65, 108, 0.5);
   transition: all 0.1s ease;
 }
@@ -264,9 +261,9 @@ button {
 }
 
 .icon-circle-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   background: linear-gradient(145deg, #1e1e1e, #0d0d0d);
   border: 1px solid #333;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -274,7 +271,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.1);
   transition: all 0.1s ease;
   position: relative;
@@ -283,6 +279,12 @@ button {
 .icon-circle-btn:active {
   transform: translateY(2px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.icon-circle-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }
 
 .badge-dot {
@@ -432,9 +434,17 @@ main {
 
 .action-icon-btn {
   color: #fff;
-  font-size: 24px;
   background: none;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-icon-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 
 .action-icon-btn.liked {
@@ -450,13 +460,13 @@ main {
   font-size: 14px;
 }
 
-/* Bottom Navigation Bar */
+/* Bottom Navigation Bar with 3D Modern Look */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(60px + env(safe-area-inset-bottom, 15px));
+  height: calc(65px + env(safe-area-inset-bottom, 15px));
   padding-bottom: max(12px, env(safe-area-inset-bottom, 15px));
   background: rgba(0, 0, 0, 0.96);
   backdrop-filter: blur(15px);
@@ -469,13 +479,19 @@ main {
 
 .nav-tab-btn {
   color: var(--text-muted);
-  font-size: 22px;
   flex: 1;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.1s ease, color 0.2s ease;
+}
+
+.nav-tab-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
 .nav-tab-btn:active {
@@ -485,6 +501,9 @@ main {
 .nav-tab-btn.active {
   color: #fff;
   text-shadow: 0 0 12px var(--accent-color);
+}
+.nav-tab-btn.active svg {
+  fill: var(--accent-color);
 }
 
 /* Chat Styling */
@@ -583,13 +602,23 @@ main {
   <header class="header">
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
-      <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
+      <!-- 3D LIVE Button -->
+      <button class="btn-live-badge" onclick="startBroadcastingLive()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg> 🔴 LIVE
+      </button>
+      <!-- 3D Notification Button -->
       <button class="icon-circle-btn" onclick="openNotificationsModal()" title="Notifications">
-        <i class="fa-regular fa-bell"></i>
+        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         <span id="notifBadgeDot" class="badge-dot hidden"></span>
       </button>
-      <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
-      <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
+      <!-- 3D Chat Button -->
+      <button class="icon-circle-btn" onclick="openChatModal()" title="Chats">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+      <!-- 3D Admin Button -->
+      <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+      </button>
     </div>
   </header>
 
@@ -640,7 +669,9 @@ main {
     <section id="profile" class="tab-pane">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px 0;">
         <b id="profileHeaderTitle" style="font-size:18px;color:#fff;">Profile</b>
-        <button onclick="openProfileSettingsModal()" style="color:#fff;font-size:20px;padding:6px;"><i class="fa-solid fa-gear"></i></button>
+        <button onclick="openProfileSettingsModal()" style="color:#fff;font-size:20px;padding:6px;">
+          <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        </button>
       </div>
 
       <div style="display:flex;gap:20px;align-items:center;padding:18px 16px;border-bottom:1px solid var(--border-color)">
@@ -665,13 +696,26 @@ main {
     </section>
   </main>
 
+  <!-- 3D Modern Bottom Navigation Bar -->
   <nav class="bottom-nav-bar">
-    <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')"><i class="fa-solid fa-house"></i></button>
-    <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
-    <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
-    <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
-    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
-    <button id="nav-profile" class="nav-tab-btn" onclick="openMyProfile()"><i class="fa-solid fa-user"></i></button>
+    <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')" title="Home">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    </button>
+    <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')" title="Search">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    </button>
+    <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')" title="Shop">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-1.99.9-1.99 2L2 19c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+    </button>
+    <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()" title="Upload">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+    </button>
+    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')" title="Reels">
+      <svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+    </button>
+    <button id="nav-profile" class="nav-tab-btn" onclick="openMyProfile()" title="Profile">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    </button>
   </nav>
 </div>
 
@@ -768,7 +812,7 @@ main {
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: admin1234):</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 9838):</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
@@ -812,7 +856,6 @@ main {
       <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;padding:9px;" onclick="detectUserLocationAndCalculateFee()">📍 Get GPS Location & Calculate Delivery</button>
       <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
       
-      <!-- Distance & Discount Dynamic Box -->
       <div id="shippingCalculationBox" style="background:#111;padding:10px;border-radius:8px;border:1px dashed #444;font-size:12px;display:none;">
         <div id="distanceText" style="color:#aaa;">📍 Distance from College: Calculating...</div>
         <div id="deliveryFeeDisplay" style="margin-top:4px;"></div>
@@ -861,20 +904,20 @@ main {
 
   <div id="privateChatRoom" class="hidden" style="position:absolute;inset:0;background:#050505;z-index:10;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
     <div style="background:#121212;padding:12px 15px;border-bottom:1px solid #333;display:flex;align-items:center;gap:12px;">
-      <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;"><i class="fa-solid fa-arrow-left"></i></button>
+      <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;">←</button>
       <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;background-size:cover;"></div>
       <b id="chatTargetName" style="color:#fff;font-size:15px;flex:1;">User</b>
-      <button onclick="startVideoCall()" style="background:#181818;border:1px solid #333;color:#0095f6;border-radius:50%;width:38px;height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Start Video Call"><i class="fa-solid fa-video"></i></button>
+      <button onclick="startVideoCall()" style="background:#181818;border:1px solid #333;color:#0095f6;border-radius:50%;width:38px;height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Start Video Call">📹</button>
       <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
     </div>
     <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:15px;"></div>
     
     <div style="padding:10px 12px;background:#121212;border-top:1px solid #333;display:flex;gap:8px;align-items:center;">
       <input id="chatMediaInput" type="file" accept="image/*" class="hidden" onchange="sendChatMedia(event)">
-      <button class="icon-circle-btn" style="width:36px;height:36px;font-size:14px;" onclick="document.getElementById('chatMediaInput').click()" title="Send Photo"><i class="fa-solid fa-image"></i></button>
-      <button class="icon-circle-btn" style="width:36px;height:36px;font-size:14px;" onclick="sendVoiceNoteMessage()" title="Send Voice Note"><i class="fa-solid fa-microphone"></i></button>
+      <button class="icon-circle-btn" style="width:36px;height:36px;" onclick="document.getElementById('chatMediaInput').click()" title="Send Photo">📷</button>
+      <button class="icon-circle-btn" style="width:36px;height:36px;" onclick="sendVoiceNoteMessage()" title="Send Voice Note">🎤</button>
       <input id="directMessageInput" class="input" placeholder="Type a message..." style="border-radius:20px;flex:1;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
-      <button class="primary-btn" style="width:55px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      <button class="primary-btn" style="width:55px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="sendDirectMessage()">➤</button>
     </div>
   </div>
 </div>
@@ -917,7 +960,7 @@ main {
     <div id="commentsList" style="padding:15px;overflow-y:auto;flex:1;"></div>
     <div style="padding:12px;background:#121212;border-top:1px solid #333;display:flex;gap:10px;">
       <input id="commentInput" class="input" placeholder="Add a comment..." style="border-radius:20px;">
-      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="postComment()"><i class="fa-solid fa-paper-plane"></i></button>
+      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="postComment()">➤</button>
     </div>
   </div>
 </div>
@@ -936,13 +979,12 @@ let currentActiveProduct = null;
 let multipleProductFiles = [];
 let activeCommentPostId = null;
 
-// R.N. Singh Inter College Fixed GPS Coordinates (Anchor Hub)
 const COLLEGE_LAT = 27.2455; 
 const COLLEGE_LON = 81.5650;
 
 let users = JSON.parse(localStorage.getItem('universe_users')) || [
-  { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '9838', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
-  { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '9838', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
+  { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '123', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
+  { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '123', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
 ];
 
 let posts = JSON.parse(localStorage.getItem('universe_posts')) || [
@@ -1098,21 +1140,25 @@ function renderFeed() {
           <div class="avatar-sm" style="background-image:url('${userObj.avatar || ''}')">${userObj.avatar ? '' : post.username[0].toUpperCase()}</div>
           <b>${userObj.name}</b>
         </div>
-        <button style="color:#aaa;" onclick="openPostOptions(${post.id})"><i class="fa-solid fa-ellipsis"></i></button>
+        <button style="color:#aaa;" onclick="openPostOptions(${post.id})">⋮</button>
       </div>
       <div class="post-media-box">
         ${post.type === 'video' ? `<video src="${post.url}" controls autoplay muted loop></video>` : `<img src="${post.url}" alt="Post">`}
       </div>
       <div class="post-actions-bar">
         <div class="left-actions">
-          <button class="action-icon-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
-            <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+          <button class="action-icon-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})" title="Like">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
           </button>
-          <button class="action-icon-btn" onclick="openCommentsModal(${post.id})"><i class="fa-regular fa-comment"></i></button>
-          <button class="action-icon-btn" onclick="sharePost(${post.id})"><i class="fa-regular fa-paper-plane"></i></button>
+          <button class="action-icon-btn" onclick="openCommentsModal(${post.id})" title="Comment">
+            <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+          </button>
+          <button class="action-icon-btn" onclick="sharePost(${post.id})" title="Share">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
         </div>
-        <button class="action-icon-btn ${isSaved ? 'saved' : ''}" onclick="toggleSavePost(${post.id})">
-          <i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-bookmark"></i>
+        <button class="action-icon-btn ${isSaved ? 'saved' : ''}" onclick="toggleSavePost(${post.id})" title="Save">
+          <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
         </button>
       </div>
       <div class="post-meta-details">
@@ -1560,22 +1606,15 @@ function requestCameraPermissions() {
     });
 }
 
-// -----------------------------------------------------------------
-// UPDATED DELETE ACCOUNT FUNCTION (Yeh ab posts aur data bhi uda dega)
-// -----------------------------------------------------------------
 function deleteMyOwnAccount() {
   if (confirm('Are you sure you want to delete your VIP account permanently? All your posts and data will be removed.')) {
     const deletedUsername = currentUser.username;
-    
-    // 1. Remove user from registered users list
     users = users.filter(u => u.username !== deletedUsername);
     localStorage.setItem('universe_users', JSON.stringify(users));
 
-    // 2. Remove all posts created by this user
     posts = posts.filter(p => p.username !== deletedUsername);
     localStorage.setItem('universe_posts', JSON.stringify(posts));
 
-    // 3. Clear logged user session and reload
     logout();
   }
 }
@@ -1789,7 +1828,7 @@ function closeAdminAuthModal() {
 
 function verifyAdminPassword() {
   const pass = document.getElementById('adminPassInput').value;
-  if (pass === 'admin9838' || pass === '8882691376') {
+  if (pass === '9838' || pass === '8882691376') {
     closeAdminAuthModal();
     document.getElementById('adminMainModal').classList.remove('hidden');
     renderAdminOrders();
@@ -1909,7 +1948,7 @@ function deleteProduct(id) {
 
 function renderAdminUsers() {
   const list = document.getElementById('adminUsersList');
-  list.innerHTML = ``;
+  list.innerHTML = '';
   users.forEach(u => {
     const div = document.createElement('div');
     div.style.cssText = 'background:#1e1e1e;padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;';
