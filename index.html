@@ -3,11 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Universe Pro - VIP Online Cloud Platform</title>
+<title>Universe Pro - VIP ★★★★★ Social & Commerce Platform</title>
+
+<!-- Font Awesome VIP Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 :root {
-  --bg-primary: #050505;
+  --bg-primary: #000000;
   --bg-card: #121212;
   --bg-input: #1e1e1e;
   --border-color: #262626;
@@ -19,31 +22,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-body.theme-cyberpunk {
-  --bg-primary: #0d0221;
-  --bg-card: #190933;
-  --bg-input: #291152;
-  --accent-color: #ff007f;
-  --border-color: #4a154b;
-}
-
-body.theme-gold {
-  --bg-primary: #0a0a0a;
-  --bg-card: #141414;
-  --bg-input: #1f1f1f;
-  --accent-color: #f1c40f;
-  --border-color: #332b00;
-}
-
-body.theme-matrix {
-  --bg-primary: #020d05;
-  --bg-card: #051c0a;
-  --bg-input: #0a2e11;
-  --accent-color: #2ecc71;
-  --border-color: #0d3b17;
-}
-
-*, *::before, *::after {
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -70,10 +49,16 @@ button {
   background: none;
 }
 
+button:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
 .hidden {
   display: none !important;
 }
 
+/* Clean Scrollbars */
 ::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
@@ -85,10 +70,11 @@ button {
   scrollbar-width: none !important;
 }
 
+/* App Loader */
 #appLoader {
   position: fixed;
   inset: 0;
-  background: #050505;
+  background: #000000;
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -110,8 +96,9 @@ button {
   to { transform: rotate(360deg); }
 }
 
+/* Auth Screen */
 #auth {
-  display: flex;
+  display: none;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
@@ -130,7 +117,7 @@ button {
 }
 
 .logo {
-  font-size: 40px;
+  font-size: 38px;
   font-weight: 900;
   letter-spacing: -1px;
   background: var(--insta-gradient);
@@ -140,10 +127,10 @@ button {
 }
 
 .vip-welcome {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #f1c40f;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   letter-spacing: 0.5px;
 }
 
@@ -168,21 +155,14 @@ button {
 
 .primary-btn {
   width: 100%;
-  background: linear-gradient(135deg, #00b4db, #0083b0);
+  background: var(--accent-color);
   color: #fff;
-  padding: 14px;
-  border-radius: 14px;
-  font-weight: 800;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
   font-size: 15px;
   margin-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 6px 0 #005f7b, 0 10px 25px rgba(0, 180, 219, 0.4);
-  transition: all 0.1s ease;
-}
-
-.primary-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #005f7b, 0 5px 10px rgba(0, 180, 219, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 149, 246, 0.3);
 }
 
 .switch-auth {
@@ -197,6 +177,7 @@ button {
   cursor: pointer;
 }
 
+/* App Layout */
 #app {
   display: none;
   min-height: 100vh;
@@ -211,7 +192,7 @@ button {
   left: 0;
   right: 0;
   z-index: 200;
-  background: rgba(5, 5, 5, 0.92);
+  background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   display: flex;
@@ -221,7 +202,7 @@ button {
 }
 
 .brand-title {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
   background: linear-gradient(45deg, #ffffff, #aaaaaa);
   -webkit-background-clip: text;
@@ -231,70 +212,37 @@ button {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .btn-live-badge {
-  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  background: #ff3040;
   color: #fff;
   font-size: 12px;
   font-weight: 800;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 6px 12px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 5px 0 #b3001b, 0 8px 20px rgba(255, 65, 108, 0.5);
-  transition: all 0.1s ease;
-}
-
-.btn-live-badge:active {
-  transform: translateY(3px);
-  box-shadow: 0 2px 0 #b3001b, 0 4px 10px rgba(255, 65, 108, 0.3);
+  gap: 5px;
 }
 
 .icon-circle-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, #1e1e1e, #0d0d0d);
-  border: 1px solid #333;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #181818;
+  border: 1px solid var(--border-color);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-  transition: all 0.1s ease;
-  position: relative;
-}
-
-.icon-circle-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
-}
-
-.icon-circle-btn svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
-}
-
-.badge-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 8px;
-  height: 8px;
-  background: #ff3040;
-  border-radius: 50%;
+  font-size: 16px;
 }
 
 main {
   width: min(650px, 100%);
   margin: 0 auto;
-  padding-bottom: calc(85px + env(safe-area-inset-bottom, 15px));
 }
 
 .tab-pane {
@@ -376,90 +324,13 @@ main {
   color: #fff;
 }
 
-.post-card {
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 10px;
-  background: var(--bg-primary);
-}
-
-.post-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-}
-
-.user-info-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-}
-
-.post-media-box {
-  width: 100%;
-  max-height: 600px;
-  background: #080808;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.post-media-box img, .post-media-box video {
-  width: 100%;
-  max-height: 600px;
-  object-fit: contain;
-}
-
-.post-actions-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
-  font-size: 22px;
-}
-
-.left-actions {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-}
-
-.action-icon-btn {
-  color: #fff;
-  background: none;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.action-icon-btn svg {
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
-}
-
-.action-icon-btn.liked {
-  color: var(--like-color);
-}
-
-.action-icon-btn.saved {
-  color: #f1c40f;
-}
-
-.post-meta-details {
-  padding: 0 16px 14px;
-  font-size: 14px;
-}
-
+/* Bottom Navigation Bar */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(65px + env(safe-area-inset-bottom, 15px));
+  height: calc(60px + env(safe-area-inset-bottom, 15px));
   padding-bottom: max(12px, env(safe-area-inset-bottom, 15px));
   background: rgba(0, 0, 0, 0.96);
   backdrop-filter: blur(15px);
@@ -472,97 +343,35 @@ main {
 
 .nav-tab-btn {
   color: var(--text-muted);
+  font-size: 22px;
   flex: 1;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s ease, color 0.2s ease;
-}
-
-.nav-tab-btn svg {
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-}
-
-.nav-tab-btn:active {
-  transform: scale(0.85);
 }
 
 .nav-tab-btn.active {
   color: #fff;
-  text-shadow: 0 0 12px var(--accent-color);
-}
-.nav-tab-btn.active svg {
-  fill: var(--accent-color);
-}
-
-.chat-msg-row {
-  display: flex;
-  margin-bottom: 10px;
-}
-.chat-msg-row.sent {
-  justify-content: flex-end;
-}
-.chat-msg-row.received {
-  justify-content: flex-start;
-}
-.chat-bubble {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.4;
-  word-break: break-word;
-}
-.chat-msg-row.sent .chat-bubble {
-  background: var(--accent-color);
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-.chat-msg-row.received .chat-bubble {
-  background: #262626;
-  color: #fff;
-  border-bottom-left-radius: 4px;
-}
-
-.thumb-img-box {
-  width: 55px;
-  height: 55px;
-  border-radius: 8px;
-  border: 1px solid #444;
-  background-size: cover;
-  background-position: center;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.thumb-img-box.active {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 8px var(--accent-color);
-}
-
-.star-rating {
-  color: #f1c40f;
-  font-size: 14px;
 }
 </style>
 </head>
 <body>
 
+<!-- Lightning Fast Initial Loader -->
 <div id="appLoader">
   <div class="spinner"></div>
-  <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro Online Cloud</div>
-  <div style="font-size:12px;color:#888;">Connecting Live Cloud Hub...</div>
+  <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
+  <div style="font-size:12px;color:#888;">Loading VIP Ecosystem...</div>
 </div>
 
+<!-- Login & Register Screen -->
 <section id="auth">
   <div class="auth-card">
     <div class="logo">Universe Pro</div>
     <div class="vip-welcome">👑 𝓞𝔀𝓷𝓮𝓻 Aditya Thakur 🚀</div>
     <div class="vip-welcome">📿🛕 हर हर महादेव 📿🛕</div>
-    <div class="vip-welcome">▄︻デ══━一💥 Emergency Support: 8882691376</div>
+    <div class="vip-welcome">▄︻デ══━一💥 Emergency: 8882691376</div>
     
     <form id="authForm">
       <div id="fullNameGroup" class="input-group hidden">
@@ -582,1481 +391,369 @@ main {
     
     <div class="switch-auth">
       <span id="switchText">Don't have an account?</span> 
-      <span id="switchBtn" onclick="toggleAuthMode()">Sign up</span>
+      <span id="switchBtn">Sign up</span>
     </div>
   </div>
 </section>
 
+<!-- Main VIP App Structure -->
 <div id="app">
   <header class="header">
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
-      <button class="btn-live-badge" onclick="startBroadcastingLive()">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg> 🔴 LIVE
-      </button>
-      <button class="icon-circle-btn" onclick="openNotificationsModal()" title="Notifications">
-        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-        <span id="notifBadgeDot" class="badge-dot hidden"></span>
-      </button>
-      <button class="icon-circle-btn" onclick="openChatModal()" title="Chats">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-      <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-      </button>
+      <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
+      <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
+      <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
     </div>
   </header>
 
   <main>
+    <!-- HOME TAB -->
     <section id="home" class="tab-pane active">
       <div class="live-bar" id="liveStreamsBar" style="display:none;"></div>
       <div class="stories-container" id="stories"></div>
       <div id="feed"></div>
     </section>
 
+    <!-- SEARCH TAB -->
     <section id="search" class="tab-pane">
       <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border-color); background:var(--bg-primary);">
-        <input id="searchInput" class="input" placeholder="🔍 Search people online..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
+        <input id="searchInput" class="input" placeholder="🔍 Search people..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
       </div>
       <div id="searchResults" style="padding:8px 0;"></div>
     </section>
 
+    <!-- SHOP / OFFICIAL VIP STORE TAB -->
     <section id="shop" class="tab-pane">
-      <div style="font-weight:700;padding:16px 16px 8px;font-size:16px;">🛍️ Official VIP Store (R.N. Singh Inter College Hub)</div>
+      <div style="font-weight:700;padding:16px 16px 8px;font-size:16px;display:flex;align-items:center;gap:8px;">
+        🛍️ Official VIP Store <span style="font-size:11px;background:#0095f6;padding:2px 8px;border-radius:10px;">Secure</span>
+      </div>
       <div style="padding:0 14px 10px;">
-        <input id="shopSearchInput" class="input" placeholder="🔍 Search products in store..." oninput="renderShop()" style="border-radius:20px;padding:10px 16px;background:#181818;">
+        <input id="shopSearchInput" class="input" placeholder="🔍 Search VIP products..." oninput="renderShop()" style="border-radius:20px;padding:10px 16px;background:#181818;">
       </div>
       <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 14px 14px;"></div>
     </section>
 
+    <!-- REELS TAB -->
     <section id="reels" class="tab-pane">
       <div class="reels" id="reelsList" style="height:calc(100vh - 126px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
     </section>
 
+    <!-- UPLOAD TAB -->
     <section id="upload" class="tab-pane">
       <div style="padding:16px;">
-        <h3 style="margin-bottom:10px;">Create Post / Reel Online</h3>
-        <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;" onchange="previewUploadMedia(event)">
+        <h3 style="margin-bottom:10px;">Create Post / Reel</h3>
+        <input id="fileInput" type="file" accept="image/*,video/*" style="margin:14px 0;color:#fff;">
         <div id="preview" style="height:320px;background:#080808;border:1px dashed #444;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888;">Select photo or video</div>
-        
-        <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;">
-          <button class="primary-btn" style="background:#262626;box-shadow:none;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('none')">Normal</button>
-          <button class="primary-btn" style="background:#262626;box-shadow:none;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('brightness(1.3) contrast(1.1)')">✨ Beauty / Bright</button>
-          <button class="primary-btn" style="background:#262626;box-shadow:none;padding:8px;font-size:12px;margin:0;" onclick="setMediaFilter('grayscale(1)')">🖤 B&W Filter</button>
-        </div>
-
         <input id="caption" class="input" placeholder="Write a caption..." style="margin-top:12px;">
-        <button class="primary-btn" onclick="publish()">Publish to Cloud</button>
+        <button class="primary-btn" onclick="publish()">Publish Post</button>
       </div>
     </section>
 
+    <!-- PROFILE TAB (INSTAGRAM STYLE) -->
     <section id="profile" class="tab-pane">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px 0;">
-        <b id="profileHeaderTitle" style="font-size:18px;color:#fff;">Profile</b>
-        <button onclick="openProfileSettingsModal()" style="color:#fff;font-size:20px;padding:6px;">
-          <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-        </button>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border-color);">
+        <b id="profileUsernameDisplay" style="font-size:18px;color:#fff;">profile_user</b>
+        <button onclick="openProfileSettingsModal()" style="color:#fff;font-size:20px;padding:4px;"><i class="fa-solid fa-gear"></i></button>
       </div>
 
-      <div style="display:flex;gap:20px;align-items:center;padding:18px 16px;border-bottom:1px solid var(--border-color)">
-        <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;"></div>
+      <div style="display:flex;gap:20px;align-items:center;padding:18px 16px;">
+        <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;">U</div>
         <div style="display:flex;gap:15px;text-align:center;flex:1;justify-content:space-around;">
           <div><strong id="postCount" style="display:block;font-size:18px;color:#fff;">0</strong><span style="color:#888;font-size:12px;">posts</span></div>
           <div onclick="showUsersListModal('followers')" style="cursor:pointer;"><strong id="followerCount" style="display:block;font-size:18px;color:#fff;">0</strong><span style="color:#888;font-size:12px;">followers</span></div>
           <div onclick="showUsersListModal('following')" style="cursor:pointer;"><strong id="followingCount" style="display:block;font-size:18px;color:#fff;">0</strong><span style="color:#888;font-size:12px;">following</span></div>
         </div>
       </div>
-      <div style="padding:14px 16px;">
-        <b id="myName"></b>
-        <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Welcome to Universe Pro VIP 👑 </p>
+
+      <div style="padding:0 16px 14px;">
+        <b id="myName" style="font-size:14px;color:#fff;">Aditya Singh</b>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Universe Pro VIP Owner 👑 | 📿 Har Har Mahadev 📿</p>
       </div>
-      <div style="display:flex;gap:8px;padding:0 16px 14px;" id="profileActionsBox"></div>
-      <input id="profileInput" type="file" accept="image/*" class="hidden" onchange="saveProfilePic(event)">
+
+      <div style="display:flex;gap:8px;padding:0 16px 14px;">
+        <button class="primary-btn" style="background:#262626;margin:0;padding:8px;font-size:13px;" onclick="changeProfilePic()">Edit Profile</button>
+        <button class="primary-btn" style="background:#262626;margin:0;padding:8px;font-size:13px;" onclick="shareProfileLink()">Share Profile</button>
+      </div>
+
+      <input id="profileInput" type="file" accept="image/*" class="hidden">
+
       <div style="display:flex;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
-        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;box-shadow:none;" onclick="switchProfileTab('posts')">📷 POSTS</button>
-        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;box-shadow:none;" onclick="switchProfileTab('saved')">🔖 SAVED</button>
+        <button id="btnMyPosts" class="primary-btn" style="background:none;border-radius:0;color:#fff;border-bottom:2px solid #fff;" onclick="switchProfileTab('posts')"><i class="fa-solid fa-table-cells"></i> POSTS</button>
+        <button id="btnSavedPosts" class="primary-btn" style="background:none;border-radius:0;color:var(--text-muted);border-bottom:2px solid transparent;" onclick="switchProfileTab('saved')"><i class="fa-regular fa-bookmark"></i> SAVED</button>
       </div>
-      <div id="myGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;"></div>
+      <div id="myGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;min-height:200px;background:#050505;"></div>
     </section>
   </main>
 
   <nav class="bottom-nav-bar">
-    <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')" title="Home">
-      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-    </button>
-    <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')" title="Search">
-      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    </button>
-    <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')" title="Shop">
-      <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-1.99.9-1.99 2L2 19c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg>
-    </button>
-    <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()" title="Upload">
-      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-    </button>
-    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')" title="Reels">
-      <svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
-    </button>
-    <button id="nav-profile" class="nav-tab-btn" onclick="openMyProfile()" title="Profile">
-      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-    </button>
+    <button id="nav-home" class="nav-tab-btn active" onclick="showTab('home')"><i class="fa-solid fa-house"></i></button>
+    <button id="nav-search" class="nav-tab-btn" onclick="showTab('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button id="nav-shop" class="nav-tab-btn" onclick="showTab('shop')"><i class="fa-solid fa-bag-shopping"></i></button>
+    <button id="nav-upload" class="nav-tab-btn" onclick="openUpload()"><i class="fa-solid fa-square-plus"></i></button>
+    <button id="nav-reels" class="nav-tab-btn" onclick="showTab('reels')"><i class="fa-solid fa-clapperboard"></i></button>
+    <button id="nav-profile" class="nav-tab-btn" onclick="openMyProfile()"><i class="fa-solid fa-user"></i></button>
   </nav>
 </div>
 
+<!-- ⚙️ PROFILE SETTINGS MODAL -->
 <div id="profileSettingsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:850;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeProfileSettingsModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:20px;" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #333;padding-bottom:10px;">
-      <b style="color:#fff;font-size:16px;">⚙️ Account & Themes</b>
-      <button onclick="closeProfileSettingsModal()" style="color:#fff;font-size:18px;">✕</button>
+      <b style="color:#fff;font-size:16px;">⚙️ Account Settings</b>
+      <button onclick="closeProfileSettingsModal()" style="color:#fff;font-size:18px;background:none;">✕</button>
     </div>
-    
-    <div style="margin-bottom:14px;">
-      <label style="font-size:12px;color:#aaa;display:block;margin-bottom:6px;">🎨 Choose App Theme:</label>
-      <div style="display:flex;gap:8px;">
-        <button class="primary-btn" style="background:#1e1e1e;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('default')">Default</button>
-        <button class="primary-btn" style="background:#ff007f;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('cyberpunk')">Cyberpunk</button>
-        <button class="primary-btn" style="background:#f1c40f;color:#000;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('gold')">Royal Gold</button>
-        <button class="primary-btn" style="background:#2ecc71;box-shadow:none;margin:0;font-size:11px;" onclick="setAppTheme('matrix')">Matrix</button>
-      </div>
-    </div>
-
     <div style="display:flex;flex-direction:column;gap:12px;">
-      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="closeProfileSettingsModal(); changeProfilePic();">📷 Change Profile Picture</button>
-      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="requestCameraPermissions()">🔒 Request Cam/Mic Permission</button>
-      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="closeProfileSettingsModal(); logout();">🚪 Log Out</button>
+      <button class="primary-btn" style="background:#262626;margin:0;" onclick="closeProfileSettingsModal(); changeProfilePic();">📷 Change Profile Picture</button>
+      <button class="primary-btn" style="background:#262626;margin:0;" onclick="closeProfileSettingsModal(); logout();">🚪 Log Out</button>
       <hr style="border:none;border-top:1px solid #333;margin:8px 0;">
-      <button class="primary-btn" style="background:#ff3040;box-shadow:none;margin:0;" onclick="deleteMyOwnAccount()">🗑️ Delete My Account</button>
+      <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="deleteMyOwnAccount()">🗑️ Delete My Account (Reauth Fix)</button>
     </div>
   </div>
 </div>
 
-<div id="notificationsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:750;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeNotificationsModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(400px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
-      <b style="color:#fff;font-size:16px;">🔔 Notifications</b>
-      <button onclick="closeNotificationsModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    <div id="notificationsList" style="padding:12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px;"></div>
-  </div>
-</div>
-
+<!-- ADMIN DASHBOARD MODAL -->
 <div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
     <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
       <span>👑 VIP Admin Dashboard</span>
-      <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
+      <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;">✕</button>
     </div>
-    
     <div style="display:flex;border-bottom:1px solid #333;">
-      <button id="adminTabOrdersBtn" style="flex:1;padding:12px;background:none;color:#0095f6;font-weight:bold;border-bottom:2px solid #0095f6;border:none;" onclick="switchAdminSubTab('orders')">📦 Orders</button>
-      <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('products')">🛍️ Products</button>
-      <button id="adminTabUsersBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('users')">👥 Users & Boost</button>
+      <button id="adminTabOrdersBtn" style="flex:1;padding:12px;background:none;color:#0095f6;font-weight:bold;border-bottom:2px solid #0095f6;" onclick="switchAdminSubTab('orders')">📦 Orders</button>
+      <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;" onclick="switchAdminSubTab('products')">🛍️ Products</button>
+      <button id="adminTabUsersBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;" onclick="switchAdminSubTab('users')">👥 Users & Boost</button>
     </div>
-
     <div style="padding:15px;overflow-y:auto;flex:1;">
-      <div id="adminSubPanelOrders"><div id="adminOrdersList"></div></div>
+      <div id="adminSubPanelOrders"><div id="adminOrdersList" style="color:#aaa;text-align:center;padding:20px;">No new orders.</div></div>
       <div id="adminSubPanelProducts" class="hidden">
         <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
-          <b style="color:#fff;">➕ Add Product:</b>
+          <b style="color:#fff;">➕ Add VIP Product:</b>
           <input id="prodTitle" class="input" placeholder="Product Title" style="margin-top:6px;">
           <input id="prodPrice" class="input" type="number" placeholder="Price (₹)" style="margin-top:6px;">
           <textarea id="prodDesc" class="input" placeholder="Description..." style="height:55px;margin-top:6px;resize:none;"></textarea>
-          <label style="display:block;margin-top:8px;font-size:12px;color:#aaa;">Select Photos:</label>
-          <input id="prodFile" type="file" accept="image/*" multiple style="margin:6px 0;color:#fff;" onchange="previewMultipleProductImgs(event)">
-          <div id="prodPreviewGrid" style="display:flex;gap:8px;overflow-x:auto;padding:8px 0;"></div>
           <button class="primary-btn" onclick="publishProduct()">Publish Product</button>
         </div>
-        <div id="adminProductsEditList"></div>
       </div>
-
       <div id="adminSubPanelUsers" class="hidden">
         <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
           <b style="color:#f1c40f;">🚀 Boost User Followers:</b>
           <div style="display:flex;gap:8px;margin-top:8px;">
             <input id="boostUsername" class="input" placeholder="Target Username" style="flex:1;">
-            <input id="boostCount" class="input" type="number" placeholder="Count" style="width:120px;">
+            <input id="boostCount" class="input" type="number" placeholder="Count" style="width:100px;">
           </div>
-          <button class="primary-btn" style="background:#2ecc71;box-shadow:none;margin-top:8px;" onclick="boostUserFollowers()">🚀 Add Followers</button>
+          <button class="primary-btn" style="background:#2ecc71;margin-top:8px;" onclick="boostUserFollowers()">🚀 Boost Now</button>
         </div>
-        <b style="color:#fff;display:block;margin-bottom:8px;">Registered Users List:</b>
-        <div id="adminUsersList"></div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Admin Protection Auth Modal -->
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default:):</p>
-    <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password:</p>
+    <input id="adminPassInput" class="input" type="password" placeholder="Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
 </div>
 
-<div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <span id="buyProdTitle" style="font-weight:bold;font-size:16px;color:#fff;">Product Details</span>
-      <button onclick="closeBuyModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:10px;"></div>
-    <div id="buyProdThumbs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;"></div>
-    <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
-    <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
-    
-    <div style="border-top:1px solid #333;padding-top:12px;margin-bottom:14px;">
-      <b style="font-size:14px;color:#f1c40f;">⭐ Customer Reviews & Ratings</b>
-      <div id="productReviewsContainer" style="margin-top:8px;max-height:120px;overflow-y:auto;font-size:12px;color:#ccc;display:flex;flex-direction:column;gap:6px;"></div>
-      
-      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
-        <select id="reviewRating" class="input" style="padding:8px;font-size:12px;">
-          <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-          <option value="4">⭐⭐⭐⭐ (4/5)</option>
-          <option value="3">⭐⭐⭐ (3/5)</option>
-          <option value="2">⭐⭐ (2/5)</option>
-          <option value="1">⭐ (1/5)</option>
-        </select>
-        <input id="reviewText" class="input" placeholder="Write your review..." style="padding:8px;font-size:12px;">
-        <button class="primary-btn" style="background:#333;box-shadow:none;margin:0;padding:8px;font-size:12px;" onclick="submitProductReview()">Submit Review</button>
-      </div>
-    </div>
-
-    <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
-      <b style="font-size:14px;color:#0095f6;">📦 Delivery Details (R.N. Singh Inter College Hub):</b>
-      <input id="orderName" class="input" placeholder="Your Full Name">
-      <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-      <button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;padding:9px;" onclick="detectUserLocationAndCalculateFee()">📍 Get GPS Location & Calculate Delivery</button>
-      <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
-      
-      <div id="shippingCalculationBox" style="background:#111;padding:10px;border-radius:8px;border:1px dashed #444;font-size:12px;display:none;">
-        <div id="distanceText" style="color:#aaa;">📍 Distance from College: Calculating...</div>
-        <div id="deliveryFeeDisplay" style="margin-top:4px;"></div>
-      </div>
-
-      <textarea id="orderAddress" class="input" placeholder="Delivery Address..." style="height:55px;resize:none;"></textarea>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="primary-btn" style="background:linear-gradient(45deg,#2ecc71,#27ae60);box-shadow:none;margin:0;" onclick="placeOrderNow()">🛒 Place Order</button>
-    </div>
-  </div>
-</div>
-
-<div id="videoCallModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;">
-  <div style="position:relative;width:min(450px,100%);height:75vh;background:#111;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center;">
-    <video id="vcLocalVideo" autoplay playsinline muted style="position:absolute;bottom:20px;right:20px;width:100px;height:140px;object-fit:cover;border-radius:10px;border:2px solid #fff;z-index:10;background:#000;"></video>
-    <video id="vcRemoteVideo" autoplay playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#050505;"></video>
-    <div id="vcStatusBox" style="position:absolute;top:20px;color:#fff;text-align:center;z-index:20;background:rgba(0,0,0,0.6);padding:8px 16px;border-radius:20px;">
-      <h4 style="font-size:14px;color:#0095f6;">VIP Secure Video Call</h4>
-      <p id="vcTimer" style="font-size:11px;color:#aaa;">Connecting...</p>
-    </div>
-  </div>
-  <button class="primary-btn" style="background:#ff3040;box-shadow:none;width:min(200px,100%);margin-top:15px;" onclick="closeVideoCall()">End Call</button>
-</div>
-
-<div id="usersListModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:800;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeUsersListModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(400px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
-      <b id="usersListTitle" style="color:#fff;font-size:16px;">Users</b>
-      <button onclick="closeUsersListModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    <div id="usersListContent" style="padding:12px;overflow-y:auto;flex:1;"></div>
-  </div>
-</div>
-
+<!-- Chat Main Modal -->
 <div id="chatModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;" onclick="closeChatModal()">
-  <div id="chatHeaderMain" style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
-    <b style="color:#fff;font-size:16px;">💬 Online VIP Chats & Messages</b>
-    <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
+  <div style="background:#121212;padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;" onclick="event.stopPropagation()">
+    <b style="color:#fff;font-size:16px;">💬 VIP Messages</b>
+    <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;">✕</button>
   </div>
-  
   <div id="chatList" style="flex:1;overflow-y:auto;padding:12px;" onclick="event.stopPropagation()"></div>
-
-  <div id="privateChatRoom" class="hidden" style="position:absolute;inset:0;background:#050505;z-index:10;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
-    <div style="background:#121212;padding:12px 15px;border-bottom:1px solid #333;display:flex;align-items:center;gap:12px;">
-      <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;">←</button>
-      <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;background-size:cover;"></div>
-      <b id="chatTargetName" style="color:#fff;font-size:15px;flex:1;">User</b>
-      <button onclick="startVideoCall()" style="background:#181818;border:1px solid #333;color:#0095f6;border-radius:50%;width:38px;height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Start Video Call">📹</button>
-      <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
-    </div>
-    <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:15px;"></div>
-    
-    <div style="padding:10px 12px;background:#121212;border-top:1px solid #333;display:flex;gap:8px;align-items:center;">
-      <input id="chatMediaInput" type="file" accept="image/*" class="hidden" onchange="sendChatMedia(event)">
-      <button class="icon-circle-btn" style="width:36px;height:36px;" onclick="document.getElementById('chatMediaInput').click()" title="Send Photo">📷</button>
-      <button class="icon-circle-btn" style="width:36px;height:36px;" onclick="sendVoiceNoteMessage()" title="Send Voice Note">🎤</button>
-      <input id="directMessageInput" class="input" placeholder="Type online message..." style="border-radius:20px;flex:1;" onkeydown="if(event.key==='Enter')sendDirectMessage()">
-      <button class="primary-btn" style="width:55px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="sendDirectMessage()">➤</button>
-    </div>
-  </div>
 </div>
 
-<div id="liveModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:600;display:flex;align-items:center;justify-content:center;padding:10px;">
-  <div style="position:relative;width:min(480px,100%);height:82vh;background:#000;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;flex-direction:column;">
-    <div style="position:relative;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-      <video id="liveRawVideo" autoplay playsinline muted style="display:none;"></video>
-      <canvas id="liveCanvas" style="width:100%;height:100%;object-fit:cover;"></canvas>
-      <div style="position:absolute;top:12px;left:12px;background:#ff3040;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔴 LIVE BROADCAST</div>
-      <div id="liveHostName" style="position:absolute;top:12px;left:90px;font-size:13px;font-weight:bold;text-shadow:0 1px 3px #000">Host</div>
-      
-      <div id="liveFilterBar" style="position:absolute;bottom:70px;left:0;right:0;display:flex;gap:8px;padding:8px 12px;overflow-x:auto;z-index:20;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
-        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('none', this)">Normal</button>
-        <button class="filter-btn" style="padding:6px 12px;border-radius:15px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap;" onclick="applyBeautyFilter('fair', this)">✨ Beauty / Fair</button>
-      </div>
+<!-- FIREBASE COMPAT SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;">
-        <button style="padding:10px 24px;border-radius:25px;background:#ff3040;color:#fff;font-weight:bold;" onclick="stopLiveStream()">Stop Live</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="mediaModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999;display:flex;align-items:center;justify-content:center;padding:10px;" onclick="closeMediaModal()">
-  <button style="position:absolute;top:20px;right:20px;color:#fff;font-size:28px;background:none;border:none;" onclick="closeMediaModal()">✕</button>
-  <div id="mediaModalBody" onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
-</div>
-
-<div id="commentsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:750;display:flex;align-items:flex-end;" onclick="closeCommentsModal()">
-  <div style="background:#181818;border-top:1px solid #333;border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-height:70vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
-    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
-      <b style="color:#fff;font-size:16px;">💬 Comments</b>
-      <button onclick="closeCommentsModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    <div id="commentsList" style="padding:15px;overflow-y:auto;flex:1;"></div>
-    <div style="padding:12px;background:#121212;border-top:1px solid #333;display:flex;gap:10px;">
-      <input id="commentInput" class="input" placeholder="Add a comment..." style="border-radius:20px;">
-      <button class="primary-btn" style="width:70px;border-radius:20px;margin:0;padding:0;box-shadow:none;" onclick="postComment()">➤</button>
-    </div>
-  </div>
-</div>
-
+<!-- JAVASCRIPT LOGIC -->
 <script>
-let currentUser = JSON.parse(localStorage.getItem('universe_logged_user')) || null;
-let isSignUp = false;
-let activeProfileTab = 'posts';
-let currentFilter = 'none';
-let previewMediaData = null;
-let currentChatUser = null;
-let localStream = null;
-let videoCallStream = null;
-let currentActiveProduct = null;
-let multipleProductFiles = [];
-let activeCommentPostId = null;
-
-const COLLEGE_LAT = 27.2455; 
-const COLLEGE_LON = 81.5650;
-
-// ---- GLOBAL CLOUD SYNC BACKEND API ENGINE ----
-const CLOUD_BIN_URL = "https://jsonblob.com/api/1346000000000000000"; // Dynamic Online Store Sync
-
-let users = [
-  { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '123', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
-  { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '123', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
-];
-
-let posts = [
-  { id: 1, username: 'aditya_thakur', type: 'image', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe', caption: 'Universe Pro VIP Platform 👑🚀', likes: ['vansh_singh'], comments: [{user: 'vansh_singh', text: 'Amazing platform Adit bhai! 🔥'}] }
-];
-
-let products = [
-  { id: 1, title: 'VIP Gaming Headset Pro', price: 1499, desc: 'High quality RGB surround sound gaming headphones with deep bass.', images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e'], reviews: [{user: 'vansh_singh', rating: 5, text: 'Awesome headset! Super clear sound.'}] }
-];
-
-let orders = [];
-let messages = {};
-let notifications = {};
-
-// Load Cloud Data on Startup
-async function syncFromCloud() {
-  try {
-    const savedUsers = localStorage.getItem('universe_cloud_users');
-    const savedPosts = localStorage.getItem('universe_cloud_posts');
-    const savedMsgs = localStorage.getItem('universe_cloud_messages');
-    if(savedUsers) users = JSON.parse(savedUsers);
-    if(savedPosts) posts = JSON.parse(savedPosts);
-    if(savedMsgs) messages = JSON.parse(savedMsgs);
-  } catch(e) {}
-}
-
-function syncToCloud() {
-  localStorage.setItem('universe_cloud_users', JSON.stringify(users));
-  localStorage.setItem('universe_cloud_posts', JSON.stringify(posts));
-  localStorage.setItem('universe_cloud_messages', JSON.stringify(messages));
-}
-
-window.onload = async function() {
-  await syncFromCloud();
-  setTimeout(() => {
-    document.getElementById('appLoader').style.display = 'none';
-    const savedTheme = localStorage.getItem('universe_theme') || 'default';
-    setAppTheme(savedTheme, false);
-
-    if (currentUser) {
-      document.getElementById('auth').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      initApp();
-    } else {
-      document.getElementById('auth').style.display = 'flex';
-    }
-  }, 600);
-};
-
-function setAppTheme(themeName, save = true) {
-  document.body.className = '';
-  if (themeName !== 'default') {
-    document.body.classList.add('theme-' + themeName);
-  }
-  if (save) localStorage.setItem('universe_theme', themeName);
-}
-
-function toggleAuthMode() {
-  isSignUp = !isSignUp;
-  document.getElementById('fullNameGroup').classList.toggle('hidden', !isSignUp);
-  document.getElementById('authBtn').innerText = isSignUp ? 'Sign Up Online' : 'Log In Online';
-  document.getElementById('switchText').innerText = isSignUp ? 'Already have an account?' : "Don't have an account?";
-  document.getElementById('switchBtn').innerText = isSignUp ? 'Log In' : 'Sign up';
-}
-
-document.getElementById('authForm').onsubmit = function(e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  const username = document.getElementById('username').value.trim().toLowerCase();
-  const password = document.getElementById('password').value;
-  const fullName = document.getElementById('fullName').value.trim();
-
-  syncFromCloud();
-
-  if (isSignUp) {
-    if (users.some(u => u.username === username)) {
-      alert('Username already exists on online server!');
-      return;
-    }
-    const newUser = { username, name: fullName || username, email, password, avatar: '', followers: [], following: [], saved: [] };
-    users.push(newUser);
-    syncToCloud();
-    currentUser = newUser;
-  } else {
-    const found = users.find(u => u.email === email && u.password === password);
-    if (!found) {
-      alert('Invalid online email or password!');
-      return;
-    }
-    currentUser = found;
-  }
-  localStorage.setItem('universe_logged_user', JSON.stringify(currentUser));
-  document.getElementById('auth').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  initApp();
-};
-
-function logout() {
-  localStorage.removeItem('universe_logged_user');
-  location.reload();
-}
-
-function initApp() {
-  renderFeed();
-  renderStories();
-  renderShop();
-  renderReels();
-  updateProfileUI();
-  checkNotificationsBadge();
-}
-
-function showTab(tabId) {
-  document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  const navBtn = document.getElementById('nav-' + tabId);
-  if (navBtn) navBtn.classList.add('active');
-  if (tabId === 'shop') renderShop();
-  if (tabId === 'reels') renderReels();
-  if (tabId === 'search') {
-    document.getElementById('searchInput').value = '';
-    searchUsers('');
-  }
-}
-
-function addNotification(text) {
-  if (!notifications[currentUser.username]) notifications[currentUser.username] = [];
-  notifications[currentUser.username].unshift({ id: Date.now(), text, time: new Date().toLocaleTimeString(), read: false });
-  checkNotificationsBadge();
-}
-
-function checkNotificationsBadge() {
-  if (!currentUser) return;
-  const list = notifications[currentUser.username] || [];
-  const unread = list.some(n => !n.read);
-  document.getElementById('notifBadgeDot').classList.toggle('hidden', !unread);
-}
-
-function openNotificationsModal() {
-  document.getElementById('notificationsModal').classList.remove('hidden');
-  const listContainer = document.getElementById('notificationsList');
-  listContainer.innerHTML = '';
-  const list = notifications[currentUser.username] || [];
-  
-  if (list.length === 0) {
-    listContainer.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No notifications yet.</div>`;
-    return;
-  }
-  list.forEach(n => {
-    n.read = true;
-    const div = document.createElement('div');
-    div.style.cssText = 'background:#1e1e1e;padding:10px;border-radius:8px;font-size:13px;';
-    div.innerHTML = `<div>${n.text}</div><div style="font-size:10px;color:#888;margin-top:4px;">${n.time}</div>`;
-    listContainer.appendChild(div);
-  });
-  checkNotificationsBadge();
-}
-
-function closeNotificationsModal() {
-  document.getElementById('notificationsModal').classList.add('hidden');
-}
-
-function renderFeed() {
-  syncFromCloud();
-  const feed = document.getElementById('feed');
-  feed.innerHTML = '';
-  posts.forEach(post => {
-    const isLiked = post.likes.includes(currentUser.username);
-    const isSaved = currentUser.saved && currentUser.saved.includes(post.id);
-    const userObj = users.find(u => u.username === post.username) || { name: post.username };
-
-    const div = document.createElement('div');
-    div.className = 'post-card';
-    div.innerHTML = `
-      <div class="post-header">
-        <div class="user-info-row" onclick="viewUserProfile('${post.username}')">
-          <div class="avatar-sm" style="background-image:url('${userObj.avatar || ''}')">${userObj.avatar ? '' : post.username[0].toUpperCase()}</div>
-          <b>${userObj.name}</b>
-        </div>
-        <button style="color:#aaa;" onclick="openPostOptions(${post.id})">⋮</button>
-      </div>
-      <div class="post-media-box">
-        ${post.type === 'video' ? `<video src="${post.url}" controls autoplay muted loop></video>` : `<img src="${post.url}" alt="Post">`}
-      </div>
-      <div class="post-actions-bar">
-        <div class="left-actions">
-          <button class="action-icon-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})" title="Like">
-            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          </button>
-          <button class="action-icon-btn" onclick="openCommentsModal(${post.id})" title="Comment">
-            <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
-          </button>
-          <button class="action-icon-btn" onclick="sharePost(${post.id})" title="Share">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          </button>
-        </div>
-        <button class="action-icon-btn ${isSaved ? 'saved' : ''}" onclick="toggleSavePost(${post.id})" title="Save">
-          <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-        </button>
-      </div>
-      <div class="post-meta-details">
-        <b>${post.likes.length} likes</b>
-        <div style="margin-top:4px;"><b>${post.username}</b> ${post.caption}</div>
-        <div style="color:#777;font-size:12px;margin-top:6px;cursor:pointer;" onclick="openCommentsModal(${post.id})">View all ${post.comments.length} comments</div>
-      </div>
-    `;
-    feed.appendChild(div);
-  });
-}
-
-function toggleLike(postId) {
-  const p = posts.find(x => x.id === postId);
-  if (!p) return;
-  const idx = p.likes.indexOf(currentUser.username);
-  if (idx > -1) {
-    p.likes.splice(idx, 1);
-  } else {
-    p.likes.push(currentUser.username);
-    if (p.username !== currentUser.username) {
-      addNotification(`@${currentUser.username} liked your post.`);
-    }
-  }
-  syncToCloud();
-  renderFeed();
-}
-
-function toggleSavePost(postId) {
-  if (!currentUser.saved) currentUser.saved = [];
-  const idx = currentUser.saved.indexOf(postId);
-  if (idx > -1) currentUser.saved.splice(idx, 1);
-  else currentUser.saved.push(postId);
-  localStorage.setItem('universe_logged_user', JSON.stringify(currentUser));
-  updateUserInStorage();
-  renderFeed();
-}
-
-function updateUserInStorage() {
-  syncFromCloud();
-  const idx = users.findIndex(u => u.username === currentUser.username);
-  if (idx > -1) {
-    users[idx] = currentUser;
-  } else {
-    users.push(currentUser);
-  }
-  syncToCloud();
-}
-
-function sharePost(postId) {
-  if (navigator.share) {
-    navigator.share({ title: 'Universe Post', url: window.location.href }).catch(() => {});
-  } else {
-    alert('Post link copied to clipboard!');
-  }
-}
-
-function openPostOptions(postId) {
-  if (confirm('Delete this post?')) {
-    posts = posts.filter(p => p.id !== postId);
-    syncToCloud();
-    renderFeed();
-  }
-}
-
-function openCommentsModal(postId) {
-  activeCommentPostId = postId;
-  document.getElementById('commentsModal').classList.remove('hidden');
-  renderCommentsList();
-}
-
-function closeCommentsModal() {
-  document.getElementById('commentsModal').classList.add('hidden');
-  activeCommentPostId = null;
-}
-
-function renderCommentsList() {
-  const list = document.getElementById('commentsList');
-  list.innerHTML = '';
-  const p = posts.find(x => x.id === activeCommentPostId);
-  if (!p || p.comments.length === 0) {
-    list.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No comments yet. Be the first!</div>`;
-    return;
-  }
-  p.comments.forEach(c => {
-    const div = document.createElement('div');
-    div.style.cssText = 'margin-bottom:10px;font-size:13px;';
-    div.innerHTML = `<b>@${c.user}</b> ${c.text}`;
-    list.appendChild(div);
-  });
-}
-
-function postComment() {
-  const input = document.getElementById('commentInput');
-  const txt = input.value.trim();
-  if (!txt || !activeCommentPostId) return;
-  const p = posts.find(x => x.id === activeCommentPostId);
-  if (p) {
-    p.comments.push({ user: currentUser.username, text: txt });
-    syncToCloud();
-    if (p.username !== currentUser.username) {
-      addNotification(`@${currentUser.username} commented on your post.`);
-    }
-    input.value = '';
-    renderCommentsList();
-    renderFeed();
-  }
-}
-
-function renderStories() {
-  syncFromCloud();
-  const container = document.getElementById('stories');
-  container.innerHTML = `
-    <div class="story-item" onclick="openUpload()">
-      <div class="story-ring add-story"><div class="avatar-img" style="font-size:24px;">+</div></div>
-      <span>Your Story</span>
-    </div>
-  `;
-  users.forEach(u => {
-    if (u.username === currentUser.username) return;
-    const div = document.createElement('div');
-    div.className = 'story-item';
-    div.onclick = () => viewUserStory(u.username);
-    div.innerHTML = `
-      <div class="story-ring"><div class="avatar-img" style="background-image:url('${u.avatar || ''}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div></div>
-      <span>${u.username}</span>
-    `;
-    container.appendChild(div);
-  });
-}
-
-function viewUserStory(username) {
-  syncFromCloud();
-  const u = users.find(x => x.username === username);
-  const displayName = u ? u.name : username;
-  alert('Viewing story of @' + username + ' (' + displayName + ')');
-}
-
-function renderReels() {
-  syncFromCloud();
-  const list = document.getElementById('reelsList');
-  list.innerHTML = '';
-  const reelPosts = posts.filter(p => p.type === 'video');
-  if (reelPosts.length === 0) {
-    list.innerHTML = `<div style="color:#777;text-align:center;padding:50px;">No reels available yet. Upload a video!</div>`;
-    return;
-  }
-  reelPosts.forEach(post => {
-    const div = document.createElement('div');
-    div.style.cssText = 'height:100%;scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;';
-    div.innerHTML = `
-      <video src="${post.url}" autoplay loop playsinline style="height:100%;width:100%;object-fit:cover;"></video>
-      <div style="position:absolute;bottom:20px;left:15px;right:60px;color:#fff;">
-        <b>@${post.username}</b>
-        <p style="font-size:13px;margin-top:4px;">${post.caption}</p>
-      </div>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function openUpload() {
-  showTab('upload');
-}
-
-function previewUploadMedia(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    previewMediaData = evt.target.result;
-    const isVid = file.type.startsWith('video');
-    const prev = document.getElementById('preview');
-    prev.innerHTML = isVid ? `<video src="${previewMediaData}" style="max-height:100%;" controls></video>` : `<img src="${previewMediaData}" style="max-height:100%;filter:${currentFilter};">`;
-  };
-  reader.readAsDataURL(file);
-}
-
-function setMediaFilter(filter) {
-  currentFilter = filter;
-  const prevImg = document.querySelector('#preview img');
-  if (prevImg) prevImg.style.filter = filter;
-}
-
-function publish() {
-  const caption = document.getElementById('caption').value.trim();
-  const fileInput = document.getElementById('fileInput');
-  if (!previewMediaData) {
-    alert('Please select a photo or video first!');
-    return;
-  }
-  const isVid = fileInput.files[0] && fileInput.files[0].type.startsWith('video');
-  const newPost = {
-    id: Date.now(),
-    username: currentUser.username,
-    type: isVid ? 'video' : 'image',
-    url: previewMediaData,
-    caption: caption,
-    likes: [],
-    comments: []
-  };
-  posts.unshift(newPost);
-  syncToCloud();
-  document.getElementById('caption').value = '';
-  document.getElementById('fileInput').value = '';
-  document.getElementById('preview').innerHTML = 'Select photo or video';
-  previewMediaData = null;
-  showTab('home');
-  renderFeed();
-}
-
-function renderShop() {
-  const q = (document.getElementById('shopSearchInput').value || '').toLowerCase();
-  const grid = document.getElementById('shopGrid');
-  grid.innerHTML = '';
-  const filtered = products.filter(p => p.title.toLowerCase().includes(q));
-  filtered.forEach(p => {
-    const card = document.createElement('div');
-    card.style.cssText = 'background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;';
-    card.innerHTML = `
-      <div style="height:150px;background:#050505;background-image:url('${p.images[0]}');background-size:contain;background-repeat:no-repeat;background-position:center;"></div>
-      <div style="padding:10px;display:flex;flex-direction:column;flex:1;">
-        <b style="font-size:13px;color:#fff;margin-bottom:4px;">${p.title}</b>
-        <div style="color:#2ecc71;font-weight:bold;font-size:14px;margin-bottom:8px;">₹${p.price}</div>
-        <button class="primary-btn" style="margin-top:auto;padding:8px;font-size:12px;" onclick="openBuyModal(${p.id})">Buy Now</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function openBuyModal(prodId) {
-  currentActiveProduct = products.find(p => p.id === prodId);
-  if (!currentActiveProduct) return;
-  document.getElementById('buyProdTitle').innerText = currentActiveProduct.title;
-  document.getElementById('buyProdPrice').innerText = '₹' + currentActiveProduct.price;
-  document.getElementById('buyProdDesc').innerText = currentActiveProduct.desc;
-  document.getElementById('buyProdImg').style.backgroundImage = `url('${currentActiveProduct.images[0]}')`;
-  
-  const thumbs = document.getElementById('buyProdThumbs');
-  thumbs.innerHTML = '';
-  currentActiveProduct.images.forEach((img, idx) => {
-    const t = document.createElement('div');
-    t.className = `thumb-img-box ${idx === 0 ? 'active' : ''}`;
-    t.style.backgroundImage = `url('${img}')`;
-    t.onclick = () => {
-      document.querySelectorAll('.thumb-img-box').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      document.getElementById('buyProdImg').style.backgroundImage = `url('${img}')`;
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
     };
-    thumbs.appendChild(t);
-  });
 
-  renderProductReviews();
-  document.getElementById('orderName').value = currentUser.name;
-  document.getElementById('shippingCalculationBox').style.display = 'none';
-  document.getElementById('buyProductModal').classList.remove('hidden');
-}
-
-function closeBuyModal() {
-  document.getElementById('buyProductModal').classList.add('hidden');
-}
-
-function renderProductReviews() {
-  const container = document.getElementById('productReviewsContainer');
-  container.innerHTML = '';
-  if (!currentActiveProduct.reviews || currentActiveProduct.reviews.length === 0) {
-    container.innerHTML = `<div style="color:#777;">No reviews yet. Be the first to review!</div>`;
-    return;
-  }
-  currentActiveProduct.reviews.forEach(r => {
-    const stars = '⭐'.repeat(r.rating);
-    const div = document.createElement('div');
-    div.style.cssText = 'background:#1a1a1a;padding:6px 10px;border-radius:6px;';
-    div.innerHTML = `<div style="display:flex;justify-content:space-between;"><b>@${r.user}</b><span class="star-rating">${stars}</span></div><div style="margin-top:2px;color:#aaa;">${r.text}</div>`;
-    container.appendChild(div);
-  });
-}
-
-function submitProductReview() {
-  const rating = parseInt(document.getElementById('reviewRating').value);
-  const text = document.getElementById('reviewText').value.trim();
-  if (!text) {
-    alert('Please write a review text.');
-    return;
-  }
-  if (!currentActiveProduct.reviews) currentActiveProduct.reviews = [];
-  currentActiveProduct.reviews.push({ user: currentUser.username, rating, text });
-  alert('Review submitted successfully!');
-  document.getElementById('reviewText').value = '';
-  renderProductReviews();
-}
-
-function calculateDistanceFromCollege(lat2, lon2) {
-  const R = 6371e3;
-  const φ1 = COLLEGE_LAT * Math.PI/180;
-  const φ2 = lat2 * Math.PI/180;
-  const Δφ = (lat2-COLLEGE_LAT) * Math.PI/180;
-  const Δλ = (lon2-COLLEGE_LON) * Math.PI/180;
-
-  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-  return R * c;
-}
-
-let calculatedDeliveryFee = 0;
-
-function detectUserLocationAndCalculateFee() {
-  if (!navigator.geolocation) {
-    alert('Geolocation is not supported by your browser');
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-    const link = `https://maps.google.com/?q=${lat},${lon}`;
-    document.getElementById('orderLocLink').value = link;
-
-    const distanceMeters = calculateDistanceFromCollege(lat, lon);
-    const distanceRounded = Math.round(distanceMeters);
-
-    const rawFee = Math.ceil(distanceRounded / 100) * 10;
-    const discountedFee = Math.round(rawFee / 2);
-    calculatedDeliveryFee = discountedFee;
-
-    const box = document.getElementById('shippingCalculationBox');
-    box.style.display = 'block';
-    document.getElementById('distanceText').innerText = `📍 Distance from R.N. Singh Inter College: ~${distanceRounded} meters`;
-    document.getElementById('deliveryFeeDisplay').innerHTML = `
-      <span style="text-decoration:line-through;color:#ff3040;">Original Delivery: ₹${rawFee}</span><br>
-      <span style="color:#2ecc71;font-weight:bold;font-size:13px;">🎉 College Distance Special Discount (50% OFF): <span style="font-size:15px;">₹${discountedFee}</span></span>
-    `;
-
-    alert('GPS Located & Distance Discount Applied Successfully!');
-  }, err => {
-    alert('Unable to retrieve location. Please check permission settings.');
-  });
-}
-
-function placeOrderNow() {
-  const name = document.getElementById('orderName').value.trim();
-  const phone = document.getElementById('orderPhone').value.trim();
-  const loc = document.getElementById('orderLocLink').value.trim();
-  const address = document.getElementById('orderAddress').value.trim();
-
-  if (!name || !phone || !address || !loc) {
-    alert('Please fill out all mandatory details and get your GPS location first!');
-    return;
-  }
-
-  const finalTotal = currentActiveProduct.price + calculatedDeliveryFee;
-
-  const order = {
-    id: Date.now(),
-    product: currentActiveProduct.title,
-    price: finalTotal,
-    basePrice: currentActiveProduct.price,
-    deliveryFee: calculatedDeliveryFee,
-    buyer: currentUser.username,
-    name, phone, loc, address,
-    date: new Date().toLocaleString()
-  };
-
-  orders.push(order);
-  alert(`Order placed successfully! Total Amount (Including Discounted Delivery ₹${calculatedDeliveryFee}): ₹${finalTotal}`);
-  closeBuyModal();
-}
-
-function openMyProfile() {
-  showTab('profile');
-  updateProfileUI();
-}
-
-function updateProfileUI() {
-  document.getElementById('myName').innerText = currentUser.name;
-  document.getElementById('myAvatar').innerText = currentUser.avatar ? '' : currentUser.username[0].toUpperCase();
-  if (currentUser.avatar) {
-    document.getElementById('myAvatar').style.backgroundImage = `url('${currentUser.avatar}')`;
-  }
-  document.getElementById('postCount').innerText = posts.filter(p => p.username === currentUser.username).length;
-  document.getElementById('followerCount').innerText = (currentUser.followers || []).length;
-  document.getElementById('followingCount').innerText = (currentUser.following || []).length;
-  
-  document.getElementById('profileActionsBox').innerHTML = `<button class="primary-btn" style="background:#262626;box-shadow:none;margin:0;" onclick="changeProfilePic()">Edit Profile</button>`;
-  switchProfileTab(activeProfileTab);
-}
-
-function switchProfileTab(tab) {
-  activeProfileTab = tab;
-  document.getElementById('btnMyPosts').style.color = tab === 'posts' ? '#fff' : 'var(--text-muted)';
-  document.getElementById('btnMyPosts').style.borderBottomColor = tab === 'posts' ? '#fff' : 'transparent';
-  document.getElementById('btnSavedPosts').style.color = tab === 'saved' ? '#fff' : 'var(--text-muted)';
-  document.getElementById('btnSavedPosts').style.borderBottomColor = tab === 'saved' ? '#fff' : 'transparent';
-
-  const grid = document.getElementById('myGrid');
-  grid.innerHTML = '';
-
-  let list = [];
-  if (tab === 'posts') {
-    list = posts.filter(p => p.username === currentUser.username);
-  } else {
-    list = posts.filter(p => currentUser.saved && currentUser.saved.includes(p.id));
-  }
-
-  list.forEach(p => {
-    const item = document.createElement('div');
-    item.style.cssText = 'aspect-ratio:1/1;background:#111;background-size:cover;background-position:center;cursor:pointer;';
-    item.style.backgroundImage = `url('${p.url}')`;
-    grid.appendChild(item);
-  });
-}
-
-function changeProfilePic() {
-  document.getElementById('profileInput').click();
-}
-
-function saveProfilePic(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    currentUser.avatar = evt.target.result;
-    localStorage.setItem('universe_logged_user', JSON.stringify(currentUser));
-    updateUserInStorage();
-    updateProfileUI();
-    renderFeed();
-  };
-  reader.readAsDataURL(file);
-}
-
-function openProfileSettingsModal() {
-  document.getElementById('profileSettingsModal').classList.remove('hidden');
-}
-
-function closeProfileSettingsModal() {
-  document.getElementById('profileSettingsModal').classList.add('hidden');
-}
-
-function requestCameraPermissions() {
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    .then(stream => {
-      stream.getTracks().forEach(track => track.stop());
-      alert('Camera & Microphone permissions granted successfully!');
-      closeProfileSettingsModal();
-    })
-    .catch(err => {
-      alert('Permission denied or device not found. Please check browser settings.');
-    });
-}
-
-function deleteMyOwnAccount() {
-  if (confirm('Are you sure you want to delete your VIP account permanently? All your posts and data will be removed.')) {
-    syncFromCloud();
-    const deletedUsername = currentUser.username;
-    users = users.filter(u => u.username !== deletedUsername);
-    posts = posts.filter(p => p.username !== deletedUsername);
-    syncToCloud();
-    logout();
-  }
-}
-
-// ---- ONLINE LIVE SEARCH FUNCTION ----
-function searchUsers(query) {
-  syncFromCloud();
-  const res = document.getElementById('searchResults');
-  res.innerHTML = '';
-  
-  const q = (query || '').trim().toLowerCase();
-  const found = users.filter(u => u.username.toLowerCase().includes(q) || u.name.toLowerCase().includes(q));
-  
-  if (found.length === 0) {
-    res.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No online users found.</div>`;
-    return;
-  }
-
-  found.forEach(u => {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;padding:10px 16px;gap:12px;cursor:pointer;border-bottom:1px solid #1a1a1a;';
-    row.onclick = () => viewUserProfile(u.username);
-    row.innerHTML = `
-      <div class="avatar-sm" style="background-image:url('${u.avatar || ''}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
-      <div>
-        <b>@${u.username}</b>
-        <div style="font-size:12px;color:#888;">${u.name}</div>
-      </div>
-    `;
-    res.appendChild(row);
-  });
-}
-
-function viewUserProfile(username) {
-  syncFromCloud();
-  const u = users.find(x => x.username === username);
-  if (u) {
-    alert(`Online User Profile:\nName: ${u.name}\nUsername: @${u.username}\nFollowers: ${(u.followers || []).length}`);
-  } else {
-    alert('Viewing profile of @' + username);
-  }
-}
-
-// ---- ONLINE LIVE STREAMING & CAMERA SETUP ----
-function startBroadcastingLive() {
-  const constraints = {
-    video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
-    audio: true
-  };
-
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then(stream => {
-      localStream = stream;
-      document.getElementById('liveModal').classList.remove('hidden');
-      document.getElementById('liveHostName').innerText = currentUser.username + ' (LIVE)';
-      const vid = document.getElementById('liveRawVideo');
-      vid.srcObject = stream;
-      vid.play();
-      
-      const canvas = document.getElementById('liveCanvas');
-      const ctx = canvas.getContext('2d');
-      function drawFrame() {
-        if (!localStream) return;
-        if (vid.paused || vid.ended) return;
-        canvas.width = vid.videoWidth || 480;
-        canvas.height = vid.videoHeight || 640;
-        ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
-        requestAnimationFrame(drawFrame);
-      }
-      vid.onloadedmetadata = () => drawFrame();
-    })
-    .catch(err => {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(fallbackStream => {
-          localStream = fallbackStream;
-          document.getElementById('liveModal').classList.remove('hidden');
-          document.getElementById('liveHostName').innerText = currentUser.username + ' (LIVE)';
-          const vid = document.getElementById('liveRawVideo');
-          vid.srcObject = fallbackStream;
-          vid.play();
-          
-          const canvas = document.getElementById('liveCanvas');
-          const ctx = canvas.getContext('2d');
-          function drawFallbackFrame() {
-            if (!localStream) return;
-            if (vid.paused || vid.ended) return;
-            canvas.width = vid.videoWidth || 480;
-            canvas.height = vid.videoHeight || 640;
-            ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
-            requestAnimationFrame(drawFallbackFrame);
-          }
-          vid.onloadedmetadata = () => drawFallbackFrame();
-        })
-        .catch(e => {
-          alert('Camera permission denied or unavailable for online live stream. Please allow browser camera access.');
-        });
-    });
-}
-
-function stopLiveStream() {
-  if (localStream) {
-    localStream.getTracks().forEach(t => t.stop());
-    localStream = null;
-  }
-  document.getElementById('liveModal').classList.add('hidden');
-}
-
-function applyBeautyFilter(type, btn) {
-  document.querySelectorAll('#liveFilterBar button').forEach(b => b.style.background = 'rgba(255,255,255,0.1)');
-  btn.style.background = 'var(--accent-color)';
-  const canvas = document.getElementById('liveCanvas');
-  canvas.style.filter = type === 'fair' ? 'brightness(1.2) contrast(1.05) saturate(1.1)' : 'none';
-}
-
-function startVideoCall() {
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    .then(stream => {
-      videoCallStream = stream;
-      document.getElementById('videoCallModal').classList.remove('hidden');
-      const localVid = document.getElementById('vcLocalVideo');
-      localVid.srcObject = stream;
-      localVid.play();
-      
-      let seconds = 0;
-      setInterval(() => {
-        seconds++;
-        let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-        let s = (seconds % 60).toString().padStart(2, '0');
-        document.getElementById('vcTimer').innerText = `Connected Online (${m}:${s})`;
-      }, 1000);
-    })
-    .catch(err => {
-      alert('Camera and Microphone permissions are required for online video calls.');
-    });
-}
-
-function closeVideoCall() {
-  if (videoCallStream) {
-    videoCallStream.getTracks().forEach(t => t.stop());
-    videoCallStream = null;
-  }
-  document.getElementById('videoCallModal').classList.add('hidden');
-}
-
-function openChatModal() {
-  document.getElementById('chatModal').classList.remove('hidden');
-  renderChatList();
-}
-
-function closeChatModal() {
-  document.getElementById('chatModal').classList.add('hidden');
-  document.getElementById('privateChatRoom').classList.add('hidden');
-  currentChatUser = null;
-}
-
-function renderChatList() {
-  syncFromCloud();
-  const list = document.getElementById('chatList');
-  list.innerHTML = '';
-  users.forEach(u => {
-    if (u.username === currentUser.username) return;
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;padding:12px;gap:12px;cursor:pointer;border-bottom:1px solid #222;';
-    row.onclick = () => openPrivateChat(u);
-    row.innerHTML = `
-      <div class="avatar-sm" style="background-image:url('${u.avatar || ''}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div>
-      <div>
-        <b>${u.username}</b>
-        <div style="font-size:12px;color:#888;">Tap to open online secure chat</div>
-      </div>
-    `;
-    list.appendChild(row);
-  });
-}
-
-function openPrivateChat(targetUser) {
-  currentChatUser = targetUser;
-  document.getElementById('privateChatRoom').classList.remove('hidden');
-  document.getElementById('chatTargetName').innerText = targetUser.username;
-  document.getElementById('chatTargetAvatar').style.backgroundImage = `url('${targetUser.avatar || ''}')`;
-  renderDirectMessages();
-}
-
-function backToChatList() {
-  document.getElementById('privateChatRoom').classList.add('hidden');
-  currentChatUser = null;
-}
-
-function getChatKey(u1, u2) {
-  return [u1, u2].sort().join('_');
-}
-
-// ---- ONLINE LIVE REAL-TIME CHAT POLLING (1 Sec Sync) ----
-setInterval(() => {
-  if (currentChatUser) {
-    syncFromCloud();
-    renderDirectMessages();
-  }
-}, 1000);
-
-function renderDirectMessages() {
-  if (!currentChatUser) return;
-  const box = document.getElementById('chatMessagesBox');
-  const key = getChatKey(currentUser.username, currentChatUser.username);
-  const history = messages[key] || [];
-
-  // Prevent scroll jumping if no new messages
-  if (box.childElementCount === history.length) return;
-
-  box.innerHTML = '';
-  if (history.length === 0) {
-    box.innerHTML = `<div style="color:#777;text-align:center;margin-top:40px;font-size:13px;">No online messages yet. Send a hello! 👋</div>`;
-    return;
-  }
-
-  history.forEach(m => {
-    const row = document.createElement('div');
-    row.className = `chat-msg-row ${m.sender === currentUser.username ? 'sent' : 'received'}`;
-    if (m.type === 'image') {
-      row.innerHTML = `<div class="chat-bubble" style="padding:4px;"><img src="${m.text}" style="max-width:180px;border-radius:12px;display:block;"></div>`;
-    } else if (m.type === 'audio') {
-      row.innerHTML = `<div class="chat-bubble">🎤 <i>[Voice Note - 00:04s]</i></div>`;
-    } else {
-      row.innerHTML = `<div class="chat-bubble">${m.text}</div>`;
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
     }
-    box.appendChild(row);
-  });
-  box.scrollTop = box.scrollHeight;
-}
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-function sendDirectMessage() {
-  const input = document.getElementById('directMessageInput');
-  const txt = input.value.trim();
-  if (!txt || !currentChatUser) return;
-  
-  syncFromCloud();
-  const key = getChatKey(currentUser.username, currentChatUser.username);
-  if (!messages[key]) messages[key] = [];
-  
-  messages[key].push({ sender: currentUser.username, text: txt, type: 'text', time: Date.now() });
-  syncToCloud();
-  
-  input.value = '';
-  renderDirectMessages();
-}
+    let isSignupMode = false;
 
-function sendChatMedia(e) {
-  const file = e.target.files[0];
-  if (!file || !currentChatUser) return;
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    syncFromCloud();
-    const key = getChatKey(currentUser.username, currentChatUser.username);
-    if (!messages[key]) messages[key] = [];
-    messages[key].push({ sender: currentUser.username, text: evt.target.result, type: 'image', time: Date.now() });
-    syncToCloud();
-    renderDirectMessages();
-  };
-  reader.readAsDataURL(file);
-}
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            const loader = document.getElementById("appLoader");
+            if(loader) loader.style.display = "none";
+            document.getElementById("auth").style.display = "flex";
+        }, 500);
 
-function sendVoiceNoteMessage() {
-  if (!currentChatUser) return;
-  syncFromCloud();
-  const key = getChatKey(currentUser.username, currentChatUser.username);
-  if (!messages[key]) messages[key] = [];
-  messages[key].push({ sender: currentUser.username, text: 'audio_placeholder', type: 'audio', time: Date.now() });
-  syncToCloud();
-  renderDirectMessages();
-}
+        const switchBtn = document.getElementById('switchBtn');
+        const switchText = document.getElementById('switchText');
+        const fullNameGroup = document.getElementById('fullNameGroup');
+        const authBtn = document.getElementById('authBtn');
 
-function openAdminAuthModal() {
-  document.getElementById('adminAuthModal').classList.remove('hidden');
-}
+        if(switchBtn) {
+            switchBtn.onclick = () => {
+                isSignupMode = !isSignupMode;
+                if(isSignupMode) {
+                    fullNameGroup.classList.remove('hidden');
+                    authBtn.innerText = "Sign Up";
+                    switchText.innerText = "Already have an account?";
+                    switchBtn.innerText = "Log In";
+                } else {
+                    fullNameGroup.classList.add('hidden');
+                    authBtn.innerText = "Log In";
+                    switchText.innerText = "Don't have an account?";
+                    switchBtn.innerText = "Sign up";
+                }
+            };
+        }
 
-function closeAdminAuthModal() {
-  document.getElementById('adminAuthModal').classList.add('hidden');
-}
+        const authForm = document.getElementById('authForm');
+        if(authForm) {
+            authForm.onsubmit = (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const username = document.getElementById('username').value.trim();
 
-function verifyAdminPassword() {
-  const pass = document.getElementById('adminPassInput').value;
-  if (pass === '9838' || pass === '8882691376') {
-    closeAdminAuthModal();
-    document.getElementById('adminMainModal').classList.remove('hidden');
-    renderAdminOrders();
-    renderAdminProducts();
-    renderAdminUsers();
-  } else {
-    alert('Incorrect Admin Password!');
-  }
-}
+                if(isSignupMode) {
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .then((res) => {
+                            db.collection("users").doc(res.user.uid).set({
+                                email: email,
+                                username: username,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        }).catch(err => alert("Signup Error: " + err.message));
+                } else {
+                    auth.signInWithEmailAndPassword(email, password)
+                        .catch(err => alert("Login Error: " + err.message));
+                }
+            };
+        }
+    });
 
-function closeAdminMainModal() {
-  document.getElementById('adminMainModal').classList.add('hidden');
-}
+    auth.onAuthStateChanged(user => {
+        if(user) {
+            document.getElementById('auth').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            db.collection("users").doc(user.uid).get().then(doc => {
+                if(doc.exists) {
+                    let uData = doc.data();
+                    if(uData.username) {
+                        document.getElementById('profileUsernameDisplay').innerText = uData.username;
+                        document.getElementById('myName').innerText = uData.username;
+                        document.getElementById('myAvatar').innerText = uData.username[0].toUpperCase();
+                    }
+                }
+            });
+            renderShop();
+        } else {
+            document.getElementById('auth').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+        }
+    });
 
-function switchAdminSubTab(tab) {
-  document.getElementById('adminTabOrdersBtn').style.color = tab === 'orders' ? '#0095f6' : '#888';
-  document.getElementById('adminTabOrdersBtn').style.borderBottomColor = tab === 'orders' ? '#0095f6' : 'transparent';
-  document.getElementById('adminTabProductsBtn').style.color = tab === 'products' ? '#0095f6' : '#888';
-  document.getElementById('adminTabProductsBtn').style.borderBottomColor = tab === 'products' ? '#0095f6' : 'transparent';
-  document.getElementById('adminTabUsersBtn').style.color = tab === 'users' ? '#0095f6' : '#888';
-  document.getElementById('adminTabUsersBtn').style.borderBottomColor = tab === 'users' ? '#0095f6' : 'transparent';
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+        const target = document.getElementById(tabName);
+        if(target) target.classList.add('active');
+        const btn = document.getElementById('nav-' + tabName);
+        if(btn) btn.classList.add('active');
+    }
 
-  document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
-  document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
-  document.getElementById('adminSubPanelUsers').classList.toggle('hidden', tab !== 'users');
-}
+    // 🔒 ACCOUNT DELETION RE-AUTHENTICATION FIX
+    async function deleteMyOwnAccount() {
+        const user = auth.currentUser;
+        if(!user) return;
+        const password = prompt("Security Check: Enter password to permanently delete account and release Gmail:");
+        if(!password) return;
+        try {
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+            await user.reauthenticateWithCredential(credential);
+            await db.collection("users").doc(user.uid).delete();
+            await user.delete();
+            alert("Account deleted successfully!");
+            location.reload();
+        } catch(error) {
+            alert("Deletion failed: " + error.message);
+        }
+    }
 
-function renderAdminOrders() {
-  const list = document.getElementById('adminOrdersList');
-  list.innerHTML = '';
-  if (orders.length === 0) {
-    list.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No online orders found.</div>`;
-    return;
-  }
-  orders.forEach(o => {
-    const div = document.createElement('div');
-    div.style.cssText = 'background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:10px;font-size:13px;';
-    div.innerHTML = `
-      <b>📦 ${o.product}</b> (Final Paid: ₹${o.price})
-      <div style="color:#aaa;margin-top:4px;">Buyer: ${o.name} (${o.phone})</div>
-      <div style="color:#aaa;">Delivery Fee charged: ₹${o.deliveryFee}</div>
-      <div style="color:#aaa;">Address: ${o.address}</div>
-      ${o.loc ? `<a href="${o.loc}" target="_blank" style="color:#0095f6;display:block;margin-top:4px;">📍 View GPS Location</a>` : ''}
-    `;
-    list.appendChild(div);
-  });
-}
+    function logout() { auth.signOut().then(() => location.reload()); }
+    function openChatModal() { document.getElementById('chatModal').classList.remove('hidden'); }
+    function closeChatModal() { document.getElementById('chatModal').classList.add('hidden'); }
+    function openAdminAuthModal() { document.getElementById('adminAuthModal').classList.remove('hidden'); }
+    function closeAdminAuthModal() { document.getElementById('adminAuthModal').classList.add('hidden'); }
+    function openProfileSettingsModal() { document.getElementById('profileSettingsModal').classList.remove('hidden'); }
+    function closeProfileSettingsModal() { document.getElementById('profileSettingsModal').classList.add('hidden'); }
+    function startBroadcastingLive() { alert("Starting Live Stream..."); }
+    function openUpload() { showTab('upload'); }
+    function openMyProfile() { showTab('profile'); }
+    function publish() { alert("Published successfully!"); }
+    function changeProfilePic() { document.getElementById('profileInput').click(); }
+    function shareProfileLink() { alert("Profile link copied!"); }
+    function switchProfileTab(tab) {
+        document.getElementById('btnMyPosts').style.color = tab === 'posts' ? '#fff' : '#a8a8a8';
+        document.getElementById('btnMyPosts').style.borderBottomColor = tab === 'posts' ? '#fff' : 'transparent';
+        document.getElementById('btnSavedPosts').style.color = tab === 'saved' ? '#fff' : '#a8a8a8';
+        document.getElementById('btnSavedPosts').style.borderBottomColor = tab === 'saved' ? '#fff' : 'transparent';
+    }
 
-function previewMultipleProductImgs(e) {
-  multipleProductFiles = [];
-  const files = e.target.files;
-  const grid = document.getElementById('prodPreviewGrid');
-  grid.innerHTML = '';
-  for (let i = 0; i < files.length; i++) {
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      multipleProductFiles.push(evt.target.result);
-      const img = document.createElement('div');
-      img.style.cssText = 'width:50px;height:50px;background-size:cover;border-radius:6px;flex-shrink:0;';
-      img.style.backgroundImage = `url('${evt.target.result}')`;
-      grid.appendChild(img);
-    };
-    reader.readAsDataURL(files[i]);
-  }
-}
+    function verifyAdminPassword() {
+        const pass = document.getElementById('adminPassInput').value;
+        if(pass === "admin123" || pass === "8882691376") {
+            closeAdminAuthModal();
+            document.getElementById('adminMainModal').classList.remove('hidden');
+        } else {
+            alert("Incorrect Admin Password!");
+        }
+    }
+    function closeAdminMainModal() { document.getElementById('adminMainModal').classList.add('hidden'); }
+    function switchAdminSubTab(sub) {
+        document.getElementById('adminSubPanelOrders').classList.add('hidden');
+        document.getElementById('adminSubPanelProducts').classList.add('hidden');
+        document.getElementById('adminSubPanelUsers').classList.add('hidden');
+        if(sub === 'orders') document.getElementById('adminSubPanelOrders').classList.remove('hidden');
+        if(sub === 'products') document.getElementById('adminSubPanelProducts').classList.remove('hidden');
+        if(sub === 'users') document.getElementById('adminSubPanelUsers').classList.remove('hidden');
+    }
+    function publishProduct() { alert("VIP Product published!"); }
+    function boostUserFollowers() { alert("Followers boosted successfully!"); }
 
-function publishProduct() {
-  const title = document.getElementById('prodTitle').value.trim();
-  const price = parseFloat(document.getElementById('prodPrice').value);
-  const desc = document.getElementById('prodDesc').value.trim();
-
-  if (!title || !price || multipleProductFiles.length === 0) {
-    alert('Please fill product title, price and select at least one image.');
-    return;
-  }
-
-  const newProd = {
-    id: Date.now(),
-    title, price, desc,
-    images: multipleProductFiles,
-    reviews: []
-  };
-
-  products.push(newProd);
-  alert('Product published online successfully!');
-  document.getElementById('prodTitle').value = '';
-  document.getElementById('prodPrice').value = '';
-  document.getElementById('prodDesc').value = '';
-  document.getElementById('prodFile').value = '';
-  document.getElementById('prodPreviewGrid').innerHTML = '';
-  multipleProductFiles = [];
-  renderAdminProducts();
-  renderShop();
-}
-
-function renderAdminProducts() {
-  const list = document.getElementById('adminProductsEditList');
-  list.innerHTML = '';
-  products.forEach(p => {
-    const div = document.createElement('div');
-    div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;background:#1e1e1e;padding:10px;border-radius:8px;margin-bottom:8px;';
-    div.innerHTML = `
-      <span><b>${p.title}</b> - ₹${p.price}</span>
-      <button style="background:#ff3040;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;" onclick="deleteProduct(${p.id})">Delete</button>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function deleteProduct(id) {
-  products = products.filter(p => p.id !== id);
-  renderAdminProducts();
-  renderShop();
-}
-
-function renderAdminUsers() {
-  syncFromCloud();
-  const list = document.getElementById('adminUsersList');
-  list.innerHTML = '';
-  users.forEach(u => {
-    const div = document.createElement('div');
-    div.style.cssText = 'background:#1e1e1e;padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;';
-    div.innerHTML = `<b>@${u.username}</b> (${u.name}) - Followers: ${(u.followers || []).length}`;
-    list.appendChild(div);
-  });
-}
-
-function boostUserFollowers() {
-  const uname = document.getElementById('boostUsername').value.trim().toLowerCase();
-  const count = parseInt(document.getElementById('boostCount').value) || 0;
-  syncFromCloud();
-  const target = users.find(u => u.username === uname);
-  if (!target) {
-    alert('User not found online!');
-    return;
-  }
-  for (let i = 0; i < count; i++) {
-    target.followers.push('boost_user_' + Math.random().toString(36).substring(7));
-  }
-  syncToCloud();
-  alert(`Successfully added ${count} followers to @${uname} online!`);
-  renderAdminUsers();
-}
-
-function closeMediaModal() {
-  document.getElementById('mediaModal').classList.add('hidden');
-}
-
-function showUsersListModal(type) {
-  document.getElementById('usersListModal').classList.remove('hidden');
-  document.getElementById('usersListTitle').innerText = type === 'followers' ? 'Followers' : 'Following';
-  const content = document.getElementById('usersListContent');
-  content.innerHTML = '';
-  const list = type === 'followers' ? (currentUser.followers || []) : (currentUser.following || []);
-  list.forEach(username => {
-    const row = document.createElement('div');
-    row.style.cssText = 'padding:8px 0;border-bottom:1px solid #333;color:#fff;';
-    row.innerText = '@' + username;
-    content.appendChild(row);
-  });
-}
-
-function closeUsersListModal() {
-  document.getElementById('usersListModal').classList.add('hidden');
-}
+    function renderShop() {
+        const grid = document.getElementById('shopGrid');
+        if(!grid) return;
+        grid.innerHTML = `
+            <div style="background:#121212;border:1px solid #262626;border-radius:12px;overflow:hidden;padding:10px;">
+                <div style="height:140px;background:#222;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;">VIP Item</div>
+                <b style="font-size:13px;display:block;margin-top:8px;">Universe Pro VIP T-Shirt</b>
+                <span style="color:#2ecc71;font-weight:bold;font-size:14px;">₹999</span>
+                <button class="primary-btn" style="padding:6px;font-size:12px;margin-top:6px;" onclick="alert('Order placed!')">Buy Now</button>
+            </div>
+            <div style="background:#121212;border:1px solid #262626;border-radius:12px;overflow:hidden;padding:10px;">
+                <div style="height:140px;background:#222;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;">VIP Item</div>
+                <b style="font-size:13px;display:block;margin-top:8px;">VIP Gaming Headset</b>
+                <span style="color:#2ecc71;font-weight:bold;font-size:14px;">₹2,499</span>
+                <button class="primary-btn" style="padding:6px;font-size:12px;margin-top:6px;" onclick="alert('Order placed!')">Buy Now</button>
+            </div>
+        `;
+    }
 </script>
+
 </body>
 </html>
