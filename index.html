@@ -485,7 +485,10 @@ main {
 <section id="auth">
   <div class="auth-card">
     <div class="logo">Universe Pro</div>
-    <div class="vip-welcome">👑 Welcome, Aditya Singh 🚀</div>
+    <div class="vip-welcome">👑 Owner: Aditya thakur :🚀</div>
+     <div class="vip-welcome">:🚀🛕📿हर हर महादेव📿🛕🚀:</div>
+      <div class="vip-welcome">🚀emergency support : ▄︻╦芫≡══--  ⌯⁍ 🚀</div>
+     <div class="vip-welcome">🚀8882691376🚀</div>
     
     <form id="authForm">
       <div id="fullNameGroup" class="input-group hidden">
@@ -675,7 +678,7 @@ main {
 <div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
   <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
     <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 9911):</p>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 1234):</p>
     <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
     <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
   </div>
@@ -1098,7 +1101,7 @@ main {
 
   window.verifyAdminPassword = () => {
     let enteredVal = document.getElementById('adminPassInput').value.trim();
-    if (enteredVal === '9911') {
+    if (enteredVal === '1234') {
       isAdminAuthenticated = true;
       closeAdminAuthModal();
       openAdminMainModal();
