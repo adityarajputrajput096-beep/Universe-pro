@@ -1835,5 +1835,43 @@ main {
     r.readAsDataURL(f);
   };
 </script>
+<script type="module">
+  // Firebase और Firestore से डेटा फेच करने का कोड
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.x.x/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore.js";
+
+  // मान लीजिए आपके ऐप में firebase, db पहले से इनिशियलाइज्ड हैं
+  // अगर आपके प्रोजेक्ट में पहले से ही auth और db बने हैं, तो आप सीधे नीचे दिए गए लॉजिक का इस्तेमाल करें:
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // अगर आपके पास ग्लोबल auth या db ऑब्जेक्ट है
+    setTimeout(async () => {
+      try {
+        const auth = window.auth || firebase.auth();
+        const db = window.db || firebase.firestore();
+        
+        // चेक करें कि यूजर लॉगइन है या नहीं
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            // यहाँ अपने उस HTML एलिमेंट की आईडी या क्लास दें जहाँ यूजरनेम दिखाना है
+            const usernameElements = document.querySelectorAll(".username-display, #usernameDisplay");
+            usernameElements.forEach(el => {
+              if (data.username) {
+                el.innerText = data.username;
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.log("Username fetch error: ", e);
+      }
+    }, 1500); // पेज लोड होने के थोड़ी देर बाद डेटा फेच करने के लिए
+  });
+</script>
 </body>
 </html>
