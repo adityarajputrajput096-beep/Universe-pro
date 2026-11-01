@@ -813,34 +813,62 @@ main {
 
 <div id="toast" style="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
-<!-- Firebase Modular Script -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  // Firebase और Realtime Database के लिए मॉडुलर इम्पोर्ट्स
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
+  // अपनी फायरबेस कॉन्फ़िगरेशन यहाँ डालें (जो आपके प्रोजेक्ट की है)
   const firebaseConfig = {
-    apiKey: "AIzaSyBSCxAOI0DGmGBc3V2emwJUECZfxt7fMoA",
-    authDomain: "universe-pro-f36a8.firebaseapp.com",
-    databaseURL: "https://universe-pro-f36a8-default-rtdb.firebaseio.com",
-    projectId: "universe-pro-f36a8",
-    storageBucket: "universe-pro-f36a8.firebasestorage.app",
-    messagingSenderId: "1051673611050",
-    appId: "1:1051673611050:web:24d6db4c72628131d42c53"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
   };
 
+  // 1. सबसे पहले Firebase ऐप को इनिशियलाइज (शुरू) करें
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
 
-  let currentUid = null;
-  let dbUsers = {}, dbPosts = {}, dbStories = {}, dbProducts = {}, dbOrders = {}, dbLives = {}, dbSaved = {}, dbChats = {};
-  let signup = false, previewUrl = '', previewType = '';
-  let activeCommentPostId = null, profileTab = 'posts', prodImagesArray = [], selectedBuyProduct = null;
-  let isAdminAuthenticated = false, activeAdminTab = 'orders';
-  let viewingUserId = null, activeChatUserId = null;
-  let currentFilterCss = 'none', liveStream = null, isBroadcaster = false, activeLiveKey = null, currentFilter = 'none', liveCanvasAnim = null;
-  let vcStream = null;
+  console.log("फायरबेस सफलतापूर्वक इनिशियलाइज हो गया है!");
+
+  // 2. पेज लोड होने पर यूजरनेम फेच करने का लॉजिक
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          console.log("यूजर लॉगइन है, UID:", user.uid);
+          const dbRef = ref(db);
+          
+          get(child(dbRef, `users/${user.uid}/username`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              const usernameValue = snapshot.val();
+              console.log("डेटा मिल गया:", usernameValue);
+              
+              // स्क्रीन पर जहाँ भी नाम दिखाना है (आईडी या क्लास)
+              const usernameElements = document.querySelectorAll(".username-display, #usernameDisplay");
+              usernameElements.forEach(el => {
+                el.innerText = usernameValue;
+              });
+              console.log("नाम सफलतापूर्वक स्क्रीन पर सेट कर दिया गया है!");
+            } else {
+              console.log("रियल-टाइम डेटाबेस में इस यूजर के लिए 'username' फील्ड नहीं मिली।");
+            }
+          }).catch((error) => {
+            console.error("डेटा फेच करने में एरर:", error);
+          });
+        } else {
+          console.log("कोई यूजर लॉगइन नहीं है!");
+        }
+      });
+    }, 1500);
+  });
+</script>
 
   // ⚡ INSTANT LOADER BYPASS
   setTimeout(() => {
