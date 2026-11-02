@@ -842,6 +842,27 @@ main {
   let currentFilterCss = 'none', liveStream = null, isBroadcaster = false, activeLiveKey = null, currentFilter = 'none', liveCanvasAnim = null;
   let vcStream = null;
 
+  // Real-time Database से यूजर का नाम लाइव फेच और सिंक करने का कोड
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUid = user.uid;
+      const userRef = ref(db, 'users/' + user.uid + '/username');
+      
+      onValue(userRef, (snapshot) => {
+        const username = snapshot.val();
+        if (username) {
+          document.querySelectorAll(".username-display, #usernameDisplay, .owner-name").forEach(el => {
+              el.innerText = username;
+          });
+        }
+      }, (error) => {
+        console.error("Database fetch error: ", error);
+      });
+    } else {
+      currentUid = null;
+    }
+  });
+
   // ⚡ INSTANT LOADER BYPASS
   setTimeout(() => {
     let loader = document.getElementById('appLoader');
