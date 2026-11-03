@@ -1474,11 +1474,25 @@ main {
     let posts = Object.keys(dbPosts).map(k => ({id: k, ...dbPosts[k]})).sort((a,b) => b.time - a.time);
     let mySavedKeys = dbSaved[currentUid] ? Object.values(dbSaved[currentUid]) : [];
 
-    f.innerHTML = posts.map(post => {
+   f.innerHTML = posts.map(post => {
       let u = dbUsers[post.userId] || { username: 'user', name: 'User', pic: '' };
       let liked = (post.likes || []).includes(currentUid);
       let saved = mySavedKeys.includes(post.id);
 
+      // 👉 यहाँ तय करें कि अगर फोटो का लिंक खाली है, तो डिफ़ॉल्ट फोटो दिखेगी
+      let userPic = (u.pic && u.pic !== "undefined") ? u.pic : "https://via.placeholder.com/150"; 
+
+      return `
+          <div class="post-card">
+              <div class="post-header">
+                  <!-- 👉 यहाँ u.pic की जगह safe 'userPic' वेरिएबल का इस्तेमाल करें -->
+                  <img src="${userPic}" alt="Profile" class="profile-pic">
+                  <span>${u.name || 'User'}</span>
+              </div>
+              <!-- बाकी पोस्ट का एचटीएमएल कोड -->
+          </div>
+      `;
+  }).join('');
       return `<article class="post-card">
         <div class="post-header">
           <div class="user-info-row" onclick="openUserProfile('${post.userId}')">
