@@ -471,7 +471,14 @@ main {
 </style>
 </head>
 <body>
-  
+
+<!-- Lightning Fast Initial Loader with Emergency Bypass -->
+<div id="appLoader">
+  <div class="spinner"></div>
+  <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
+  <div style="font-size:12px;color:#888;">Loading VIP Data...</div>
+</div>
+
 <!-- Login & Register -->
 <section id="auth">
   <div class="auth-card">
@@ -1749,6 +1756,25 @@ main {
     r.onload = () => { update(ref(db, `users/${currentUid}`), { pic: r.result }); toast('Profile photo updated!'); };
     r.readAsDataURL(f);
   };
+// Firebase से डेटा फेच करते वक्त:
+onValue(ref(db, 'posts'), (snapshot) => {
+    // 1. डेटा मिल गया, अब लोडर को तुरंत गायब कर दें
+    const loader = document.getElementById("appLoader");
+    if (loader) loader.style.display = "none";
+
+    const data = snapshot.val();
+    if (data) {
+        // यहाँ अपना फीड रेंडर करें
+        renderFeed(data);
+    } else {
+        console.log("No posts found");
+    }
+}, (error) => {
+    // अगर एरर आए तब भी लोडर हटा दें ताकि यूजर अटके नहीं
+    const loader = document.getElementById("appLoader");
+    if (loader) loader.style.display = "none";
+    console.error(error);
+});
 </script>
 </body>
 </html>
