@@ -182,7 +182,7 @@ button:active {
   display: none;
   min-height: 100vh;
   padding-top: 60px;
-  padding-bottom: calc(75px + var(--safe-bottom));
+  padding-bottom: calc(65px + var(--safe-bottom));
 }
 
 .header {
@@ -243,7 +243,6 @@ button:active {
 main {
   width: min(650px, 100%);
   margin: 0 auto;
-  padding-bottom: calc(85px + env(safe-area-inset-bottom, 15px));
 }
 
 .tab-pane {
@@ -395,15 +394,14 @@ main {
   font-size: 14px;
 }
 
-/* Bottom Navigation Bar */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(60px + env(safe-area-inset-bottom, 15px));
-  padding-bottom: max(12px, env(safe-area-inset-bottom, 15px));
-  background: rgba(0, 0, 0, 0.96);
+  height: calc(56px + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(0, 0, 0, 0.95);
   backdrop-filter: blur(15px);
   border-top: 1px solid var(--border-color);
   display: flex;
@@ -474,7 +472,7 @@ main {
 </head>
 <body>
 
-<!-- Lightning Fast Initial Loader -->
+<!-- Lightning Fast Initial Loader with Emergency Bypass -->
 <div id="appLoader">
   <div class="spinner"></div>
   <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
@@ -485,10 +483,7 @@ main {
 <section id="auth">
   <div class="auth-card">
     <div class="logo">Universe Pro</div>
-    <div class="vip-welcome">👑 Owner: Aditya thakur :🚀</div>
-     <div class="vip-welcome">:🚀🛕📿हर हर महादेव📿🛕🚀:</div>
-      <div class="vip-welcome">🚀emergency support : ▄︻╦芫≡══--  ⌯⁍ 🚀</div>
-     <div class="vip-welcome">🚀8882691376🚀</div>
+    <div class="vip-welcome">👑 Welcome, Aditya Singh 🚀</div>
     
     <form id="authForm">
       <div id="fullNameGroup" class="input-group hidden">
@@ -518,6 +513,8 @@ main {
   <header class="header">
     <div class="brand-title">Universe Pro</div>
     <div class="header-actions">
+      <!-- Added Video Call Option Back -->
+      <button class="icon-circle-btn" onclick="startVideoCall()" title="Video Call"><i class="fa-solid fa-video"></i></button>
       <button class="btn-live-badge" onclick="startBroadcastingLive()"><i class="fa-solid fa-signal"></i> 🔴 LIVE</button>
       <button class="icon-circle-btn" onclick="openChatModal()" title="Chats"><i class="fa-regular fa-paper-plane"></i></button>
       <button class="icon-circle-btn" onclick="openAdminAuthModal()" title="Admin Panel"><i class="fa-solid fa-user-shield"></i></button>
@@ -532,22 +529,26 @@ main {
     </section>
 
     <section id="search" class="tab-pane">
-      <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border-color); background:var(--bg-primary);">
-        <input id="searchInput" class="input" placeholder="🔍 Search people..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
+      <div style="padding:13px;border-bottom:1px solid var(--border-color)">
+        <input id="searchInput" class="input" placeholder="Search people..." oninput="searchUsers(this.value)">
       </div>
-      <div id="searchResults" style="padding:8px 0;"></div>
+      <div id="searchResults"></div>
     </section>
 
+    <!-- SHOP SECTION WITH LIVE SEARCH BAR -->
     <section id="shop" class="tab-pane">
       <div style="font-weight:700;padding:16px 16px 8px;font-size:16px;">🛍️ Official VIP Store</div>
+      
+      <!-- Store Search Input Bar -->
       <div style="padding:0 14px 10px;">
         <input id="shopSearchInput" class="input" placeholder="🔍 Search products in store..." oninput="renderShop()" style="border-radius:20px;padding:10px 16px;background:#181818;">
       </div>
+
       <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 14px 14px;"></div>
     </section>
 
     <section id="reels" class="tab-pane">
-      <div class="reels" id="reelsList" style="height:calc(100vh - 126px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
+      <div class="reels" id="reelsList" style="height:calc(100vh - 116px);overflow-y:auto;scroll-snap-type:y mandatory;background:#000;"></div>
     </section>
 
     <section id="upload" class="tab-pane">
@@ -567,15 +568,8 @@ main {
       </div>
     </section>
 
-    <!-- PROFILE SECTION WITH TOP SETTINGS BUTTON -->
     <section id="profile" class="tab-pane">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px 0;">
-        <b id="profileHeaderTitle" style="font-size:18px;color:#fff;">Profile</b>
-        <!-- ⚙️ PROFILE SETTINGS BUTTON -->
-        <button onclick="openProfileSettingsModal()" style="color:#fff;font-size:20px;padding:6px;"><i class="fa-solid fa-gear"></i></button>
-      </div>
-
-      <div style="display:flex;gap:20px;align-items:center;padding:18px 16px;border-bottom:1px solid var(--border-color)">
+      <div style="display:flex;gap:20px;align-items:center;padding:22px 16px;border-bottom:1px solid var(--border-color)">
         <div id="myAvatar" class="avatar-img" style="width:84px;height:84px;font-size:30px;"></div>
         <div style="display:flex;gap:15px;text-align:center;flex:1;justify-content:space-around;">
           <div><strong id="postCount" style="display:block;font-size:18px;color:#fff;">0</strong><span style="color:#888;font-size:12px;">posts</span></div>
@@ -607,115 +601,13 @@ main {
   </nav>
 </div>
 
-<!-- ⚙️ PROFILE SETTINGS MODAL -->
-<div id="profileSettingsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:850;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeProfileSettingsModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:20px;" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #333;padding-bottom:10px;">
-      <b style="color:#fff;font-size:16px;">⚙️ Account Settings</b>
-      <button onclick="closeProfileSettingsModal()" style="color:#fff;font-size:18px;">✕</button>
-    </div>
-    
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <button class="primary-btn" style="background:#262626;margin:0;" onclick="closeProfileSettingsModal(); changeProfilePic();">📷 Change Profile Picture</button>
-      <button class="primary-btn" style="background:#262626;margin:0;" onclick="closeProfileSettingsModal(); logout();">🚪 Log Out</button>
-      <hr style="border:none;border-top:1px solid #333;margin:8px 0;">
-      <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="deleteMyOwnAccount()">🗑️ Delete My Account</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN DASHBOARD MODAL -->
-<div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
-    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
-      <span>👑 VIP Admin Dashboard</span>
-      <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    
-    <div style="display:flex;border-bottom:1px solid #333;">
-      <button id="adminTabOrdersBtn" style="flex:1;padding:12px;background:none;color:#0095f6;font-weight:bold;border-bottom:2px solid #0095f6;border:none;" onclick="switchAdminSubTab('orders')">📦 Orders</button>
-      <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('products')">🛍️ Products</button>
-      <button id="adminTabUsersBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('users')">👥 Users & Boost</button>
-    </div>
-
-    <div style="padding:10px 15px 0;">
-      <input id="adminSearchInput" class="input" placeholder="🔍 Search in Admin..." oninput="filterAdminContent(this.value)" style="border-radius:20px;padding:8px 14px;font-size:13px;background:#121212;">
-    </div>
-
-    <div style="padding:15px;overflow-y:auto;flex:1;">
-      <div id="adminSubPanelOrders"><div id="adminOrdersList"></div></div>
-      <div id="adminSubPanelProducts" class="hidden">
-        <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
-          <b style="color:#fff;">➕ Add Product:</b>
-          <input id="prodTitle" class="input" placeholder="Product Title" style="margin-top:6px;">
-          <input id="prodPrice" class="input" type="number" placeholder="Price (₹)" style="margin-top:6px;">
-          <textarea id="prodDesc" class="input" placeholder="Description..." style="height:55px;margin-top:6px;resize:none;"></textarea>
-          <label style="display:block;margin-top:8px;font-size:12px;color:#aaa;">Select Photos:</label>
-          <input id="prodFile" type="file" accept="image/*" multiple style="margin:6px 0;color:#fff;" onchange="previewMultipleProductImgs(event)">
-          <div id="prodPreviewGrid" style="display:flex;gap:8px;overflow-x:auto;padding:8px 0;"></div>
-          <button class="primary-btn" onclick="publishProduct()">Publish Product</button>
-        </div>
-        <div id="adminProductsEditList"></div>
-      </div>
-
-      <div id="adminSubPanelUsers" class="hidden">
-        <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
-          <b style="color:#f1c40f;">🚀 Boost User Followers:</b>
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <input id="boostUsername" class="input" placeholder="Target Username" style="flex:1;">
-            <input id="boostCount" class="input" type="number" placeholder="Count" style="width:120px;">
-          </div>
-          <button class="primary-btn" style="background:#2ecc71;margin-top:8px;" onclick="boostUserFollowers()">🚀 Add Followers</button>
-        </div>
-        <b style="color:#fff;display:block;margin-bottom:8px;">Registered Users List:</b>
-        <div id="adminUsersList"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Admin Protection Auth Modal -->
-<div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
-    <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 1234):</p>
-    <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
-    <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
-  </div>
-</div>
-
-<!-- Buy Product Modal -->
-<div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
-  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <span id="buyProdTitle" style="font-weight:bold;font-size:16px;color:#fff;">Product Details</span>
-      <button onclick="closeBuyModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
-    </div>
-    <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:10px;"></div>
-    <div id="buyProdThumbs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;"></div>
-    <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
-    <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
-    <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
-      <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
-      <input id="orderName" class="input" placeholder="Your Full Name">
-      <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-      <button class="primary-btn" style="background:#262626;margin:0;padding:9px;" onclick="detectUserLocation()">📍 Get GPS Location</button>
-      <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
-      <textarea id="orderAddress" class="input" placeholder="Delivery Address..." style="height:55px;resize:none;"></textarea>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="primary-btn" style="background:linear-gradient(45deg,#2ecc71,#27ae60);margin:0;" onclick="placeOrderNow()">🛒 Place Order</button>
-    </div>
-  </div>
-</div>
-
 <!-- Video Call Modal -->
 <div id="videoCallModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;">
   <div style="position:relative;width:min(450px,100%);height:75vh;background:#111;border-radius:18px;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center;">
     <video id="vcLocalVideo" autoplay playsinline muted style="position:absolute;bottom:20px;right:20px;width:100px;height:140px;object-fit:cover;border-radius:10px;border:2px solid #fff;z-index:10;background:#000;"></video>
     <div style="color:#fff;text-align:center;">
       <i class="fa-solid fa-video" style="font-size:48px;color:#0095f6;margin-bottom:12px;"></i>
-      <h3 style="margin-bottom:6px;">VIP Video Call</h3>
+      <h3 style="margin-bottom:6px;">VIP Video Call Room</h3>
       <p style="font-size:13px;color:#888;">Secure Peer-to-Peer Connection</p>
     </div>
     <button onclick="closeVideoCall()" style="position:absolute;top:15px;right:15px;background:#ff3040;color:#fff;border-radius:50%;width:36px;height:36px;font-size:16px;">✕</button>
@@ -748,7 +640,6 @@ main {
       <button onclick="backToChatList()" style="color:#fff;font-size:20px;background:none;border:none;"><i class="fa-solid fa-arrow-left"></i></button>
       <div id="chatTargetAvatar" style="width:36px;height:36px;border-radius:50%;"></div>
       <b id="chatTargetName" style="color:#fff;font-size:15px;flex:1;">User</b>
-      <button onclick="startVideoCall()" style="background:#181818;border:1px solid #333;color:#0095f6;border-radius:50%;width:38px;height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Start Video Call"><i class="fa-solid fa-video"></i></button>
       <button onclick="closeChatModal()" style="color:#fff;font-size:20px;background:none;border:none;">✕</button>
     </div>
     <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:15px;"></div>
@@ -777,6 +668,86 @@ main {
       <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;">
         <button style="padding:10px 24px;border-radius:25px;background:#ff3040;color:#fff;font-weight:bold;" onclick="stopLiveStream()">Stop Live</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Protection Auth Modal -->
+<div id="adminAuthModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminAuthModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(380px,100%);padding:24px;text-align:center;" onclick="event.stopPropagation()">
+    <h3 style="margin-bottom:10px;color:#fff;">🔐 Admin Protection</h3>
+    <p style="font-size:13px;color:#aaa;margin-bottom:14px;">Enter VIP Admin Password (Default: 9911):</p>
+    <input id="adminPassInput" class="input" type="password" placeholder="Enter Password" style="text-align:center;font-size:18px;letter-spacing:4px;margin-bottom:12px;">
+    <button class="primary-btn" onclick="verifyAdminPassword()">Login to Admin</button>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD MODAL WITH SEARCH -->
+<div id="adminMainModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeAdminMainModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(580px,100%);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;" onclick="event.stopPropagation()">
+    <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;font-weight:bold;color:#fff;">
+      <span>👑 VIP Admin Dashboard</span>
+      <button onclick="closeAdminMainModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
+    </div>
+    
+    <div style="display:flex;border-bottom:1px solid #333;">
+      <button id="adminTabOrdersBtn" style="flex:1;padding:12px;background:none;color:#0095f6;font-weight:bold;border-bottom:2px solid #0095f6;border:none;" onclick="switchAdminSubTab('orders')">📦 View Orders</button>
+      <button id="adminTabProductsBtn" style="flex:1;padding:12px;background:none;color:#888;font-weight:bold;border-bottom:2px solid transparent;border:none;" onclick="switchAdminSubTab('products')">🛍️ Manage Products</button>
+    </div>
+
+    <!-- Admin Panel Search Bar -->
+    <div style="padding:10px 15px 0;">
+      <input id="adminSearchInput" class="input" placeholder="🔍 Search in Admin (Orders / Products)..." oninput="filterAdminContent(this.value)" style="border-radius:20px;padding:8px 14px;font-size:13px;background:#121212;">
+    </div>
+
+    <div style="padding:15px;overflow-y:auto;flex:1;">
+      <div id="adminSubPanelOrders"><div id="adminOrdersList"></div></div>
+      <div id="adminSubPanelProducts" class="hidden">
+        <div style="background:#1e1e1e;padding:12px;border-radius:10px;margin-bottom:14px;">
+          <b style="color:#fff;">➕ Add Product (Multiple Photos Allowed):</b>
+          <input id="prodTitle" class="input" placeholder="Product Title" style="margin-top:6px;">
+          <input id="prodPrice" class="input" type="number" placeholder="Price (₹)" style="margin-top:6px;">
+          <textarea id="prodDesc" class="input" placeholder="Description..." style="height:55px;margin-top:6px;resize:none;"></textarea>
+          
+          <label style="display:block;margin-top:8px;font-size:12px;color:#aaa;">Select 3-4 Photos (Front, Back, Side views):</label>
+          <input id="prodFile" type="file" accept="image/*" multiple style="margin:6px 0;color:#fff;" onchange="previewMultipleProductImgs(event)">
+          
+          <div id="prodPreviewGrid" style="display:flex;gap:8px;overflow-x:auto;padding:8px 0;"></div>
+          <button class="primary-btn" onclick="publishProduct()">Publish Product</button>
+        </div>
+        <div id="adminProductsEditList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buy Product Modal -->
+<div id="buyProductModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;display:flex;align-items:center;justify-content:center;padding:15px;" onclick="closeBuyModal()">
+  <div style="background:#181818;border:1px solid #333;border-radius:16px;width:min(455px,100%);max-height:85vh;overflow-y:auto;padding:16px;" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span id="buyProdTitle" style="font-weight:bold;font-size:16px;color:#fff;">Product Details</span>
+      <button onclick="closeBuyModal()" style="color:#fff;font-size:18px;background:none;border:none;">✕</button>
+    </div>
+    
+    <!-- Main Photo -->
+    <div id="buyProdImg" style="width:100%;height:220px;background:#050505;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:8px;border:1px solid #333;margin-bottom:10px;"></div>
+    
+    <!-- Thumbnails Gallery -->
+    <div id="buyProdThumbs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;"></div>
+
+    <div style="color:#2ecc71;font-size:22px;font-weight:800;margin-bottom:8px;" id="buyProdPrice">₹0</div>
+    <p id="buyProdDesc" style="font-size:13px;color:#aaa;margin-bottom:14px;white-space:pre-wrap;"></p>
+    
+    <div style="border-top:1px solid #333;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
+      <b style="font-size:14px;color:#0095f6;">📦 Delivery Details:</b>
+      <input id="orderName" class="input" placeholder="Your Full Name">
+      <input id="orderPhone" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
+      <button class="primary-btn" style="background:#262626;margin:0;padding:9px;" onclick="detectUserLocation()">📍 Get GPS Location</button>
+      <input id="orderLocLink" class="input" placeholder="GPS Link" readonly style="font-size:11px;color:#777;">
+      <textarea id="orderAddress" class="input" placeholder="Delivery Address..." style="height:55px;resize:none;"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="primary-btn" style="background:linear-gradient(45deg,#2ecc71,#27ae60);margin:0;" onclick="placeOrderNow()">🛒 Place Order</button>
     </div>
   </div>
 </div>
@@ -811,12 +782,12 @@ main {
   </div>
 </div>
 
-<div id="toast" style="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
+<div id="toast" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:20px;display:none;z-index:1000;font-size:13px;font-weight:700;"></div>
 
-<!-- Firebase Modular Script -->
+<!-- Firebase Modular Script with Lightning Fast Async Execution -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
@@ -842,28 +813,7 @@ main {
   let currentFilterCss = 'none', liveStream = null, isBroadcaster = false, activeLiveKey = null, currentFilter = 'none', liveCanvasAnim = null;
   let vcStream = null;
 
-  // Real-time Database से यूजर का नाम लाइव फेच और सिंक करने का कोड
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUid = user.uid;
-      const userRef = ref(db, 'users/' + user.uid + '/username');
-      
-      onValue(userRef, (snapshot) => {
-        const username = snapshot.val();
-        if (username) {
-          document.querySelectorAll(".username-display, #usernameDisplay, .owner-name").forEach(el => {
-              el.innerText = username;
-          });
-        }
-      }, (error) => {
-        console.error("Database fetch error: ", error);
-      });
-    } else {
-      currentUid = null;
-    }
-  });
-
-  // ⚡ INSTANT LOADER BYPASS
+  // ⚡ INSTANT LOADER BYPASS (Zero Lag & Super Fast Open)
   setTimeout(() => {
     let loader = document.getElementById('appLoader');
     if(loader && loader.style.display !== 'none') {
@@ -873,7 +823,7 @@ main {
         if(authSec) authSec.style.display = 'flex';
       }
     }
-  }, 1000);
+  }, 800);
 
   function toast(msg){
     let x = document.getElementById('toast');
@@ -904,43 +854,18 @@ main {
     if (user) {
       currentUid = user.uid;
       viewingUserId = currentUid;
-      
-      // 🔒 SINGLE DEVICE SESSION ENFORCEMENT
-      let myDeviceSession = Date.now().toString() + '_' + Math.random().toString(36).substring(2, 7);
-      localStorage.setItem('current_session_id', myDeviceSession);
-
-      update(ref(db, 'users/' + currentUid), { currentSessionId: myDeviceSession });
-
-      onValue(ref(db, `users/${currentUid}/currentSessionId`), snapshot => {
-        let activeSessionInDb = snapshot.val();
-        let localSession = localStorage.getItem('current_session_id');
-        if (activeSessionInDb && localSession && activeSessionInDb !== localSession) {
-          alert("⚠️ Aapki ID kisi dusre device par login ho gayi hai! Aap yahan se logout ho rahe hain.");
-          signOut(auth);
-        }
-      });
-
       document.getElementById('auth').style.display = 'none';
       document.getElementById('app').style.display = 'block';
-      
-      const userRef = ref(db, 'users/' + currentUid);
-      onValue(userRef, snapshot => {
-        if(!snapshot.exists()) {
-          set(userRef, { id: currentUid, name: user.email.split('@')[0], username: user.email.split('@')[0], email: user.email, pic: '', following: [], fakeFollowersCount: 0 });
-        }
-      }, { onlyOnce: true });
-
       listenToDatabase();
     } else {
       currentUid = null;
-      localStorage.removeItem('current_session_id');
       document.getElementById('auth').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
     }
   });
 
   function listenToDatabase() {
-    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); if(isAdminAuthenticated) renderAdminUsersList(); });
+    onValue(ref(db, 'users'), snapshot => { dbUsers = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'posts'), snapshot => { dbPosts = snapshot.val() || {}; renderAll(); });
     onValue(ref(db, 'stories'), snapshot => { dbStories = snapshot.val() || {}; renderStories(); });
     onValue(ref(db, 'products'), snapshot => { dbProducts = snapshot.val() || {}; renderShop(); if(isAdminAuthenticated) renderAdminProductsEdit(); });
@@ -959,38 +884,16 @@ main {
     renderLiveBar();
   }
 
-  /* ⚙️ Profile Settings Functions */
-  window.openProfileSettingsModal = () => document.getElementById('profileSettingsModal').classList.remove('hidden');
-  window.closeProfileSettingsModal = () => document.getElementById('profileSettingsModal').classList.add('hidden');
-
-  /* Delete Current User's Own Account (Completely from Auth & Database) */
-  window.deleteMyOwnAccount = async () => {
-    if (confirm("⚠️ Kya aap sach me apna account permanently delete karna chahte hain? Yeh vaapas nahi aayega!")) {
-      try {
-        let user = auth.currentUser;
-        if (user) {
-          await remove(ref(db, `users/${currentUid}`));
-          await deleteUser(user);
-          toast("Account Permanently Deleted!");
-          closeProfileSettingsModal();
-        }
-      } catch (err) {
-        alert("Account delete karne ke liye kripya dobara Login karke turant Delete dabayein (Security requirement). Error: " + err.message);
-        signOut(auth);
-      }
-    }
-  };
-
-  /* 🎥 Video Call Functionality */
+  /* Video Call Functionality */
   window.startVideoCall = async () => {
     try {
       vcStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      let vEl = document.getElementById('vcLocalVideo');
-      if(vEl) vEl.srcObject = vcStream;
+      document.getElementById('vcLocalVideo').srcObject = vcStream;
       document.getElementById('videoCallModal').classList.remove('hidden');
       toast('📹 Video Call Connected!');
     } catch(e) {
       toast('Camera/Mic permission required!');
+      alert('⚠️ Camera and Microphone permission is required to start Video Call.');
     }
   };
 
@@ -1003,64 +906,45 @@ main {
     toast('Call Ended');
   };
 
-  /* 👑 Admin Dashboard Functions */
+  /* Store Live Search Implementation */
+  window.renderShop = () => {
+    let box = document.getElementById('shopGrid');
+    if(!box) return;
+    
+    let query = (document.getElementById('shopSearchInput')?.value || '').toLowerCase().trim();
+    
+    let prods = Object.keys(dbProducts)
+      .map(k => ({id: k, ...dbProducts[k]}))
+      .filter(p => (p.title || '').toLowerCase().includes(query) || (p.desc || '').toLowerCase().includes(query))
+      .sort((a,b) => b.time - a.time);
+
+    box.innerHTML = prods.map(p => {
+      let mainImg = (p.images && p.images.length > 0) ? p.images[0] : p.image;
+      return `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="width:100%;aspect-ratio:1;background-image:url('${mainImg}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
+            <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
+            <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
+            <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
+          </div>
+        </div>
+      `;
+    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items match search.</div>';
+  };
+
+  /* Admin Live Search Filter */
   window.filterAdminContent = (q) => {
     if(activeAdminTab === 'orders') renderAdminOrders(q);
     if(activeAdminTab === 'products') renderAdminProductsEdit(q);
-    if(activeAdminTab === 'users') renderAdminUsersList(q);
-  };
-
-  function renderAdminUsersList(query = '') {
-    let box = document.getElementById('adminUsersList');
-    if(!box) return;
-    let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
-    let users = Object.keys(dbUsers)
-      .map(k => ({id: k, ...dbUsers[k]}))
-      .filter(u => (u.username||'').toLowerCase().includes(q) || (u.name||'').toLowerCase().includes(q));
-
-    box.innerHTML = users.map(u => `
-      <div style="background:#121212;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          ${renderAvatar(u, true)}
-          <div>
-            <b style="color:#fff;">${esc(u.username||u.name)}</b>
-            <div style="color:#aaa;font-size:11px;">ID: ${u.id}</div>
-          </div>
-        </div>
-        <button class="primary-btn" style="background:#ff3040;padding:6px 10px;font-size:11px;margin:0;width:auto;" onclick="adminDeleteAnyUser('${u.id}')">Delete User</button>
-      </div>
-    `).join('') || '<div style="color:#777;font-size:13px;">No users found.</div>';
-  }
-
-  window.boostUserFollowers = () => {
-    let uname = document.getElementById('boostUsername').value.trim().toLowerCase();
-    let count = parseInt(document.getElementById('boostCount').value.trim());
-
-    if (!uname || isNaN(count) || count <= 0) return toast('Valid Username & Count enter karein!');
-
-    let targetUid = Object.keys(dbUsers).find(k => (dbUsers[k].username || '').toLowerCase() === uname);
-    if (!targetUid) return toast('User nahi mila!');
-
-    let currentFake = dbUsers[targetUid].fakeFollowersCount || 0;
-    let newTotal = currentFake + count;
-
-    update(ref(db, `users/${targetUid}`), { fakeFollowersCount: newTotal });
-    toast(`🚀 Added ${count} followers to @${uname}`);
-    document.getElementById('boostUsername').value = '';
-    document.getElementById('boostCount').value = '';
-  };
-
-  window.adminDeleteAnyUser = (userId) => {
-    if (confirm("⚠️ Warn: Kya aap is user ko database se permanently DELETE karna chahte hain?")) {
-      remove(ref(db, `users/${userId}`));
-      toast("User Deleted by Admin!");
-    }
   };
 
   function renderAdminOrders(query = '') {
     let box = document.getElementById('adminOrdersList');
     if(!box) return;
+    
     let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+    
     let keys = Object.keys(dbOrders)
       .filter(k => {
         let o = dbOrders[k];
@@ -1088,7 +972,9 @@ main {
   function renderAdminProductsEdit(query = '') {
     let box = document.getElementById('adminProductsEditList');
     if(!box) return;
+    
     let q = (query || document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+
     let prods = Object.keys(dbProducts)
       .map(k => ({id: k, ...dbProducts[k]}))
       .filter(p => (p.title || '').toLowerCase().includes(q))
@@ -1109,6 +995,7 @@ main {
     `).join('') || '<div style="color:#777;font-size:13px;">No items match search.</div>';
   }
 
+  /* Admin Auth Handling */
   window.openAdminAuthModal = () => {
     if (isAdminAuthenticated) {
       openAdminMainModal();
@@ -1122,7 +1009,7 @@ main {
 
   window.verifyAdminPassword = () => {
     let enteredVal = document.getElementById('adminPassInput').value.trim();
-    if (enteredVal === '1234') {
+    if (enteredVal === '9911') {
       isAdminAuthenticated = true;
       closeAdminAuthModal();
       openAdminMainModal();
@@ -1142,49 +1029,21 @@ main {
     document.getElementById('adminTabOrdersBtn').style.borderColor = tab==='orders'?'#0095f6':'transparent';
     document.getElementById('adminTabProductsBtn').style.color = tab==='products'?'#0095f6':'#888';
     document.getElementById('adminTabProductsBtn').style.borderColor = tab==='products'?'#0095f6':'transparent';
-    document.getElementById('adminTabUsersBtn').style.color = tab==='users'?'#0095f6':'#888';
-    document.getElementById('adminTabUsersBtn').style.borderColor = tab==='users'?'#0095f6':'transparent';
-
     document.getElementById('adminSubPanelOrders').classList.toggle('hidden', tab !== 'orders');
     document.getElementById('adminSubPanelProducts').classList.toggle('hidden', tab !== 'products');
-    document.getElementById('adminSubPanelUsers').classList.toggle('hidden', tab !== 'users');
-
     let q = document.getElementById('adminSearchInput')?.value || '';
     if(tab==='orders') renderAdminOrders(q);
     if(tab==='products') renderAdminProductsEdit(q);
-    if(tab==='users') renderAdminUsersList(q);
   };
 
-  window.renderShop = () => {
-    let box = document.getElementById('shopGrid');
-    if(!box) return;
-    let query = (document.getElementById('shopSearchInput')?.value || '').toLowerCase().trim();
-    let prods = Object.keys(dbProducts)
-      .map(k => ({id: k, ...dbProducts[k]}))
-      .filter(p => (p.title || '').toLowerCase().includes(query) || (p.desc || '').toLowerCase().includes(query))
-      .sort((a,b) => b.time - a.time);
-
-    box.innerHTML = prods.map(p => {
-      let mainImg = (p.images && p.images.length > 0) ? p.images[0] : p.image;
-      return `
-        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">
-          <div style="width:100%;aspect-ratio:1;background-image:url('${mainImg}');background-size:cover;background-position:center;cursor:pointer;" onclick="openBuyModal('${p.id}')"></div>
-          <div style="padding:10px;display:flex;flex-direction:column;gap:4px;flex:1;">
-            <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;">${esc(p.title)}</div>
-            <div style="color:#2ecc71;font-weight:800;">₹${esc(p.price)}</div>
-            <button class="primary-btn" style="background:#2ecc71;padding:8px;font-size:12px;margin-top:4px;" onclick="openBuyModal('${p.id}')">🛒 Buy Now</button>
-          </div>
-        </div>
-      `;
-    }).join('') || '<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">No items match search.</div>';
-  };
-
+  /* Multiple Product Photos Upload */
   window.previewMultipleProductImgs = (e) => {
     let files = Array.from(e.target.files);
     if(files.length === 0) return;
     prodImagesArray = [];
     let grid = document.getElementById('prodPreviewGrid');
     grid.innerHTML = '';
+
     files.forEach(file => {
       let r = new FileReader();
       r.onload = () => {
@@ -1223,6 +1082,7 @@ main {
     selectedBuyProduct = dbProducts[id];
     if(!selectedBuyProduct) return;
     let myObj = dbUsers[currentUid] || {};
+    
     let allImgs = selectedBuyProduct.images && selectedBuyProduct.images.length > 0 ? selectedBuyProduct.images : [selectedBuyProduct.image];
 
     document.getElementById('buyProdTitle').textContent = selectedBuyProduct.title;
@@ -1252,6 +1112,7 @@ main {
 
   window.closeBuyModal = () => { document.getElementById('buyProductModal').classList.add('hidden'); selectedBuyProduct = null; };
 
+  /* Direct Private Messaging */
   window.openChatModal = () => {
     let box = document.getElementById('chatList');
     let users = Object.keys(dbUsers).filter(id => id !== currentUid).map(id => dbUsers[id]);
@@ -1260,10 +1121,10 @@ main {
         ${renderAvatar(u, true)}
         <div>
           <b style="color:#fff;font-size:14px;">${esc(u.username || u.name)}</b>
-          <div style="color:#888;font-size:12px;">Tap to open chat room & video call</div>
+          <div style="color:#888;font-size:12px;">Tap to open chat room</div>
         </div>
       </div>
-    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No other users found.</div>';
+    `).join('') || '<div style="color:#777;text-align:center;padding:30px;">No users found.</div>';
     
     document.getElementById('privateChatRoom').classList.add('hidden');
     document.getElementById('chatModal').classList.remove('hidden');
@@ -1331,6 +1192,7 @@ main {
     inp.value = '';
   };
 
+  /* Live Stream Handling */
   function renderLiveBar() {
     let bar = document.getElementById('liveStreamsBar');
     if(!bar) return;
@@ -1351,8 +1213,7 @@ main {
   window.startBroadcastingLive = async () => {
     try {
       liveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      let rVid = document.getElementById('liveRawVideo');
-      rVid.srcObject = liveStream;
+      document.getElementById('liveRawVideo').srcObject = liveStream;
       document.getElementById('liveCanvas').style.display = 'block';
       document.getElementById('liveRemoteVideo').style.display = 'none';
       document.getElementById('liveFilterBar').style.display = 'flex';
@@ -1366,13 +1227,13 @@ main {
       toast('🔴 You are now Live!');
     } catch(e) {
       toast('Camera/Mic permission required!');
+      alert('⚠️ Camera and Microphone permission is required to start Live Stream.');
     }
   };
 
   function startCanvasFilterLoop() {
     let video = document.getElementById('liveRawVideo');
     let canvas = document.getElementById('liveCanvas');
-    if(!canvas || !video) return;
     let ctx = canvas.getContext('2d');
     function draw() {
       if (!isBroadcaster) return;
@@ -1427,11 +1288,11 @@ main {
     let email = document.getElementById('email').value.trim();
     let pass = document.getElementById('password').value;
     let username = document.getElementById('username').value.trim().toLowerCase();
-    let name = document.getElementById('fullName').value.trim() || username;
+    let name = document.getElementById('fullName').value.trim();
     try {
       if (signup) {
         let res = await createUserWithEmailAndPassword(auth, email, pass);
-        await set(ref(db, 'users/' + res.user.uid), { id: res.user.uid, name, username, email, pic: '', following: [], fakeFollowersCount: 0 });
+        await set(ref(db, 'users/' + res.user.uid), { id: res.user.uid, name, username, email, pic: '', following: [] });
         toast('Account Created!');
       } else {
         await signInWithEmailAndPassword(auth, email, pass);
@@ -1486,6 +1347,7 @@ main {
     document.getElementById('usersListTitle').textContent = title;
     let listContent = document.getElementById('usersListContent');
     let u = dbUsers[viewingUserId] || {};
+    
     let targetUserIds = [];
     if (type === 'following') {
       targetUserIds = u.following || [];
@@ -1509,11 +1371,20 @@ main {
   window.closeUsersListModal = () => document.getElementById('usersListModal').classList.add('hidden');
 
   window.detectUserLocation = () => {
-    if (!navigator.geolocation) {
-      toast("⚠️ GPS Supported Nahi Hai!");
+    if (!navigator.onLine) {
+      toast("⚠️ Internet Off Hai!");
+      alert("⚠️ AAPKA INTERNET OFF HAI!\nKripya Mobile Data/Wi-Fi On karke dobara try karein.");
       return;
     }
+
+    if (!navigator.geolocation) {
+      toast("⚠️ GPS Supported Nahi Hai!");
+      alert("⚠️ Aapke browser me GPS supported nahi hai. Kripya manual address type karein.");
+      return;
+    }
+
     toast("📡 Fetching GPS Location...");
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         let lat = pos.coords.latitude;
@@ -1521,9 +1392,27 @@ main {
         let mapLink = `https://maps.google.com/?q=${lat},${lng}`;
         document.getElementById('orderLocLink').value = mapLink;
         toast("✅ GPS Location Attached!");
+        alert("✅ Aapki Live Location Successfully Attach Ho Gayi Hai!");
       },
-      () => { toast("❌ GPS Failed"); },
-      { enableHighAccuracy: true, timeout: 10000 }
+      (err) => {
+        let errorMsg = "";
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            errorMsg = "⚠️ Location Permission Denied! Phone settings ya browser permission me location allow karein.";
+            break;
+          case err.POSITION_UNAVAILABLE:
+            errorMsg = "⚠️ GPS Signal Unavailable! Apne phone ka GPS/Location switch On karein.";
+            break;
+          case err.TIMEOUT:
+            errorMsg = "⚠️ Request Timeout! Network signal weak hai, kripya dobara try karein.";
+            break;
+          default:
+            errorMsg = "⚠️ Location fetch karne me problem aayi hai.";
+        }
+        toast("❌ GPS Failed");
+        alert(`${errorMsg}\n\n💡 Tip: Aap niche 'Delivery Address' box me directly apna address type kar sakte hain.`);
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
     );
   };
 
@@ -1612,7 +1501,7 @@ main {
           <div style="color:var(--text-muted);font-size:13px;margin-top:6px;cursor:pointer;" onclick="openComments('${post.id}')">View comments</div>
         </div>
       </article>`;
-    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available yet. Create one!</div>';
+    }).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available</div>';
   }
 
   window.likePost = (id) => {
@@ -1729,7 +1618,7 @@ main {
     let reels = Object.keys(dbPosts).filter(k => dbPosts[k].type === 'video').map(k => ({id: k, ...dbPosts[k]}));
     box.innerHTML = reels.map(r => {
       let u = dbUsers[r.userId] || {};
-      return `<div style="height:calc(100vh - 126px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
+      return `<div style="height:calc(100vh - 116px);scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;background:#000;">
         <video src="${r.data}" loop playsinline style="width:100%;height:100%;object-fit:contain;filter:${r.filter||'none'}" onclick="toggleAudioPlay(this)"></video>
         <div style="position:absolute;right:16px;bottom:90px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:10;">
           <button class="action-icon-btn" onclick="likePost('${r.id}')" style="font-size:28px;">♥</button>
@@ -1801,14 +1690,14 @@ main {
     ab.innerHTML = '';
     if(u.pic) { ab.style.backgroundImage = `url('${u.pic}')`; ab.textContent = ''; }
     else { ab.style.backgroundImage = 'none'; ab.textContent = (u.username||'U').charAt(0).toUpperCase(); }
-    document.getElementById('myName').textContent = u.name || u.username || '';
-    document.getElementById('profileHeaderTitle').textContent = u.username ? `@${u.username}` : 'Profile';
+    document.getElementById('myName').textContent = u.name || '';
     
     let actBox = document.getElementById('profileActionsBox');
     if (viewingUserId === currentUid) {
       actBox.style.display = 'flex';
       actBox.innerHTML = `
-        <button class="primary-btn" style="background:#262626;margin:0;" onclick="openProfileSettingsModal()">⚙️ Account Settings</button>
+        <button class="primary-btn" style="background:#262626;margin:0;" onclick="changeProfilePic()">Change Photo</button>
+        <button class="primary-btn" style="background:#ff3040;margin:0;" onclick="logout()">Log Out</button>
       `;
     } else {
       let myObj = dbUsers[currentUid] || {};
@@ -1822,11 +1711,7 @@ main {
 
     let posts = Object.keys(dbPosts).filter(k => dbPosts[k].userId === viewingUserId);
     document.getElementById('postCount').textContent = posts.length;
-    
-    let realFollowersCount = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(viewingUserId)).length;
-    let fakeCount = u.fakeFollowersCount || 0;
-    document.getElementById('followerCount').textContent = realFollowersCount + fakeCount;
-
+    document.getElementById('followerCount').textContent = Object.keys(dbUsers).filter(k => (dbUsers[k].following||[]).includes(viewingUserId)).length;
     document.getElementById('followingCount').textContent = (u.following||[]).length;
 
     let gridBox = document.getElementById('myGrid');
