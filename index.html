@@ -1516,8 +1516,10 @@ main {
           <div style="color:var(--text-muted);font-size:13px;margin-top:6px;cursor:pointer;" onclick="openComments('${post.id}')">View comments</div>
         </div>
       </article>`;
-}).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available</div>';
-  }
+document.getElementById("feedContainer").innerHTML = postsArray.map(post => `
+    <!-- Aapka post card ka HTML -->
+    <div class="post-card">...</div>
+`).join('') || '<div style="text-align:center;color:#777;padding:40px;">No posts available</div>';
 
   window.likePost = (id) => {
     let p = dbPosts[id];
