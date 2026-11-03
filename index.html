@@ -1774,6 +1774,21 @@ onValue(ref(db, 'posts'), (snapshot) => {
     if (loader) loader.style.display = "none";
     console.error(error);
 });
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    // Asynchronous task ko handle karne ka sahi tarika
+    (async () => {
+        try {
+            const result = await fetchData();
+            sendResponse({ status: "success", data: result });
+        } catch (error) {
+            sendResponse({ status: "error", message: error.message });
+        }
+    })();
+
+    // 💡 SABSE ZAROORI: Ye true return karna hi padega taaki channel band na ho
+    return true; 
+});
 </script>
 </body>
 </html>
