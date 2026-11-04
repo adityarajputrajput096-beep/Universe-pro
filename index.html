@@ -57,7 +57,13 @@ button:active {
 .hidden {
   display: none !important;
 }
-
+  
+// Firebase से डेटा मिलने के बाद यह लाइन चलानी है:
+const nameElement = document.getElementById("userNameDisplay");
+if (nameElement) {
+    nameElement.innerText = userData.name || "Adit Bhai"; // यहाँ यूजर का नाम आ जाएगा
+}
+  
 /* Hide Scrollbars Cleanly Across All Browsers */
 ::-webkit-scrollbar {
   display: none !important;
