@@ -1084,6 +1084,7 @@ function renderFeed() {
     const isLiked = post.likes.includes(currentUser.username);
     const isSaved = currentUser.saved && currentUser.saved.includes(post.id);
     const userObj = users.find(u => u.username === post.username) || { name: post.username };
+if (!userObj.name) userObj.name = post.username;
 
     const div = document.createElement('div');
     div.className = 'post-card';
@@ -1112,7 +1113,7 @@ function renderFeed() {
       </div>
       <div class="post-meta-details">
         <b>${post.likes.length} likes</b>
-        <div style="margin-top:4px;"><b>${post.username}</b> ${post.caption}</div>
+        <div style="margin-top:4px;"><b>${userObj.name || post.username}</b> ${post.caption}</div>
         <div style="color:#777;font-size:12px;margin-top:6px;cursor:pointer;" onclick="openCommentsModal(${post.id})">View all ${post.comments.length} comments</div>
       </div>
     `;
