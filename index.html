@@ -544,7 +544,7 @@ main {
 <div id="appLoader">
   <div class="spinner"></div>
   <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">Universe Pro</div>
-  <div style="font-size:12px;color:#888;">Loading VIP Data...</div>
+  <div style="font-size:12px;color:#888;">Loading Clean VIP Data...</div>
 </div>
 
 <!-- Login & Register Section -->
@@ -602,7 +602,7 @@ main {
 
     <section id="search" class="tab-pane">
       <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border-color); background:var(--bg-primary);">
-        <input id="searchInput" class="input" placeholder="🔍 Search people..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
+        <input id="searchInput" class="input" placeholder="🔍 Search real users..." oninput="searchUsers(this.value)" style="border-radius:20px; padding:12px 16px; background:#181818;">
       </div>
       <div id="searchResults" style="padding:8px 0;"></div>
     </section>
@@ -610,7 +610,7 @@ main {
     <section id="shop" class="tab-pane">
       <div style="font-weight:700;padding:16px 16px 8px;font-size:16px;">🛍️ Official VIP Store (R.N. Singh Inter College Hub)</div>
       <div style="padding:0 14px 10px;">
-        <input id="shopSearchInput" class="input" placeholder="🔍 Search products in store..." oninput="renderShop()" style="border-radius:20px;padding:10px 16px;background:#181818;">
+        <input id="shopSearchInput" class="input" placeholder="🔍 Search store products..." oninput="renderShop()" style="border-radius:20px;padding:10px 16px;background:#181818;">
       </div>
       <div class="shop-grid" id="shopGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 14px 14px;"></div>
     </section>
@@ -922,7 +922,7 @@ main {
   </div>
 </div>
 
-<!-- FULL ADVANCED JAVASCRIPT LOGIC -->
+<!-- FULL CLEAN JAVASCRIPT LOGIC (ZERO FAKE USERS / MOCK DATA) -->
 <script>
 let currentUser = JSON.parse(localStorage.getItem('universe_logged_user')) || null;
 let isSignUp = false;
@@ -940,19 +940,10 @@ let activeCommentPostId = null;
 const COLLEGE_LAT = 27.2455; 
 const COLLEGE_LON = 81.5650;
 
-let users = JSON.parse(localStorage.getItem('universe_users')) || [
-  { username: 'aditya_thakur', name: 'Aditya Thakur', email: 'adit@universe.pro', password: '123', avatar: '', followers: ['vansh_singh'], following: ['vansh_singh'], saved: [] },
-  { username: 'vansh_singh', name: 'Vansh Singh', email: 'vansh@universe.pro', password: '123', avatar: '', followers: ['aditya_thakur'], following: ['aditya_thakur'], saved: [] }
-];
-
-let posts = JSON.parse(localStorage.getItem('universe_posts')) || [
-  { id: 1, username: 'aditya_thakur', type: 'image', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe', caption: 'Universe Pro VIP Platform 👑🚀', likes: ['vansh_singh'], comments: [{user: 'vansh_singh', text: 'Amazing platform Adit bhai! 🔥'}] }
-];
-
-let products = JSON.parse(localStorage.getItem('universe_products')) || [
-  { id: 1, title: 'VIP Gaming Headset Pro', price: 1499, desc: 'High quality RGB surround sound gaming headphones with deep bass.', images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e'], reviews: [{user: 'vansh_singh', rating: 5, text: 'Awesome headset! Super clear sound.'}] }
-];
-
+// Clean Initial State (No fake mock users or pre-loaded dummy content)
+let users = JSON.parse(localStorage.getItem('universe_users')) || [];
+let posts = JSON.parse(localStorage.getItem('universe_posts')) || [];
+let products = JSON.parse(localStorage.getItem('universe_products')) || [];
 let orders = JSON.parse(localStorage.getItem('universe_orders')) || [];
 let messages = JSON.parse(localStorage.getItem('universe_messages')) || {};
 let notifications = JSON.parse(localStorage.getItem('universe_notifications')) || [];
@@ -1085,6 +1076,10 @@ function closeNotificationsModal() {
 function renderFeed() {
   const feed = document.getElementById('feed');
   feed.innerHTML = '';
+  if (posts.length === 0) {
+    feed.innerHTML = `<div style="color:#777;text-align:center;padding:50px;">No posts yet. Be the first to publish!</div>`;
+    return;
+  }
   posts.forEach(post => {
     const isLiked = post.likes.includes(currentUser.username);
     const isSaved = currentUser.saved && currentUser.saved.includes(post.id);
@@ -1227,21 +1222,6 @@ function renderStories() {
       <span>Your Story</span>
     </div>
   `;
-  users.forEach(u => {
-    if (u.username === currentUser.username) return;
-    const div = document.createElement('div');
-    div.className = 'story-item';
-    div.onclick = () => viewUserStory(u.username);
-    div.innerHTML = `
-      <div class="story-ring"><div class="avatar-img" style="background-image:url('${u.avatar}')">${u.avatar ? '' : u.username[0].toUpperCase()}</div></div>
-      <span>${u.username}</span>
-    `;
-    container.appendChild(div);
-  });
-}
-
-function viewUserStory(username) {
-  alert('Viewing story of @' + username);
 }
 
 function renderReels() {
@@ -1321,6 +1301,10 @@ function renderShop() {
   const grid = document.getElementById('shopGrid');
   grid.innerHTML = '';
   const filtered = products.filter(p => p.title.toLowerCase().includes(q));
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="color:#777;grid-column:span 2;text-align:center;padding:40px;">No store products available. Admin can add items.</div>`;
+    return;
+  }
   filtered.forEach(p => {
     const card = document.createElement('div');
     card.style.cssText = 'background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;';
@@ -1560,22 +1544,13 @@ function requestCameraPermissions() {
     });
 }
 
-// -----------------------------------------------------------------
-// UPDATED DELETE ACCOUNT FUNCTION (Yeh ab posts aur data bhi uda dega)
-// -----------------------------------------------------------------
 function deleteMyOwnAccount() {
   if (confirm('Are you sure you want to delete your VIP account permanently? All your posts and data will be removed.')) {
     const deletedUsername = currentUser.username;
-    
-    // 1. Remove user from registered users list
     users = users.filter(u => u.username !== deletedUsername);
     localStorage.setItem('universe_users', JSON.stringify(users));
-
-    // 2. Remove all posts created by this user
     posts = posts.filter(p => p.username !== deletedUsername);
     localStorage.setItem('universe_posts', JSON.stringify(posts));
-
-    // 3. Clear logged user session and reload
     logout();
   }
 }
@@ -1910,6 +1885,10 @@ function deleteProduct(id) {
 function renderAdminUsers() {
   const list = document.getElementById('adminUsersList');
   list.innerHTML = ``;
+  if (users.length === 0) {
+    list.innerHTML = `<div style="color:#777;padding:10px;">No registered users yet.</div>`;
+    return;
+  }
   users.forEach(u => {
     const div = document.createElement('div');
     div.style.cssText = 'background:#1e1e1e;padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;';
@@ -1946,6 +1925,10 @@ function showUsersListModal(type) {
   const content = document.getElementById('usersListContent');
   content.innerHTML = '';
   const list = type === 'followers' ? (currentUser.followers || []) : (currentUser.following || []);
+  if (list.length === 0) {
+    content.innerHTML = `<div style="color:#777;text-align:center;padding:20px;">No users found.</div>`;
+    return;
+  }
   list.forEach(username => {
     const row = document.createElement('div');
     row.style.cssText = 'padding:8px 0;border-bottom:1px solid #333;color:#fff;';
